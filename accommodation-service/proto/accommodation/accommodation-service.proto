@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "proto/accommodation";
+
+service AccommodationService {
+  rpc GetAll(AM_Request) returns (AM_Response) {}
+  rpc Create(AM_Request) returns (AM_Response) {}
+}
+
+message AM_Request {
+  string name = 1;
+}
+
+message AM_Response {
+  string greeting = 2;
+}
