@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = "proto/booking";
+
+service BookingService {
+  rpc GetAll(BK_Request) returns (BK_Response) {}
+}
+
+message BK_Request {
+  string name = 1;
+}
+
+message BK_Response {
+  string message = 2;
+}

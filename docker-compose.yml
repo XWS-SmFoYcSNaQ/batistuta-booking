@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  api_gateway:
+    image: api_gateway
+    container_name: api_gateway
+    hostname: api_gateway
+    build:
+      context: ./api-gateway/
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      ACCOMMODATION_SERVICE_ADDRESS: accommodation_service${ACCOMMODATION_SERVICE_ADDRESS}
+      BOOKING_SERVICE_ADDRESS: booking_service${BOOKING_SERVICE_ADDRESS}
+      GATEWAY_ADDRESS: ${GATEWAY_ADDRESS}
+    depends_on:
+      - accommodation_service
+      - booking_service
+    networks:
+      - network
+    ports:
+      - "11000:11000"
+
+  accommodation_service:
+    image: accommodation_service
+    container_name: accommodation_service
+    hostname: accommodation_service
+    build:
+      context: accommodation-service/
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      ACCOMMODATION_SERVICE_ADDRESS: ${ACCOMMODATION_SERVICE_ADDRESS}
+    networks:
+      - network
+
+  booking_service:
+    image: booking_service
+    container_name: booking_service
+    hostname: booking_service
+    build:
+      context: booking-service/
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      BOOKING_SERVICE_ADDRESS: ${BOOKING_SERVICE_ADDRESS}
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge
