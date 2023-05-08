@@ -16,8 +16,6 @@ services:
     depends_on:
       - accommodation_service
       - booking_service
-    networks:
-      - network
     ports:
       - "11000:11000"
 
@@ -31,8 +29,22 @@ services:
     restart: always
     environment:
       ACCOMMODATION_SERVICE_ADDRESS: ${ACCOMMODATION_SERVICE_ADDRESS}
-    networks:
-      - network
+      ACCOMMODATION_DATABASE_ADDRESS: accommodation_database:5432
+      ACCOMMODATION_DATABASE_USERNAME: ${ACCOMMODATION_DATABASE_USERNAME}
+      ACCOMMODATION_DATABASE_PASSWORD: ${ACCOMMODATION_DATABASE_PASSWORD}
+    depends_on:
+      - accommodation_database
+
+  accommodation_database:
+    image: postgres:15.0-alpine
+    container_name: accommodation_database
+    hostname: accommodation_database
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '12102:5432'
+    restart: always
 
   booking_service:
     image: booking_service
@@ -44,9 +56,16 @@ services:
     restart: always
     environment:
       BOOKING_SERVICE_ADDRESS: ${BOOKING_SERVICE_ADDRESS}
-    networks:
-      - network
 
-networks:
-  network:
-    driver: bridge
+  public_app:
+    image: public_app
+    container_name: public_app
+    hostname: public_app
+    build:
+      context: ./public-app/.
+      dockerfile: Dockerfile
+    ports:
+      - "10000:3000"
+    restart: always
+    depends_on:
+      - api_gateway

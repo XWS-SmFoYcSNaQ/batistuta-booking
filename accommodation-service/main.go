@@ -2,6 +2,7 @@ package main
 
 import (
 	"accommodation_service/config"
+	"accommodation_service/database"
 	"accommodation_service/handlers"
 	"accommodation_service/proto/accommodation"
 	"google.golang.org/grpc"
@@ -15,6 +16,9 @@ import (
 
 func main() {
 	cfg := config.LoadConfig()
+
+	db := database.Connect(cfg)
+	defer db.Close()
 
 	listener, err := net.Listen("tcp", cfg.Address)
 	if err != nil {
