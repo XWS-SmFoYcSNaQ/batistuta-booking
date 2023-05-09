@@ -57,6 +57,28 @@ services:
     environment:
       BOOKING_SERVICE_ADDRESS: ${BOOKING_SERVICE_ADDRESS}
 
+  user_service:
+    image: user_service
+    container_name: user_service
+    hostname: user_service
+    build:
+      context: user-service/user-service/
+      dockerfile: Dockerfile 
+    restart: always
+    environment:
+      ASPNETCORE_URLS: http://localhost:${USER_SERVICE_ADDRESS}
+
+  auth_service:
+    image: auth-service
+    container_name: auth-service
+    hostname: auth-service
+    build:
+      context: auth-service/auth-service/
+      dockerfile: Dockerfile 
+    restart: always
+    environment:
+      ASPNETCORE_URLS: http://localhost:${AUTH_SERVICE_ADDRESS}
+      
   public_app:
     image: public_app
     container_name: public_app
