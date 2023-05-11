@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option go_package = "proto/user";
+
+import "google/api/annotations.proto";
+
+// The user service definition.
+service UserService {
+  rpc GetUser (US_Request) returns (US_Response) {
+    option (google.api.http) = {
+      get: "/user"
+    };
+  }
+}
+
+// The request message containing the user's name.
+message US_Request {
+  string name = 1;
+}
+
+// The response message containing the greetings.
+message US_Response {
+  string message = 1;
+}

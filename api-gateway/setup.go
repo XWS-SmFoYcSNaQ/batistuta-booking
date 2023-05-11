@@ -10,6 +10,7 @@ import (
 func registerServices(gwmux *runtime.ServeMux, cfg *config.Config) {
 	client.RegisterAccommodationClient(gwmux, cfg)
 	client.RegisterBookingClient(gwmux, cfg)
+	client.RegisterUserClient(gwmux, cfg)
 }
 
 func GetServer() *http.Server {

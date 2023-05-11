@@ -12,6 +12,7 @@ services:
     environment:
       ACCOMMODATION_SERVICE_ADDRESS: accommodation_service${ACCOMMODATION_SERVICE_ADDRESS}
       BOOKING_SERVICE_ADDRESS: booking_service${BOOKING_SERVICE_ADDRESS}
+      USER_SERVICE_ADDRESS: user_service${USER_SERVICE_ADDRESS}
       GATEWAY_ADDRESS: ${GATEWAY_ADDRESS}
     depends_on:
       - accommodation_service

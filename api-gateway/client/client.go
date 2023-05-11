@@ -4,11 +4,13 @@ import (
 	"api_gateway/config"
 	"api_gateway/proto/accommodation"
 	"api_gateway/proto/booking"
+	"api_gateway/proto/user"
 	"context"
+	"log"
+
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"log"
 )
 
 func RegisterAccommodationClient(Mux *runtime.ServeMux, Cfg *config.Config) {
@@ -31,6 +33,17 @@ func RegisterBookingClient(Mux *runtime.ServeMux, Cfg *config.Config) {
 		client,
 	)
 	handleError(err, "Failed to register Booking Microservice")
+}
+
+func RegisterUserClient(Mux *runtime.ServeMux, Cfg *config.Config) {
+	conn := createConnection(Cfg.UserServiceAddress)
+	client := user.NewUserServiceClient(conn)
+	err := user.RegisterUserServiceHandlerClient(
+		context.Background(),
+		Mux,
+		client,
+	)
+	handleError(err, "Failed to register User Microservice")
 }
 
 // private
