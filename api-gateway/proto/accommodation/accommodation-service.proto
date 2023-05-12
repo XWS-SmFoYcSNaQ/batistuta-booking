@@ -5,32 +5,82 @@ option go_package = "proto/accommodation";
 import "google/api/annotations.proto";
 
 service AccommodationService {
-  rpc GetAll(AM_GetAll_Request) returns (AM_GetAll_Response) {
+  rpc GetAllAccommodations(AM_GetAllAccommodations_Request) returns (AM_GetAllAccommodations_Response) {
     option (google.api.http) = {
       get: "/accommodation"
     };
   }
-  rpc Create(AM_Create_Request) returns (AM_Create_Response) {
+  rpc CreateAccommodation(AM_CreateAccommodation_Request) returns (AM_CreateAccommodation_Response) {
     option (google.api.http) = {
       post: "/accommodation"
       body: "*"
     };
   }
+  rpc GetAllPeriodsByAccommodation(AM_GetAllPeriodsByAccommodation_Request) returns (AM_GetAllPeriodsByAccommodation_Response) {
+    option (google.api.http) = {
+      get: "/accommodation/period"
+    };
+  }
+  rpc CreatePeriod(AM_CreatePeriod_Request) returns (AM_CreatePeriod_Response) {
+    option (google.api.http) = {
+      post: "/accommodation/period",
+      body: "*"
+    };
+  }
 }
 
-message AM_GetAll_Request {}
+message AM_GetAllAccommodations_Request {}
 
-message AM_GetAll_Response {
-  string data = 1;
+message AM_GetAllAccommodations_Response {
+  repeated AccommodationDTO data = 1;
+  string error = 2;
 }
 
-message AM_Create_Request {
+message AM_CreateAccommodation_Request {
   string name = 1;
   string benefits = 2;
   int32 minGuests = 3;
   int32 maxGuests = 4;
 }
 
-message AM_Create_Response {
+message AM_CreateAccommodation_Response {
   string id = 1;
+  string error = 2;
+}
+
+message AM_GetAllPeriodsByAccommodation_Request {
+  string accommodationId = 1;
+}
+
+message AM_GetAllPeriodsByAccommodation_Response {
+  repeated PeriodDTO data = 1;
+  string error = 2;
+}
+
+message AM_CreatePeriod_Request {
+  string start = 1;
+  string end = 2;
+  string accommodationId = 4;
+}
+
+message AM_CreatePeriod_Response {
+  string id = 1;
+  string error = 2;
+}
+
+message AccommodationDTO {
+  string id = 1;
+  string name = 2;
+  string benefits = 3;
+  int32 minGuests = 4;
+  int32 maxGuests = 5;
+}
+
+message PeriodDTO {
+  string id = 1;
+  string start = 2;
+  string end = 3;
+  int32 type = 4;
+  string accommodationId = 5;
+  string userId = 6;
 }
