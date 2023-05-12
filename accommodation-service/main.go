@@ -37,7 +37,7 @@ func main() {
 	reflection.Register(grpcServer)
 
 	// Bootstrap gRPC service server and respond to request.
-	accommodationHandler := handlers.AccommodationHandler{}
+	accommodationHandler := handlers.AccommodationHandler{DB: db}
 	accommodation.RegisterAccommodationServiceServer(grpcServer, accommodationHandler)
 
 	go func() {

@@ -5,24 +5,32 @@ option go_package = "proto/accommodation";
 import "google/api/annotations.proto";
 
 service AccommodationService {
-  rpc Create(AM_Request) returns (AM_Response) {
+  rpc GetAll(AM_GetAll_Request) returns (AM_GetAll_Response) {
+    option (google.api.http) = {
+      get: "/accommodation"
+    };
+  }
+  rpc Create(AM_Create_Request) returns (AM_Create_Response) {
     option (google.api.http) = {
       post: "/accommodation"
       body: "*"
     };
   }
-
-  rpc GetAll(AM_Request) returns (AM_Response) {
-    option (google.api.http) = {
-      get: "/accommodation"
-    };
-  }
 }
 
-message AM_Request {
+message AM_GetAll_Request {}
+
+message AM_GetAll_Response {
+  string data = 1;
+}
+
+message AM_Create_Request {
   string name = 1;
+  string benefits = 2;
+  int32 minGuests = 3;
+  int32 maxGuests = 4;
 }
 
-message AM_Response {
-  string greeting = 2;
+message AM_Create_Response {
+  string id = 1;
 }

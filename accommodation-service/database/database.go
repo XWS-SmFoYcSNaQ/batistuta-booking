@@ -29,5 +29,17 @@ func Connect(cfg config.Config) *sql.DB {
 		log.Fatalln(err)
 	}
 	log.Println("DATABASE WORKS!")
+
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS Accommodation (" +
+		"id uuid NOT NULL PRIMARY KEY, " +
+		"name TEXT NOT NULL," +
+		"benefits TEXT," +
+		"min_guests integer," +
+		"max_guests integer)",
+	)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	return db
 }

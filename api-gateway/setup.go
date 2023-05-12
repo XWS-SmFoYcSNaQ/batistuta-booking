@@ -4,6 +4,7 @@ import (
 	"api_gateway/client"
 	"api_gateway/config"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"log"
 	"net/http"
 )
 
@@ -17,6 +18,7 @@ func GetServer() *http.Server {
 	gwmux := runtime.NewServeMux()
 
 	registerServices(gwmux, &cfg)
+	log.Println("ADDRESS" + cfg.Address)
 
 	return &http.Server{
 		Addr:    cfg.Address,
