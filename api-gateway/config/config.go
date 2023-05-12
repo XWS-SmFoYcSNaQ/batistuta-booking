@@ -1,9 +1,10 @@
 package config
 
 import (
-	"github.com/joho/godotenv"
 	"log"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -11,6 +12,7 @@ type Config struct {
 	AccommodationServiceAddress string
 	BookingServiceAddress       string
 	UserServiceAddress          string
+	AuthServiceAddress          string
 }
 
 func LoadConfig() Config {
@@ -27,6 +29,7 @@ func getConfig() Config {
 		Address:                     os.Getenv("GATEWAY_ADDRESS"),
 		BookingServiceAddress:       os.Getenv("BOOKING_SERVICE_ADDRESS"),
 		UserServiceAddress:          os.Getenv("USER_SERVICE_ADDRESS"),
+		AuthServiceAddress:          os.Getenv("AUTH_SERVICE_ADDRESS"),
 	}
 }
 

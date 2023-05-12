@@ -2,20 +2,20 @@ syntax = "proto3";
 
 option csharp_namespace = "auth_service";
 
-package greet;
+package auth;
 
 // The greeting service definition.
-service Greeter {
+service AuthService {
   // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply);
+  rpc Verify (VerifyRequest) returns (VerifyResponse);
 }
 
 // The request message containing the user's name.
-message HelloRequest {
+message VerifyRequest {
   string name = 1;
 }
 
 // The response message containing the greetings.
-message HelloReply {
+message VerifyResponse {
   string message = 1;
 }

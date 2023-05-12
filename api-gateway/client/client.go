@@ -3,6 +3,7 @@ package client
 import (
 	"api_gateway/config"
 	"api_gateway/proto/accommodation"
+	"api_gateway/proto/auth"
 	"api_gateway/proto/booking"
 	"api_gateway/proto/user"
 	"context"
@@ -44,6 +45,17 @@ func RegisterUserClient(Mux *runtime.ServeMux, Cfg *config.Config) {
 		client,
 	)
 	handleError(err, "Failed to register User Microservice")
+}
+
+func RegisterAuthClient(Mux *runtime.ServeMux, Cfg *config.Config) {
+	conn := createConnection(Cfg.AuthServiceAddress)
+	client := auth.NewAuthServiceClient(conn)
+	err := auth.RegisterAuthServiceHandlerClient(
+		context.Background(),
+		Mux,
+		client,
+	)
+	handleError(err, "Failed to register Auth Microservice")
 }
 
 // private

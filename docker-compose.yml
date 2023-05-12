@@ -13,6 +13,7 @@ services:
       ACCOMMODATION_SERVICE_ADDRESS: accommodation_service${ACCOMMODATION_SERVICE_ADDRESS}
       BOOKING_SERVICE_ADDRESS: booking_service${BOOKING_SERVICE_ADDRESS}
       USER_SERVICE_ADDRESS: user_service${USER_SERVICE_ADDRESS}
+      AUTH_SERVICE_ADDRESS: auth_service${AUTH_SERVICE_ADDRESS}
       GATEWAY_ADDRESS: ${GATEWAY_ADDRESS}
     depends_on:
       - accommodation_service
@@ -70,9 +71,9 @@ services:
       ASPNETCORE_URLS: http://localhost:${USER_SERVICE_ADDRESS}
 
   auth_service:
-    image: auth-service
-    container_name: auth-service
-    hostname: auth-service
+    image: auth_service
+    container_name: auth_service
+    hostname: auth_service
     build:
       context: auth-service/auth-service/
       dockerfile: Dockerfile 
