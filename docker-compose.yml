@@ -64,19 +64,40 @@ services:
     container_name: user_service
     hostname: user_service
     build:
-      context: user-service/user-service/
-      dockerfile: Dockerfile 
+      context: ./user-service
+      dockerfile: user-service\Dockerfile
     restart: always
     environment:
       ASPNETCORE_URLS: http://localhost:${USER_SERVICE_ADDRESS}
+      MySqlConfig__Server: ${USER_DATABASE_SERVER}
+      MySqlConfig__Port: ${USER_DATABASE_PORT}
+      MySqlConfig__Database: ${USER_DATABASE}
+      MySqlConfig__User: ${USER_DATABASE_USERNAME}
+      MySqlConfig__Password: ${USER_DATABASE_PASSWORD}
+    depends_on:
+      - user_database
+
+  user_database:
+    image: mysql:5.7
+    container_name: user_database
+    hostname: user_database
+    environment:
+      MYSQL_ROOT_PASSWORD: ${USER_DATABASE_PASSWORD}
+      MYSQL_DATABASE: UserServiceDb
+    ports:
+      - '12101:3306'
+    volumes:
+      - user_database-mysql-data:/var/lib/mysql
+    restart:
+      always
 
   auth_service:
     image: auth_service
     container_name: auth_service
     hostname: auth_service
     build:
-      context: auth-service/auth-service/
-      dockerfile: Dockerfile 
+      context: ./auth-service
+      dockerfile: auth-service\Dockerfile 
     restart: always
     environment:
       ASPNETCORE_URLS: http://localhost:${AUTH_SERVICE_ADDRESS}
@@ -93,3 +114,6 @@ services:
     restart: always
     depends_on:
       - api_gateway
+
+volumes:
+  user_database-mysql-data:
