@@ -8,8 +8,6 @@ import (
 	"log"
 	"net/http"
 	"regexp"
-
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 )
 
 func registerServices(gwmux *runtime.ServeMux, cfg *config.Config) {
