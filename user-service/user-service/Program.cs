@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using user_service.data.Db;
+using user_service.Extensions;
 using user_service.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddGrpc();
+builder.AddDb();
+
 
 var app = builder.Build();
 
@@ -14,4 +19,5 @@ var app = builder.Build();
 app.MapGrpcService<UserService>();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
+app.ApplyMigrations();
 app.Run();
