@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option go_package = "proto/auth";
+
+package auth;
+
+import "google/api/annotations.proto";
+
+// The auth service definition.
+service AuthService {
+  rpc Verify (VerifyRequest) returns (VerifyResponse) {
+    option (google.api.http) = {
+      get: "/auth/{name}"
+    };
+  }
+}
+
+message VerifyRequest {
+  string name = 1;
+}
+
+message VerifyResponse {
+  string message = 1;
+}

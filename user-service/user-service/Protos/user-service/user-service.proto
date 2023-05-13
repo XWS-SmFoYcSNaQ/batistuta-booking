@@ -1,0 +1,21 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "user_service";
+
+package user;
+
+// The user service definition.
+service UserService {
+  rpc GetUser (US_Request) returns (US_Response);
+}
+
+// The request message containing the user's name.
+message US_Request {
+  string name = 1;
+}
+
+// The response message containing the greetings.
+message US_Response {
+  string message = 1;
+}
+
