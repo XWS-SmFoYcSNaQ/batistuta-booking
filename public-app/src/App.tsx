@@ -15,6 +15,7 @@ import { ListItemIcon, Button } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import HouseIcon from '@mui/icons-material/House';
+import { ToastContainer } from 'react-toastify';
 
 const drawerWidth = 240;
 
@@ -112,6 +113,7 @@ export default function App() {
       >
         <Outlet />
       </Box>
+      <ToastContainer />
     </Box>
   );
 }

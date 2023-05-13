@@ -12,11 +12,6 @@ code {
     monospace;
 }
 
-::-webkit-scrollbar {
-  width: 0;
-  background: transparent;
-}
-
 :root {
   --primary-color: #1976d2;
   --primary-light: #5dade2;
