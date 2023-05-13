@@ -10,7 +10,7 @@ export const mockAccommodationStore = (
   fetchAccommodations: async () => {
     set(
       produce((draft: AppState) => {
-        draft.accommodation.data = [{ name: "123" }, { name: "456" }]
+        draft.accommodation.data = []
         return draft
       })
     )

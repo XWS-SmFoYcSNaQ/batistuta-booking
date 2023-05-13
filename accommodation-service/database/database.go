@@ -23,11 +23,7 @@ func Connect(cfg config.Config) *sql.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = db.Exec("CREATE DATABASE accommodation")
-	err = db.Ping()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	log.Println("DATABASE WORKS!")
+
+	SetupDatabase(db)
 	return db
 }

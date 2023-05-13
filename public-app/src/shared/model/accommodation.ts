@@ -1,3 +1,8 @@
 export interface Accommodation {
-  name: string;
+  id?: string;
+  name?: string;
+  benefits?: string;
+  minGuests?: number;
+  maxGuests?: number;
+  basePrice?: number;
 }

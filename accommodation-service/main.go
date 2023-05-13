@@ -5,6 +5,7 @@ import (
 	"accommodation_service/database"
 	"accommodation_service/handlers"
 	"accommodation_service/proto/accommodation"
+	"accommodation_service/services"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
@@ -31,13 +32,14 @@ func main() {
 			log.Fatal(err)
 		}
 	}(listener)
-
-	// Bootstrap gRPC server.
+	
 	grpcServer := grpc.NewServer()
 	reflection.Register(grpcServer)
 
-	// Bootstrap gRPC service server and respond to request.
-	accommodationHandler := handlers.AccommodationHandler{}
+	accommodationHandler := handlers.AccommodationHandler{
+		DB:                   db,
+		AccommodationService: &services.AccommodationService{DB: db},
+	}
 	accommodation.RegisterAccommodationServiceServer(grpcServer, accommodationHandler)
 
 	go func() {

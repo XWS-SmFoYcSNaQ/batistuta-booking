@@ -102,18 +102,18 @@ services:
     environment:
       ASPNETCORE_URLS: http://localhost:${AUTH_SERVICE_ADDRESS}
       
-  public_app:
-    image: public_app
-    container_name: public_app
-    hostname: public_app
-    build:
-      context: ./public-app/.
-      dockerfile: Dockerfile
-    ports:
-      - "10000:3000"
-    restart: always
-    depends_on:
-      - api_gateway
+  # public_app:
+  #   image: public_app
+  #   container_name: public_app
+  #   hostname: public_app
+  #   build:
+  #     context: ./public-app/.
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "10000:3000"
+  #   restart: always
+  #   depends_on:
+  #     - api_gateway
 
 volumes:
   user_database-mysql-data:

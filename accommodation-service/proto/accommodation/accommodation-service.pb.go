@@ -20,16 +20,14 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type AM_Request struct {
+type AM_GetAllAccommodations_Request struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
-
-	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 }
 
-func (x *AM_Request) Reset() {
-	*x = AM_Request{}
+func (x *AM_GetAllAccommodations_Request) Reset() {
+	*x = AM_GetAllAccommodations_Request{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_accommodation_accommodation_service_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -37,13 +35,13 @@ func (x *AM_Request) Reset() {
 	}
 }
 
-func (x *AM_Request) String() string {
+func (x *AM_GetAllAccommodations_Request) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AM_Request) ProtoMessage() {}
+func (*AM_GetAllAccommodations_Request) ProtoMessage() {}
 
-func (x *AM_Request) ProtoReflect() protoreflect.Message {
+func (x *AM_GetAllAccommodations_Request) ProtoReflect() protoreflect.Message {
 	mi := &file_accommodation_accommodation_service_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -55,28 +53,21 @@ func (x *AM_Request) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AM_Request.ProtoReflect.Descriptor instead.
-func (*AM_Request) Descriptor() ([]byte, []int) {
+// Deprecated: Use AM_GetAllAccommodations_Request.ProtoReflect.Descriptor instead.
+func (*AM_GetAllAccommodations_Request) Descriptor() ([]byte, []int) {
 	return file_accommodation_accommodation_service_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AM_Request) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-type AM_Response struct {
+type AM_GetAllAccommodations_Response struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Greeting string `protobuf:"bytes,2,opt,name=greeting,proto3" json:"greeting,omitempty"`
+	Data []*AccommodationDTO `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
 }
 
-func (x *AM_Response) Reset() {
-	*x = AM_Response{}
+func (x *AM_GetAllAccommodations_Response) Reset() {
+	*x = AM_GetAllAccommodations_Response{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_accommodation_accommodation_service_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -84,13 +75,13 @@ func (x *AM_Response) Reset() {
 	}
 }
 
-func (x *AM_Response) String() string {
+func (x *AM_GetAllAccommodations_Response) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AM_Response) ProtoMessage() {}
+func (*AM_GetAllAccommodations_Response) ProtoMessage() {}
 
-func (x *AM_Response) ProtoReflect() protoreflect.Message {
+func (x *AM_GetAllAccommodations_Response) ProtoReflect() protoreflect.Message {
 	mi := &file_accommodation_accommodation_service_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -102,14 +93,518 @@ func (x *AM_Response) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AM_Response.ProtoReflect.Descriptor instead.
-func (*AM_Response) Descriptor() ([]byte, []int) {
+// Deprecated: Use AM_GetAllAccommodations_Response.ProtoReflect.Descriptor instead.
+func (*AM_GetAllAccommodations_Response) Descriptor() ([]byte, []int) {
 	return file_accommodation_accommodation_service_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *AM_Response) GetGreeting() string {
+func (x *AM_GetAllAccommodations_Response) GetData() []*AccommodationDTO {
 	if x != nil {
-		return x.Greeting
+		return x.Data
+	}
+	return nil
+}
+
+type AM_CreateAccommodation_Request struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name      string  `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Benefits  string  `protobuf:"bytes,2,opt,name=benefits,proto3" json:"benefits,omitempty"`
+	MinGuests int32   `protobuf:"varint,3,opt,name=minGuests,proto3" json:"minGuests,omitempty"`
+	MaxGuests int32   `protobuf:"varint,4,opt,name=maxGuests,proto3" json:"maxGuests,omitempty"`
+	BasePrice float64 `protobuf:"fixed64,5,opt,name=basePrice,proto3" json:"basePrice,omitempty"`
+}
+
+func (x *AM_CreateAccommodation_Request) Reset() {
+	*x = AM_CreateAccommodation_Request{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_accommodation_accommodation_service_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AM_CreateAccommodation_Request) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AM_CreateAccommodation_Request) ProtoMessage() {}
+
+func (x *AM_CreateAccommodation_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_accommodation_accommodation_service_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AM_CreateAccommodation_Request.ProtoReflect.Descriptor instead.
+func (*AM_CreateAccommodation_Request) Descriptor() ([]byte, []int) {
+	return file_accommodation_accommodation_service_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *AM_CreateAccommodation_Request) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *AM_CreateAccommodation_Request) GetBenefits() string {
+	if x != nil {
+		return x.Benefits
+	}
+	return ""
+}
+
+func (x *AM_CreateAccommodation_Request) GetMinGuests() int32 {
+	if x != nil {
+		return x.MinGuests
+	}
+	return 0
+}
+
+func (x *AM_CreateAccommodation_Request) GetMaxGuests() int32 {
+	if x != nil {
+		return x.MaxGuests
+	}
+	return 0
+}
+
+func (x *AM_CreateAccommodation_Request) GetBasePrice() float64 {
+	if x != nil {
+		return x.BasePrice
+	}
+	return 0
+}
+
+type AM_CreateAccommodation_Response struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *AM_CreateAccommodation_Response) Reset() {
+	*x = AM_CreateAccommodation_Response{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_accommodation_accommodation_service_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AM_CreateAccommodation_Response) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AM_CreateAccommodation_Response) ProtoMessage() {}
+
+func (x *AM_CreateAccommodation_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_accommodation_accommodation_service_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AM_CreateAccommodation_Response.ProtoReflect.Descriptor instead.
+func (*AM_CreateAccommodation_Response) Descriptor() ([]byte, []int) {
+	return file_accommodation_accommodation_service_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *AM_CreateAccommodation_Response) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type AM_GetAllPeriodsByAccommodation_Request struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *AM_GetAllPeriodsByAccommodation_Request) Reset() {
+	*x = AM_GetAllPeriodsByAccommodation_Request{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_accommodation_accommodation_service_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AM_GetAllPeriodsByAccommodation_Request) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AM_GetAllPeriodsByAccommodation_Request) ProtoMessage() {}
+
+func (x *AM_GetAllPeriodsByAccommodation_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_accommodation_accommodation_service_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AM_GetAllPeriodsByAccommodation_Request.ProtoReflect.Descriptor instead.
+func (*AM_GetAllPeriodsByAccommodation_Request) Descriptor() ([]byte, []int) {
+	return file_accommodation_accommodation_service_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *AM_GetAllPeriodsByAccommodation_Request) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type AM_GetAllPeriodsByAccommodation_Response struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Data []*PeriodDTO `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
+}
+
+func (x *AM_GetAllPeriodsByAccommodation_Response) Reset() {
+	*x = AM_GetAllPeriodsByAccommodation_Response{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_accommodation_accommodation_service_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AM_GetAllPeriodsByAccommodation_Response) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AM_GetAllPeriodsByAccommodation_Response) ProtoMessage() {}
+
+func (x *AM_GetAllPeriodsByAccommodation_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_accommodation_accommodation_service_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AM_GetAllPeriodsByAccommodation_Response.ProtoReflect.Descriptor instead.
+func (*AM_GetAllPeriodsByAccommodation_Response) Descriptor() ([]byte, []int) {
+	return file_accommodation_accommodation_service_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *AM_GetAllPeriodsByAccommodation_Response) GetData() []*PeriodDTO {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type AM_CreatePeriod_Request struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Start           string `protobuf:"bytes,1,opt,name=start,proto3" json:"start,omitempty"`
+	End             string `protobuf:"bytes,2,opt,name=end,proto3" json:"end,omitempty"`
+	AccommodationId string `protobuf:"bytes,3,opt,name=accommodationId,proto3" json:"accommodationId,omitempty"`
+	UserId          string `protobuf:"bytes,4,opt,name=userId,proto3" json:"userId,omitempty"`
+}
+
+func (x *AM_CreatePeriod_Request) Reset() {
+	*x = AM_CreatePeriod_Request{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_accommodation_accommodation_service_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AM_CreatePeriod_Request) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AM_CreatePeriod_Request) ProtoMessage() {}
+
+func (x *AM_CreatePeriod_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_accommodation_accommodation_service_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AM_CreatePeriod_Request.ProtoReflect.Descriptor instead.
+func (*AM_CreatePeriod_Request) Descriptor() ([]byte, []int) {
+	return file_accommodation_accommodation_service_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *AM_CreatePeriod_Request) GetStart() string {
+	if x != nil {
+		return x.Start
+	}
+	return ""
+}
+
+func (x *AM_CreatePeriod_Request) GetEnd() string {
+	if x != nil {
+		return x.End
+	}
+	return ""
+}
+
+func (x *AM_CreatePeriod_Request) GetAccommodationId() string {
+	if x != nil {
+		return x.AccommodationId
+	}
+	return ""
+}
+
+func (x *AM_CreatePeriod_Request) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type AM_CreatePeriod_Response struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *AM_CreatePeriod_Response) Reset() {
+	*x = AM_CreatePeriod_Response{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_accommodation_accommodation_service_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AM_CreatePeriod_Response) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AM_CreatePeriod_Response) ProtoMessage() {}
+
+func (x *AM_CreatePeriod_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_accommodation_accommodation_service_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AM_CreatePeriod_Response.ProtoReflect.Descriptor instead.
+func (*AM_CreatePeriod_Response) Descriptor() ([]byte, []int) {
+	return file_accommodation_accommodation_service_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *AM_CreatePeriod_Response) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type AccommodationDTO struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id        string  `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name      string  `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Benefits  string  `protobuf:"bytes,3,opt,name=benefits,proto3" json:"benefits,omitempty"`
+	MinGuests int32   `protobuf:"varint,4,opt,name=minGuests,proto3" json:"minGuests,omitempty"`
+	MaxGuests int32   `protobuf:"varint,5,opt,name=maxGuests,proto3" json:"maxGuests,omitempty"`
+	BasePrice float64 `protobuf:"fixed64,6,opt,name=basePrice,proto3" json:"basePrice,omitempty"`
+}
+
+func (x *AccommodationDTO) Reset() {
+	*x = AccommodationDTO{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_accommodation_accommodation_service_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AccommodationDTO) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AccommodationDTO) ProtoMessage() {}
+
+func (x *AccommodationDTO) ProtoReflect() protoreflect.Message {
+	mi := &file_accommodation_accommodation_service_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AccommodationDTO.ProtoReflect.Descriptor instead.
+func (*AccommodationDTO) Descriptor() ([]byte, []int) {
+	return file_accommodation_accommodation_service_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *AccommodationDTO) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *AccommodationDTO) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *AccommodationDTO) GetBenefits() string {
+	if x != nil {
+		return x.Benefits
+	}
+	return ""
+}
+
+func (x *AccommodationDTO) GetMinGuests() int32 {
+	if x != nil {
+		return x.MinGuests
+	}
+	return 0
+}
+
+func (x *AccommodationDTO) GetMaxGuests() int32 {
+	if x != nil {
+		return x.MaxGuests
+	}
+	return 0
+}
+
+func (x *AccommodationDTO) GetBasePrice() float64 {
+	if x != nil {
+		return x.BasePrice
+	}
+	return 0
+}
+
+type PeriodDTO struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id              string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Start           string `protobuf:"bytes,2,opt,name=start,proto3" json:"start,omitempty"`
+	End             string `protobuf:"bytes,3,opt,name=end,proto3" json:"end,omitempty"`
+	AccommodationId string `protobuf:"bytes,4,opt,name=accommodationId,proto3" json:"accommodationId,omitempty"`
+	UserId          string `protobuf:"bytes,5,opt,name=userId,proto3" json:"userId,omitempty"`
+}
+
+func (x *PeriodDTO) Reset() {
+	*x = PeriodDTO{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_accommodation_accommodation_service_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PeriodDTO) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PeriodDTO) ProtoMessage() {}
+
+func (x *PeriodDTO) ProtoReflect() protoreflect.Message {
+	mi := &file_accommodation_accommodation_service_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PeriodDTO.ProtoReflect.Descriptor instead.
+func (*PeriodDTO) Descriptor() ([]byte, []int) {
+	return file_accommodation_accommodation_service_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *PeriodDTO) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *PeriodDTO) GetStart() string {
+	if x != nil {
+		return x.Start
+	}
+	return ""
+}
+
+func (x *PeriodDTO) GetEnd() string {
+	if x != nil {
+		return x.End
+	}
+	return ""
+}
+
+func (x *PeriodDTO) GetAccommodationId() string {
+	if x != nil {
+		return x.AccommodationId
+	}
+	return ""
+}
+
+func (x *PeriodDTO) GetUserId() string {
+	if x != nil {
+		return x.UserId
 	}
 	return ""
 }
@@ -119,20 +614,94 @@ var File_accommodation_accommodation_service_proto protoreflect.FileDescriptor
 var file_accommodation_accommodation_service_proto_rawDesc = []byte{
 	0x0a, 0x29, 0x61, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2f,
 	0x61, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2d, 0x73, 0x65,
-	0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x20, 0x0a, 0x0a, 0x41,
-	0x4d, 0x5f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d,
-	0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x29, 0x0a,
-	0x0b, 0x41, 0x4d, 0x5f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1a, 0x0a, 0x08,
-	0x67, 0x72, 0x65, 0x65, 0x74, 0x69, 0x6e, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
-	0x67, 0x72, 0x65, 0x65, 0x74, 0x69, 0x6e, 0x67, 0x32, 0x64, 0x0a, 0x14, 0x41, 0x63, 0x63, 0x6f,
-	0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
-	0x12, 0x25, 0x0a, 0x06, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x12, 0x0b, 0x2e, 0x41, 0x4d, 0x5f,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0c, 0x2e, 0x41, 0x4d, 0x5f, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x25, 0x0a, 0x06, 0x43, 0x72, 0x65, 0x61, 0x74,
-	0x65, 0x12, 0x0b, 0x2e, 0x41, 0x4d, 0x5f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0c,
-	0x2e, 0x41, 0x4d, 0x5f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x15,
-	0x5a, 0x13, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x61, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64,
-	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x21, 0x0a, 0x1f, 0x41,
+	0x4d, 0x5f, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x5f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x49,
+	0x0a, 0x20, 0x41, 0x4d, 0x5f, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x41, 0x63, 0x63, 0x6f, 0x6d,
+	0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x5f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x12, 0x25, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b,
+	0x32, 0x11, 0x2e, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x44, 0x54, 0x4f, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x22, 0xaa, 0x01, 0x0a, 0x1e, 0x41, 0x4d,
+	0x5f, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04,
+	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65,
+	0x12, 0x1a, 0x0a, 0x08, 0x62, 0x65, 0x6e, 0x65, 0x66, 0x69, 0x74, 0x73, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x08, 0x62, 0x65, 0x6e, 0x65, 0x66, 0x69, 0x74, 0x73, 0x12, 0x1c, 0x0a, 0x09,
+	0x6d, 0x69, 0x6e, 0x47, 0x75, 0x65, 0x73, 0x74, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52,
+	0x09, 0x6d, 0x69, 0x6e, 0x47, 0x75, 0x65, 0x73, 0x74, 0x73, 0x12, 0x1c, 0x0a, 0x09, 0x6d, 0x61,
+	0x78, 0x47, 0x75, 0x65, 0x73, 0x74, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09, 0x6d,
+	0x61, 0x78, 0x47, 0x75, 0x65, 0x73, 0x74, 0x73, 0x12, 0x1c, 0x0a, 0x09, 0x62, 0x61, 0x73, 0x65,
+	0x50, 0x72, 0x69, 0x63, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x01, 0x52, 0x09, 0x62, 0x61, 0x73,
+	0x65, 0x50, 0x72, 0x69, 0x63, 0x65, 0x22, 0x31, 0x0a, 0x1f, 0x41, 0x4d, 0x5f, 0x43, 0x72, 0x65,
+	0x61, 0x74, 0x65, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x5f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x39, 0x0a, 0x27, 0x41, 0x4d, 0x5f,
+	0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x73, 0x42, 0x79, 0x41,
+	0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x02, 0x69, 0x64, 0x22, 0x4a, 0x0a, 0x28, 0x41, 0x4d, 0x5f, 0x47, 0x65, 0x74, 0x41, 0x6c,
+	0x6c, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x73, 0x42, 0x79, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d,
+	0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x1e, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0a,
+	0x2e, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x44, 0x54, 0x4f, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61,
+	0x22, 0x83, 0x01, 0x0a, 0x17, 0x41, 0x4d, 0x5f, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x50, 0x65,
+	0x72, 0x69, 0x6f, 0x64, 0x5f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05,
+	0x73, 0x74, 0x61, 0x72, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x73, 0x74, 0x61,
+	0x72, 0x74, 0x12, 0x10, 0x0a, 0x03, 0x65, 0x6e, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x03, 0x65, 0x6e, 0x64, 0x12, 0x28, 0x0a, 0x0f, 0x61, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0f, 0x61,
+	0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x12, 0x16,
+	0x0a, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
+	0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x22, 0x2a, 0x0a, 0x18, 0x41, 0x4d, 0x5f, 0x43, 0x72, 0x65,
+	0x61, 0x74, 0x65, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x5f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02,
+	0x69, 0x64, 0x22, 0xac, 0x01, 0x0a, 0x10, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x44, 0x54, 0x4f, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x62,
+	0x65, 0x6e, 0x65, 0x66, 0x69, 0x74, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x62,
+	0x65, 0x6e, 0x65, 0x66, 0x69, 0x74, 0x73, 0x12, 0x1c, 0x0a, 0x09, 0x6d, 0x69, 0x6e, 0x47, 0x75,
+	0x65, 0x73, 0x74, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09, 0x6d, 0x69, 0x6e, 0x47,
+	0x75, 0x65, 0x73, 0x74, 0x73, 0x12, 0x1c, 0x0a, 0x09, 0x6d, 0x61, 0x78, 0x47, 0x75, 0x65, 0x73,
+	0x74, 0x73, 0x18, 0x05, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09, 0x6d, 0x61, 0x78, 0x47, 0x75, 0x65,
+	0x73, 0x74, 0x73, 0x12, 0x1c, 0x0a, 0x09, 0x62, 0x61, 0x73, 0x65, 0x50, 0x72, 0x69, 0x63, 0x65,
+	0x18, 0x06, 0x20, 0x01, 0x28, 0x01, 0x52, 0x09, 0x62, 0x61, 0x73, 0x65, 0x50, 0x72, 0x69, 0x63,
+	0x65, 0x22, 0x85, 0x01, 0x0a, 0x09, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x44, 0x54, 0x4f, 0x12,
+	0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12,
+	0x14, 0x0a, 0x05, 0x73, 0x74, 0x61, 0x72, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05,
+	0x73, 0x74, 0x61, 0x72, 0x74, 0x12, 0x10, 0x0a, 0x03, 0x65, 0x6e, 0x64, 0x18, 0x03, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x03, 0x65, 0x6e, 0x64, 0x12, 0x28, 0x0a, 0x0f, 0x61, 0x63, 0x63, 0x6f, 0x6d,
+	0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x0f, 0x61, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49,
+	0x64, 0x12, 0x16, 0x0a, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x05, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x32, 0x8f, 0x03, 0x0a, 0x14, 0x41, 0x63,
+	0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69,
+	0x63, 0x65, 0x12, 0x5d, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x41, 0x63, 0x63, 0x6f,
+	0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x20, 0x2e, 0x41, 0x4d, 0x5f,
+	0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x73, 0x5f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x21, 0x2e, 0x41,
+	0x4d, 0x5f, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x5f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x00, 0x12, 0x5a, 0x0a, 0x13, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x41, 0x63, 0x63, 0x6f, 0x6d,
+	0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x1f, 0x2e, 0x41, 0x4d, 0x5f, 0x43, 0x72,
+	0x65, 0x61, 0x74, 0x65, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x5f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x20, 0x2e, 0x41, 0x4d, 0x5f, 0x43,
+	0x72, 0x65, 0x61, 0x74, 0x65, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x5f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x75, 0x0a,
+	0x1c, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x73, 0x42, 0x79,
+	0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x28, 0x2e,
+	0x41, 0x4d, 0x5f, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x73,
+	0x42, 0x79, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x29, 0x2e, 0x41, 0x4d, 0x5f, 0x47, 0x65, 0x74,
+	0x41, 0x6c, 0x6c, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x73, 0x42, 0x79, 0x41, 0x63, 0x63, 0x6f,
+	0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x00, 0x12, 0x45, 0x0a, 0x0c, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x50, 0x65,
+	0x72, 0x69, 0x6f, 0x64, 0x12, 0x18, 0x2e, 0x41, 0x4d, 0x5f, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
+	0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x5f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19,
+	0x2e, 0x41, 0x4d, 0x5f, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64,
+	0x5f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x15, 0x5a, 0x13, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x61, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -147,21 +716,35 @@ func file_accommodation_accommodation_service_proto_rawDescGZIP() []byte {
 	return file_accommodation_accommodation_service_proto_rawDescData
 }
 
-var file_accommodation_accommodation_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_accommodation_accommodation_service_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_accommodation_accommodation_service_proto_goTypes = []interface{}{
-	(*AM_Request)(nil),  // 0: AM_Request
-	(*AM_Response)(nil), // 1: AM_Response
+	(*AM_GetAllAccommodations_Request)(nil),          // 0: AM_GetAllAccommodations_Request
+	(*AM_GetAllAccommodations_Response)(nil),         // 1: AM_GetAllAccommodations_Response
+	(*AM_CreateAccommodation_Request)(nil),           // 2: AM_CreateAccommodation_Request
+	(*AM_CreateAccommodation_Response)(nil),          // 3: AM_CreateAccommodation_Response
+	(*AM_GetAllPeriodsByAccommodation_Request)(nil),  // 4: AM_GetAllPeriodsByAccommodation_Request
+	(*AM_GetAllPeriodsByAccommodation_Response)(nil), // 5: AM_GetAllPeriodsByAccommodation_Response
+	(*AM_CreatePeriod_Request)(nil),                  // 6: AM_CreatePeriod_Request
+	(*AM_CreatePeriod_Response)(nil),                 // 7: AM_CreatePeriod_Response
+	(*AccommodationDTO)(nil),                         // 8: AccommodationDTO
+	(*PeriodDTO)(nil),                                // 9: PeriodDTO
 }
 var file_accommodation_accommodation_service_proto_depIdxs = []int32{
-	0, // 0: AccommodationService.GetAll:input_type -> AM_Request
-	0, // 1: AccommodationService.Create:input_type -> AM_Request
-	1, // 2: AccommodationService.GetAll:output_type -> AM_Response
-	1, // 3: AccommodationService.Create:output_type -> AM_Response
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	8, // 0: AM_GetAllAccommodations_Response.data:type_name -> AccommodationDTO
+	9, // 1: AM_GetAllPeriodsByAccommodation_Response.data:type_name -> PeriodDTO
+	0, // 2: AccommodationService.GetAllAccommodations:input_type -> AM_GetAllAccommodations_Request
+	2, // 3: AccommodationService.CreateAccommodation:input_type -> AM_CreateAccommodation_Request
+	4, // 4: AccommodationService.GetAllPeriodsByAccommodation:input_type -> AM_GetAllPeriodsByAccommodation_Request
+	6, // 5: AccommodationService.CreatePeriod:input_type -> AM_CreatePeriod_Request
+	1, // 6: AccommodationService.GetAllAccommodations:output_type -> AM_GetAllAccommodations_Response
+	3, // 7: AccommodationService.CreateAccommodation:output_type -> AM_CreateAccommodation_Response
+	5, // 8: AccommodationService.GetAllPeriodsByAccommodation:output_type -> AM_GetAllPeriodsByAccommodation_Response
+	7, // 9: AccommodationService.CreatePeriod:output_type -> AM_CreatePeriod_Response
+	6, // [6:10] is the sub-list for method output_type
+	2, // [2:6] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_accommodation_accommodation_service_proto_init() }
@@ -171,7 +754,7 @@ func file_accommodation_accommodation_service_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_accommodation_accommodation_service_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AM_Request); i {
+			switch v := v.(*AM_GetAllAccommodations_Request); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -183,7 +766,103 @@ func file_accommodation_accommodation_service_proto_init() {
 			}
 		}
 		file_accommodation_accommodation_service_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AM_Response); i {
+			switch v := v.(*AM_GetAllAccommodations_Response); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_accommodation_accommodation_service_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AM_CreateAccommodation_Request); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_accommodation_accommodation_service_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AM_CreateAccommodation_Response); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_accommodation_accommodation_service_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AM_GetAllPeriodsByAccommodation_Request); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_accommodation_accommodation_service_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AM_GetAllPeriodsByAccommodation_Response); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_accommodation_accommodation_service_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AM_CreatePeriod_Request); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_accommodation_accommodation_service_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AM_CreatePeriod_Response); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_accommodation_accommodation_service_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AccommodationDTO); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_accommodation_accommodation_service_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PeriodDTO); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -201,7 +880,7 @@ func file_accommodation_accommodation_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_accommodation_accommodation_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
