@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -14,4 +10,41 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+:root {
+  --primary-color: #1976d2;
+  --primary-light: #5dade2;
+  --primary-dark: #1a120b;
+  --primary-text: #f6f1f1;
+}
+
+a {
+  text-decoration: none;
+  color: #333;
+}
+
+a.active .MuiListItem-root {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.MuiCardHeader-title {
+  font-size: 2.5rem !important;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-gap: 20px;
+}
+
+.error-block {
+  font-size: 16px;
+  color: crimson;
 }

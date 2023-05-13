@@ -1,8 +1,9 @@
 import { RouteObject } from "react-router-dom";
+import { Create } from "./create";
 
 export const accommodationRoutes: RouteObject[] = [
   {
-    path: "child",
-    element: <div>child</div>,
+    path: "create",
+    element: <Create/>
   },
 ];

@@ -8,4 +8,5 @@ type Accommodation struct {
 	Benefits  string
 	MinGuests int
 	MaxGuests int
+	BasePrice float64
 }

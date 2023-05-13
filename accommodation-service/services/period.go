@@ -28,7 +28,7 @@ func (s PeriodService) GetAllByAccommodation(id uuid.UUID) ([]*model.Period, err
 	var data []*model.Period
 	for rows.Next() {
 		var d model.Period
-		err := rows.Scan(&d.ID, &d.Start, &d.End, &d.Type, &d.AccommodationId, &d.UserId)
+		err := rows.Scan(&d.ID, &d.Start, &d.End, &d.AccommodationId, &d.UserId)
 		if err != nil {
 			return nil, errors.New(errorMessage)
 		}
@@ -47,21 +47,24 @@ func (s PeriodService) Create(p *model.Period) (uuid.UUID, error) {
 		return uuid.Nil, errors.New("timestamps are overlapping")
 	}
 
-	stmt, err := s.DB.Prepare(`INSERT INTO Period VALUES ($1, $2, $3, $4, $5, $6)`)
+	stmt, err := s.DB.Prepare(`INSERT INTO Period VALUES ($1, $2, $4, $5, $6)`)
 	if err != nil {
 		return uuid.Nil, errors.New(errorMessage)
 	}
 	id := uuid.New()
-	_, err = stmt.Exec(id, p.Start, p.End, p.Type, p.AccommodationId, p.UserId)
+	_, err = stmt.Exec(id, p.Start, p.End, p.AccommodationId, p.UserId)
 	if err != nil {
 		return uuid.Nil, errors.New(errorMessage)
 	}
-	
+
 	return id, nil
 }
 
 func (s PeriodService) checkOverlap(start, end time.Time) (bool, error) {
-	stmt, err := s.DB.Prepare(`SELECT COUNT(*) FROM Period WHERE (p_start, p_end) OVERLAPS ($1, $2)`)
+	stmt, err := s.DB.Prepare(`
+		SELECT COUNT(*) as c FROM Period p INNER JOIN Accommodation a ON a.id = p.accommodation_id
+		WHERE (p_start, p_end) OVERLAPS ($1, $2) AND (a.max_guests >= c OR p.user_id = NULL)
+	`)
 	if err != nil {
 		return false, err
 	}

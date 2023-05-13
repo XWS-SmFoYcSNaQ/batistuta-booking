@@ -5,10 +5,11 @@ import (
 	"time"
 )
 
-type Period struct {
+type Price struct {
 	ID              uuid.UUID
 	Start           time.Time
 	End             time.Time
 	AccommodationId uuid.UUID
 	UserId          uuid.UUID
+	Price           float64
 }

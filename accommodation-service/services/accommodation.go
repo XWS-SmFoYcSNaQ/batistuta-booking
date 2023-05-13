@@ -22,7 +22,7 @@ func (s AccommodationService) GetAll() ([]*model.Accommodation, error) {
 	var accommodations []*model.Accommodation
 	for rows.Next() {
 		var p model.Accommodation
-		err := rows.Scan(&p.ID, &p.Name, &p.Benefits, &p.MinGuests, &p.MaxGuests)
+		err := rows.Scan(&p.ID, &p.Name, &p.Benefits, &p.MinGuests, &p.MaxGuests, &p.BasePrice)
 		if err != nil {
 			return nil, errors.New(errorMessage)
 		}
@@ -37,13 +37,13 @@ func (s AccommodationService) GetAll() ([]*model.Accommodation, error) {
 
 func (s AccommodationService) Create(a *model.Accommodation) (uuid.UUID, error) {
 	errorMessage := "error while creating accommodation"
-	stmt, err := s.DB.Prepare("INSERT INTO Accommodation VALUES ($1, $2, $3, $4, $5)")
+	stmt, err := s.DB.Prepare("INSERT INTO Accommodation VALUES ($1, $2, $3, $4, $5, $6)")
 	if err != nil {
 		return uuid.Nil, errors.New(errorMessage)
 	}
 	defer stmt.Close()
 	id := uuid.New()
-	_, err = stmt.Exec(id, a.Name, a.Benefits, a.MinGuests, a.MaxGuests)
+	_, err = stmt.Exec(id, a.Name, a.Benefits, a.MinGuests, a.MaxGuests, a.BasePrice)
 	if err != nil {
 		return uuid.Nil, errors.New(errorMessage)
 	}

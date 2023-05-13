@@ -13,7 +13,6 @@ message AM_GetAllAccommodations_Request {}
 
 message AM_GetAllAccommodations_Response {
   repeated AccommodationDTO data = 1;
-  string error = 2;
 }
 
 message AM_CreateAccommodation_Request {
@@ -21,31 +20,30 @@ message AM_CreateAccommodation_Request {
   string benefits = 2;
   int32 minGuests = 3;
   int32 maxGuests = 4;
+  double basePrice = 5;
 }
 
 message AM_CreateAccommodation_Response {
   string id = 1;
-  string error = 2;
 }
 
 message AM_GetAllPeriodsByAccommodation_Request {
-  string accommodationId = 1;
+  string id = 1;
 }
 
 message AM_GetAllPeriodsByAccommodation_Response {
   repeated PeriodDTO data = 1;
-  string error = 2;
 }
 
 message AM_CreatePeriod_Request {
   string start = 1;
   string end = 2;
-  string accommodationId = 4;
+  string accommodationId = 3;
+  string userId = 4;
 }
 
 message AM_CreatePeriod_Response {
   string id = 1;
-  string error = 2;
 }
 
 message AccommodationDTO {
@@ -54,13 +52,13 @@ message AccommodationDTO {
   string benefits = 3;
   int32 minGuests = 4;
   int32 maxGuests = 5;
+  double basePrice = 6;
 }
 
 message PeriodDTO {
   string id = 1;
   string start = 2;
   string end = 3;
-  int32 type = 4;
-  string accommodationId = 5;
-  string userId = 6;
+  string accommodationId = 4;
+  string userId = 5;
 }
