@@ -5,8 +5,8 @@ import (
 	"accommodation_service/proto/accommodation"
 	"database/sql"
 	"errors"
-
 	"github.com/google/uuid"
+	"strconv"
 )
 
 type AccommodationService struct {
@@ -55,10 +55,11 @@ func (s AccommodationService) Create(a *model.Accommodation) (uuid.UUID, error) 
 }
 
 func (s AccommodationService) GetSearchedAccommodations(a *accommodation.AM_SearchAccommodations_Request) ([]*model.Accommodation, error) {
-	errorMessage := "error while fetching accommodations"
-	rows, err := s.DB.Query("SELECT * FROM Accommodation WHERE min_guests <= $3 AND max_guests >= $3", a)
+	//errorMessage := "error while fetching accommodations"
+	rows, err := s.DB.Query("SELECT * FROM Accommodation WHERE min_guests <= " + strconv.Itoa(int(a.NumberOfGuests)) +
+		" AND max_guests >= " + strconv.Itoa(int(a.NumberOfGuests)))
 	if err != nil {
-		return nil, errors.New(errorMessage)
+		return nil, errors.New("Number of guests : " + strconv.Itoa(int(a.NumberOfGuests)))
 	}
 	defer rows.Close()
 
@@ -67,12 +68,12 @@ func (s AccommodationService) GetSearchedAccommodations(a *accommodation.AM_Sear
 		var p model.Accommodation
 		err := rows.Scan(&p.ID, &p.Name, &p.Benefits, &p.MinGuests, &p.MaxGuests, &p.BasePrice)
 		if err != nil {
-			return nil, errors.New(errorMessage)
+			return nil, errors.New("lose appendovao")
 		}
 		accommodations = append(accommodations, &p)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, errors.New(errorMessage)
+		return nil, errors.New("losi redovi")
 	}
 
 	return accommodations, nil

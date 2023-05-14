@@ -50,34 +50,5 @@ func (h AccommodationHandler) CreateDiscount(ctx context.Context, request *accom
 }
 
 func (h AccommodationHandler) SearchAccommodations(ctx context.Context, request *accommodation.AM_SearchAccommodations_Request) (*accommodation.AM_SearchAccommodations_Response, error) {
-	if request.NumberOfGuests <= 0 {
-		return nil, status.Error(codes.InvalidArgument, "number of guests must be greater than 0")
-	}
-
-	accommodations, err := h.AccommodationService.GetSearchedAccommodations(&accommodation.AM_SearchAccommodations_Request{
-		Start:          request.Start,
-		End:            request.End,
-		NumberOfGuests: request.NumberOfGuests,
-		Location:       request.Location,
-	})
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	var res []*accommodation.SearchedAccommodationsDTO
-	for _, d := range accommodations {
-		a := accommodation.SearchedAccommodationsDTO{
-			Id:         d.ID.String(),
-			Name:       d.Name,
-			Benefits:   d.Benefits,
-			MinGuests:  int32(d.MinGuests),
-			MaxGuests:  int32(d.MaxGuests),
-			BasePrice:  d.BasePrice,
-			Location:   "nema jos",
-			TotalPrice: 0.0,
-		}
-		res = append(res, &a)
-	}
-
-	return &accommodation.AM_SearchAccommodations_Response{Data: res}, nil
+	return h.AccommodationController.SearchAccommodations(ctx, request)
 }

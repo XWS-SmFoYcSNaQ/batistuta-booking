@@ -79,3 +79,55 @@ func (c AccommodationController) GetByIdWithDiscounts(ctx context.Context, reque
 
 	return utility.AccommodationWithDiscountsToDTO(a, discounts)
 }
+
+func (c AccommodationController) SearchAccommodations(ctx context.Context, request *accommodation.AM_SearchAccommodations_Request) (*accommodation.AM_SearchAccommodations_Response, error) {
+	if request.NumberOfGuests <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "number of guests must be greater than 0")
+	}
+
+	accommodations, err := c.AccommodationService.GetSearchedAccommodations(&accommodation.AM_SearchAccommodations_Request{
+		Start:          request.Start,
+		End:            request.End,
+		NumberOfGuests: request.NumberOfGuests,
+		Location:       request.Location,
+	})
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	var availableAccommodations []*model.Accommodation
+	for _, a := range accommodations {
+		start, err := utility.ParseISOString(request.Start)
+		if err != nil {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+		end, err := utility.ParseISOString(request.End)
+		if err != nil {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+		available, err := c.PeriodService.IsAvailableForGivenInterval(a.ID, start, end)
+		if err != nil {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+		if available {
+			availableAccommodations = append(availableAccommodations, a)
+		}
+	}
+
+	var res []*accommodation.SearchedAccommodationsDTO
+	for _, d := range availableAccommodations {
+		a := accommodation.SearchedAccommodationsDTO{
+			Id:         d.ID.String(),
+			Name:       d.Name,
+			Benefits:   d.Benefits,
+			MinGuests:  int32(d.MinGuests),
+			MaxGuests:  int32(d.MaxGuests),
+			BasePrice:  d.BasePrice,
+			Location:   "nema jos",
+			TotalPrice: 0.0,
+		}
+		res = append(res, &a)
+	}
+
+	return &accommodation.AM_SearchAccommodations_Response{Data: res}, nil
+}
