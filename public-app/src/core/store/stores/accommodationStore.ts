@@ -5,8 +5,10 @@ import axios from "axios";
 
 export interface AccommodationStoreType {
   data: Accommodation[]
+  accommodation: Accommodation | null
   loading: boolean
   fetchAccommodations: () => Promise<void>
+  fetchDetails: (id: string, type: 'periods' | 'discounts') => Promise<void>
   createAccommodation: (data: Accommodation) => Promise<void>
   clearData: () => void
   setLoading: (val: boolean) => void
@@ -17,6 +19,7 @@ export const accommodationStore = (
   get: GetAppState
 ): AccommodationStoreType => ({
   data: [],
+  accommodation: null,
   loading: false,
   fetchAccommodations: async () => {
     get().accommodation.setLoading(true)
@@ -26,6 +29,22 @@ export const accommodationStore = (
       set(
         produce((draft: AppState) => {
           draft.accommodation.data = res.data.data
+          return draft
+        })
+      )
+    } catch (e) {
+      console.log(e)
+    }
+    get().accommodation.setLoading(false)
+  },
+  fetchDetails: async (id: string, type: 'periods' | 'discounts') => {
+    get().accommodation.setLoading(true)
+    get().accommodation.clearData()
+    try {
+      const res = await axios.get(`${apiUrl}/accommodation/details/${type}/${id}`)
+      set(
+        produce((draft: AppState) => {
+          draft.accommodation.accommodation = res.data
           return draft
         })
       )
@@ -48,6 +67,7 @@ export const accommodationStore = (
     set(
       produce((draft: AppState) => {
         draft.accommodation.data = []
+        draft.accommodation.accommodation = null
         return draft
       })
     )

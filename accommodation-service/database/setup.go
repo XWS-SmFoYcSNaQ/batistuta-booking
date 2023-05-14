@@ -30,6 +30,7 @@ func SetupDatabase(db *sql.DB) {
     	p_end TIMESTAMPTZ NOT NULL,
     	accommodation_id uuid NOT NULL,
     	user_id uuid,
+    	guests integer NOT NULL,
     	FOREIGN KEY (accommodation_id) REFERENCES Accommodation (id)
 	)`)
 	if err != nil {

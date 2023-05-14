@@ -18,8 +18,8 @@ export const Availability = () => {
   const params = useParams();
   const [data, setData] = useState<Period>(getInitialData());
   const createPeriod = appStore((state: AppState) => state.period.createPeriod);
-  const fetchPeriods = appStore((state: AppState) => state.period.fetchPeriods);
-  const periods = appStore((state: AppState) => state.period.data);
+  const fetchAccommodationDetails = appStore((state: AppState) => state.accommodation.fetchDetails)
+  const accommodation = appStore((state: AppState) => state.accommodation.accommodation)
 
   const [events, setEvents] = useState<CalendarEvent[]>([]);
 
@@ -30,7 +30,7 @@ export const Availability = () => {
       await createPeriod({ ...data, accommodationId: params.id, userId: "" });
       toast.success("Period created successfully");
       setData(getInitialData());
-      fetchPeriods(params.id ?? "");
+      fetchAccommodationDetails(params.id ?? "", 'periods');
     } catch (e: any) {
       toast.error(e.message);
     }
@@ -54,19 +54,21 @@ export const Availability = () => {
   };
 
   useEffect(() => {
-    fetchPeriods(params.id ?? "");
-  }, [fetchPeriods, params.id]);
+    fetchAccommodationDetails(params.id ?? "", 'periods')
+  }, [fetchAccommodationDetails, params.id]);
 
   useEffect(() => {
-    setEvents(
-      periods.map((p: Period) => ({
-        title: !p.userId || p.userId === "" ? "Unavailable" : "",
-        start: new Date(p.start ?? "") ?? undefined,
-        end: new Date(p.end ?? "") ?? undefined,
-        color: !p.userId || p.userId === "" ? "#800" : "green",
-      }))
-    );
-  }, [periods]);
+    if(accommodation?.periods){
+      setEvents(
+        accommodation.periods.map((p: Period) => ({
+          title: !p.userId || p.userId === "" ? "Unavailable" : "",
+          start: new Date(p.start ?? "") ?? undefined,
+          end: new Date(p.end ?? "") ?? undefined,
+          color: !p.userId || p.userId === "" ? "#800" : "green",
+        }))
+      );
+    }
+  }, [accommodation]);
   return (
     <Container>
       <Box sx={{ margin: "10px 0px" }}>
@@ -80,6 +82,9 @@ export const Availability = () => {
       <h1>Availability</h1>
       <Calendar events={events} selectHandler={selectHandler} renderEventContent={renderEventContent}/>
       <Box sx={{marginTop: "30px"}}>
+        <Box sx={{ marginBottom: "25px" }}>
+          Maxiumum Guests: {accommodation?.maxGuests}
+        </Box>
         <form onSubmit={handleSubmit}>
           <Button type="submit" variant="outlined">
             Set Unavailable

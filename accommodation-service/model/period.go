@@ -11,4 +11,5 @@ type Period struct {
 	End             time.Time
 	AccommodationId uuid.UUID
 	UserId          uuid.UUID
+	Guests          int
 }

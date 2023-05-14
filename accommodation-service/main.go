@@ -40,6 +40,8 @@ func main() {
 	accommodationHandler := handlers.AccommodationHandler{
 		AccommodationController: &controller.AccommodationController{
 			AccommodationService: &services.AccommodationService{DB: db},
+			PeriodService:        &services.PeriodService{DB: db},
+			DiscountService:      &services.DiscountService{DB: db},
 		},
 		PeriodController: &controller.PeriodController{
 			PeriodService: &services.PeriodService{DB: db},
