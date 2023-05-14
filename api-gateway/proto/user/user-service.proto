@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+option go_package = "proto/user";
+
+package user;
+
+import "google/api/annotations.proto";
+
+// The user service definition.
+service UserService {
+  rpc GetAllUsers (Empty_Request) returns (GetAllUsers_Response) {
+    option (google.api.http) = {
+      get: "/api/users"
+    };
+  }
+}
+
+enum UserRole {
+    Host = 0;
+    Guest = 1;
+};
+
+message Empty_Request {
+
+}
+
+message User {
+  string Id = 1;
+  UserRole Role = 2;
+  string Username = 3;
+  string FirstName = 4;
+  string LastName = 5;
+  string Email = 6;
+  string LivingPlace = 7;
+}
+
+message GetAllUsers_Response {
+  message User {
+    UserRole Role = 1;
+    string Username = 2;
+    string FirstName = 3;
+    string LastName = 4;
+    string Email = 5;
+    string LivingPlace = 6;
+  }
+  repeated User Users = 1;
+}
