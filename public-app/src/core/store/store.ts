@@ -4,9 +4,12 @@ import { immer } from "zustand/middleware/immer"
 import { devtools, persist } from "zustand/middleware"
 import { mockAccommodationStore } from "./mock/mockAccommodationStore";
 import { AccommodationStoreType, accommodationStore } from "./stores/accommodationStore";
+import { PeriodStoreType, periodStore } from "./stores/periodStore";
+import { mockPeriodStore } from "./mock/mockPeriodStore";
 
 export interface AppState {
   accommodation: AccommodationStoreType
+  period: PeriodStoreType
 }
 
 export const isStoreMocked = process.env.REACT_APP_USE_MOCK_STORE === "true"
@@ -18,6 +21,9 @@ const storeGenerator = (set: SetAppState, get: GetAppState): AppState => ({
   accommodation: !isStoreMocked
     ? accommodationStore(set, get)
     : { ...accommodationStore(set, get), ...mockAccommodationStore(set, get) },
+  period: !isStoreMocked
+    ? periodStore(set, get)
+    : {...periodStore(set, get), ...mockPeriodStore(set, get)}
 })
 
 const storeMerge = (persistedState: any, currentState: any) => {

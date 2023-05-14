@@ -14,5 +14,6 @@ export const mockAccommodationStore = (
         return draft
       })
     )
-  }
+  },
+  createAccommodation: async (data) => {},
 })

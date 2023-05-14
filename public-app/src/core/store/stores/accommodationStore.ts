@@ -37,8 +37,10 @@ export const accommodationStore = (
   createAccommodation: async (data: Accommodation) => {
     try {
       await axios.post(`${apiUrl}/accommodation`, data)
-    } catch (e) {
-      console.log(e)
+    } catch (e: any) {
+      if(e.message){
+        throw new Error(e.message)
+      }
       throw new Error("Error while creating accommodation.")
     }
   },
