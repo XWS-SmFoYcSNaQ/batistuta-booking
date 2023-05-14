@@ -19,7 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserService_GetUser_FullMethodName = "/user.UserService/GetUser"
+	UserService_GetUser_FullMethodName      = "/user.UserService/GetUser"
+	UserService_RegisterUser_FullMethodName = "/user.UserService/RegisterUser"
+	UserService_GetAllUsers_FullMethodName  = "/user.UserService/GetAllUsers"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -27,6 +29,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
 	GetUser(ctx context.Context, in *US_Request, opts ...grpc.CallOption) (*US_Response, error)
+	RegisterUser(ctx context.Context, in *RegisterUser_Request, opts ...grpc.CallOption) (*RegisterUser_Response, error)
+	GetAllUsers(ctx context.Context, in *Empty_Request, opts ...grpc.CallOption) (*GetAllUsers_Response, error)
 }
 
 type userServiceClient struct {
@@ -46,11 +50,31 @@ func (c *userServiceClient) GetUser(ctx context.Context, in *US_Request, opts ..
 	return out, nil
 }
 
+func (c *userServiceClient) RegisterUser(ctx context.Context, in *RegisterUser_Request, opts ...grpc.CallOption) (*RegisterUser_Response, error) {
+	out := new(RegisterUser_Response)
+	err := c.cc.Invoke(ctx, UserService_RegisterUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetAllUsers(ctx context.Context, in *Empty_Request, opts ...grpc.CallOption) (*GetAllUsers_Response, error) {
+	out := new(GetAllUsers_Response)
+	err := c.cc.Invoke(ctx, UserService_GetAllUsers_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
 	GetUser(context.Context, *US_Request) (*US_Response, error)
+	RegisterUser(context.Context, *RegisterUser_Request) (*RegisterUser_Response, error)
+	GetAllUsers(context.Context, *Empty_Request) (*GetAllUsers_Response, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -60,6 +84,12 @@ type UnimplementedUserServiceServer struct {
 
 func (UnimplementedUserServiceServer) GetUser(context.Context, *US_Request) (*US_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+}
+func (UnimplementedUserServiceServer) RegisterUser(context.Context, *RegisterUser_Request) (*RegisterUser_Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterUser not implemented")
+}
+func (UnimplementedUserServiceServer) GetAllUsers(context.Context, *Empty_Request) (*GetAllUsers_Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllUsers not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -92,6 +122,42 @@ func _UserService_GetUser_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_RegisterUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterUser_Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).RegisterUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_RegisterUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).RegisterUser(ctx, req.(*RegisterUser_Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetAllUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty_Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetAllUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetAllUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetAllUsers(ctx, req.(*Empty_Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +168,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUser",
 			Handler:    _UserService_GetUser_Handler,
+		},
+		{
+			MethodName: "RegisterUser",
+			Handler:    _UserService_RegisterUser_Handler,
+		},
+		{
+			MethodName: "GetAllUsers",
+			Handler:    _UserService_GetAllUsers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

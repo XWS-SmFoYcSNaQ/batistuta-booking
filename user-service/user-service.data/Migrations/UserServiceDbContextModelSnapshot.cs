@@ -66,7 +66,7 @@ namespace user_service.data.Migrations
 
                     b.HasAlternateKey("Username");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.HasData(
                         new
