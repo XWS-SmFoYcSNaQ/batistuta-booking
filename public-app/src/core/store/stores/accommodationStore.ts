@@ -8,6 +8,7 @@ export interface AccommodationStoreType {
   accommodation: Accommodation | null
   loading: boolean
   fetchAccommodations: () => Promise<void>
+  fetchMyAccommodations: () => Promise<void>
   fetchDetails: (id: string, type: 'periods' | 'discounts') => Promise<void>
   createAccommodation: (data: Accommodation) => Promise<void>
   clearData: () => void
@@ -37,6 +38,26 @@ export const accommodationStore = (
     }
     get().accommodation.setLoading(false)
   },
+  fetchMyAccommodations: async () => {
+    get().accommodation.setLoading(true)
+    get().accommodation.clearData()
+    try {
+      const res = await axios.get(`${apiUrl}/accommodation/me`, {
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("jwt")}`
+        }
+      })
+      set(
+        produce((draft: AppState) => {
+          draft.accommodation.data = res.data.data
+          return draft
+        })
+      )
+    } catch (e) {
+      console.log(e)
+    }
+    get().accommodation.setLoading(false)
+  },
   fetchDetails: async (id: string, type: 'periods' | 'discounts') => {
     get().accommodation.setLoading(true)
     get().accommodation.clearData()
@@ -55,7 +76,11 @@ export const accommodationStore = (
   },
   createAccommodation: async (data: Accommodation) => {
     try {
-      await axios.post(`${apiUrl}/accommodation`, data)
+      await axios.post(`${apiUrl}/accommodation`, data, {
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("jwt")}`
+        }
+      })
     } catch (e: any) {
       if(e.message){
         throw new Error(e.message)
