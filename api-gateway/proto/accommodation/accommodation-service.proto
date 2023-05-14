@@ -27,7 +27,13 @@ service AccommodationService {
       body: "*"
     };
   }
-}
+  rpc SearchAccommodations(AM_SearchAccommodations_Request) returns (AM_SearchAccommodations_Response) {
+    option (google.api.http) = {
+      post: "/accommodation/search",
+      body: "*"
+    };
+  }
+ }
 
 message AM_GetAllAccommodations_Request {}
 
@@ -64,6 +70,10 @@ message AM_CreatePeriod_Request {
 
 message AM_CreatePeriod_Response {
   string id = 1;
+}
+
+message AM_SearchAccommodations_Request {
+
 }
 
 message AccommodationDTO {

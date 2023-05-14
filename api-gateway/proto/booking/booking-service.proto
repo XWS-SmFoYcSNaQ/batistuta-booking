@@ -17,6 +17,12 @@ service BookingService {
       body: "*"
     };
   }
+
+  rpc DeleteBookingRequest(AM_DeleteBookingRequest_Request) returns (AM_DeleteBookingRequest_Response) {
+    option (google.api.http) = {
+      delete: "/booking/request/{id}"
+    };
+  }
 }
 
 message AM_GetAllBookingRequests_Request {}
@@ -45,3 +51,9 @@ message BookingRequestsDTO {
   int32 numberOfGuests = 5;
   string userId = 6;
 }
+
+message AM_DeleteBookingRequest_Request {
+  string id = 1;
+}
+
+message AM_DeleteBookingRequest_Response { }

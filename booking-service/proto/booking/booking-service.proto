@@ -5,6 +5,7 @@ option go_package = "proto/booking";
 service BookingService {
   rpc GetAll(AM_GetAllBookingRequests_Request) returns (AM_GetAllBookingRequests_Response) {}
   rpc MakeBookingRequest(AM_BookingRequest_Request) returns (AM_CreateBookingRequest_Response) {}
+  rpc DeleteBookingRequest(AM_DeleteBookingRequest_Request) returns (AM_DeleteBookingRequest_Response) {}
 }
 
 message AM_GetAllBookingRequests_Request {}
@@ -33,3 +34,9 @@ message BookingRequestsDTO {
   int32 numberOfGuests = 5;
   string userId = 6;
 }
+
+message AM_DeleteBookingRequest_Request {
+  string id = 1;
+}
+
+message AM_DeleteBookingRequest_Response { }

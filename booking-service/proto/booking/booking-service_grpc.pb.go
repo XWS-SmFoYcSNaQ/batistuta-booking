@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	BookingService_GetAll_FullMethodName             = "/BookingService/GetAll"
-	BookingService_MakeBookingRequest_FullMethodName = "/BookingService/MakeBookingRequest"
+	BookingService_GetAll_FullMethodName               = "/BookingService/GetAll"
+	BookingService_MakeBookingRequest_FullMethodName   = "/BookingService/MakeBookingRequest"
+	BookingService_DeleteBookingRequest_FullMethodName = "/BookingService/DeleteBookingRequest"
 )
 
 // BookingServiceClient is the client API for BookingService service.
@@ -29,6 +30,7 @@ const (
 type BookingServiceClient interface {
 	GetAll(ctx context.Context, in *AM_GetAllBookingRequests_Request, opts ...grpc.CallOption) (*AM_GetAllBookingRequests_Response, error)
 	MakeBookingRequest(ctx context.Context, in *AM_BookingRequest_Request, opts ...grpc.CallOption) (*AM_CreateBookingRequest_Response, error)
+	DeleteBookingRequest(ctx context.Context, in *AM_DeleteBookingRequest_Request, opts ...grpc.CallOption) (*AM_DeleteBookingRequest_Response, error)
 }
 
 type bookingServiceClient struct {
@@ -57,12 +59,22 @@ func (c *bookingServiceClient) MakeBookingRequest(ctx context.Context, in *AM_Bo
 	return out, nil
 }
 
+func (c *bookingServiceClient) DeleteBookingRequest(ctx context.Context, in *AM_DeleteBookingRequest_Request, opts ...grpc.CallOption) (*AM_DeleteBookingRequest_Response, error) {
+	out := new(AM_DeleteBookingRequest_Response)
+	err := c.cc.Invoke(ctx, BookingService_DeleteBookingRequest_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BookingServiceServer is the server API for BookingService service.
 // All implementations must embed UnimplementedBookingServiceServer
 // for forward compatibility
 type BookingServiceServer interface {
 	GetAll(context.Context, *AM_GetAllBookingRequests_Request) (*AM_GetAllBookingRequests_Response, error)
 	MakeBookingRequest(context.Context, *AM_BookingRequest_Request) (*AM_CreateBookingRequest_Response, error)
+	DeleteBookingRequest(context.Context, *AM_DeleteBookingRequest_Request) (*AM_DeleteBookingRequest_Response, error)
 	mustEmbedUnimplementedBookingServiceServer()
 }
 
@@ -75,6 +87,9 @@ func (UnimplementedBookingServiceServer) GetAll(context.Context, *AM_GetAllBooki
 }
 func (UnimplementedBookingServiceServer) MakeBookingRequest(context.Context, *AM_BookingRequest_Request) (*AM_CreateBookingRequest_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MakeBookingRequest not implemented")
+}
+func (UnimplementedBookingServiceServer) DeleteBookingRequest(context.Context, *AM_DeleteBookingRequest_Request) (*AM_DeleteBookingRequest_Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBookingRequest not implemented")
 }
 func (UnimplementedBookingServiceServer) mustEmbedUnimplementedBookingServiceServer() {}
 
@@ -125,6 +140,24 @@ func _BookingService_MakeBookingRequest_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BookingService_DeleteBookingRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AM_DeleteBookingRequest_Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookingServiceServer).DeleteBookingRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BookingService_DeleteBookingRequest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookingServiceServer).DeleteBookingRequest(ctx, req.(*AM_DeleteBookingRequest_Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BookingService_ServiceDesc is the grpc.ServiceDesc for BookingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -139,6 +172,10 @@ var BookingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MakeBookingRequest",
 			Handler:    _BookingService_MakeBookingRequest_Handler,
+		},
+		{
+			MethodName: "DeleteBookingRequest",
+			Handler:    _BookingService_DeleteBookingRequest_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

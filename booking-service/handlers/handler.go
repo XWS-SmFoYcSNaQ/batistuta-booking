@@ -50,3 +50,11 @@ func (h BookingHandler) MakeBookingRequest(ctx context.Context, request *booking
 	}
 	return &booking.AM_CreateBookingRequest_Response{Id: id.String()}, nil
 }
+
+func (h BookingHandler) DeleteBookingRequest(ctx context.Context, request *booking.AM_DeleteBookingRequest_Request) (*booking.AM_DeleteBookingRequest_Response, error) {
+	err := h.BookingRequestService.DeleteBookingRequest(request.Id)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return &booking.AM_DeleteBookingRequest_Response{}, nil
+}
