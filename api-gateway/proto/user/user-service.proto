@@ -8,13 +8,11 @@ import "google/api/annotations.proto";
 
 // The user service definition.
 service UserService {
-  rpc RegisterUser (RegisterUser_Request) returns (RegisterUser_Response);
   rpc GetAllUsers (Empty_Request) returns (GetAllUsers_Response) {
     option (google.api.http) = {
       get: "/api/users"
     };
   }
-  rpc VerifyUserPassword (VerifyUser_Request) returns (VerifyUser_Response);
 }
 
 enum UserRole {
@@ -24,11 +22,6 @@ enum UserRole {
 
 message Empty_Request {
 
-}
-
-message Error {
-  string PropertyName = 1; 
-  string ErrorMessage = 2;
 }
 
 message User {
@@ -41,23 +34,6 @@ message User {
   string LivingPlace = 7;
 }
 
-message RegisterUser_Request {
-  UserRole Role = 1;
-  string Username = 2;
-  string Password = 3;
-  string FirstName = 4;
-  string LastName = 5;
-  string Email = 6;
-  string LivingPlace = 7;
-}
-
-message RegisterUser_Response {
-  bool Success = 1;
-  string Message = 2;
-  repeated Error Errors = 3;
-  User User = 4;
-}
-
 message GetAllUsers_Response {
   message User {
     UserRole Role = 1;
@@ -68,15 +44,4 @@ message GetAllUsers_Response {
     string LivingPlace = 6;
   }
   repeated User Users = 1;
-}
-
-message VerifyUser_Request {
-  string Username = 1;
-  string Password = 2;
-}
-
-message VerifyUser_Response {
-  bool Verified = 1;
-  string ErrorMessage = 2;
-  User User = 3;
 }
