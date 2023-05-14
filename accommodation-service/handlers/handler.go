@@ -4,12 +4,12 @@ import (
 	"accommodation_service/model"
 	"accommodation_service/proto/accommodation"
 	"accommodation_service/services"
+	"accommodation_service/utility"
 	"context"
 	"database/sql"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"time"
 )
 
 type AccommodationHandler struct {
@@ -62,12 +62,16 @@ func (h AccommodationHandler) GetAllPeriodsByAccommodation(ctx context.Context, 
 	periods, err := h.PeriodService.GetAllByAccommodation(id)
 	var res []*accommodation.PeriodDTO
 	for _, d := range periods {
+		userId := ""
+		if d.UserId != uuid.Nil {
+			userId = d.UserId.String()
+		}
 		p := accommodation.PeriodDTO{
 			Id:              d.ID.String(),
 			Start:           d.Start.String(),
 			End:             d.End.String(),
 			AccommodationId: d.AccommodationId.String(),
-			UserId:          d.UserId.String(),
+			UserId:          userId,
 		}
 		res = append(res, &p)
 	}
@@ -78,21 +82,25 @@ func (h AccommodationHandler) GetAllPeriodsByAccommodation(ctx context.Context, 
 }
 
 func (h AccommodationHandler) CreatePeriod(ctx context.Context, request *accommodation.AM_CreatePeriod_Request) (*accommodation.AM_CreatePeriod_Response, error) {
-	start, err := time.Parse("2006-01-02", request.Start)
+	start, err := utility.ParseISOString(request.Start)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	end, err := time.Parse("2006-01-02", request.End)
+	end, err := utility.ParseISOString(request.End)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
+
 	accommodationId, err := uuid.Parse(request.AccommodationId)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	userId, err := uuid.Parse(request.AccommodationId)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+	userId := uuid.Nil
+	if request.UserId != "" {
+		userId, err = uuid.Parse(request.UserId)
+		if err != nil {
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		}
 	}
 
 	id, err := h.PeriodService.Create(&model.Period{
@@ -101,6 +109,9 @@ func (h AccommodationHandler) CreatePeriod(ctx context.Context, request *accommo
 		AccommodationId: accommodationId,
 		UserId:          userId,
 	})
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
 
 	return &accommodation.AM_CreatePeriod_Response{Id: id.String()}, nil
 }
