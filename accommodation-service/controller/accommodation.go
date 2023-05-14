@@ -15,10 +15,11 @@ type AccommodationController struct {
 	AccommodationService *services.AccommodationService
 	PeriodService        *services.PeriodService
 	DiscountService      *services.DiscountService
+	AuthService          *services.AuthService
 }
 
 func (c AccommodationController) GetAll(ctx context.Context, request *accommodation.AM_GetAllAccommodations_Request) (*accommodation.AM_GetAllAccommodations_Response, error) {
-	accommodations, err := c.AccommodationService.GetAll()
+	accommodations, err := c.AccommodationService.GetAll(uuid.Nil)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -30,7 +31,29 @@ func (c AccommodationController) GetAll(ctx context.Context, request *accommodat
 	return &accommodation.AM_GetAllAccommodations_Response{Data: r}, nil
 }
 
+func (c AccommodationController) GetAllByHost(ctx context.Context, request *accommodation.AM_GetAllAccommodations_Request) (*accommodation.AM_GetAllAccommodations_Response, error) {
+	res, err := c.AuthService.ValidateToken(&ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, err.Error())
+	}
+
+	id, err := uuid.Parse(res.UserId)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "Error while parsing host id")
+	}
+	accommodations, err := c.AccommodationService.GetAll(id)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	data, err := utility.AccommodationSliceToDTOSlice(accommodations)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return &accommodation.AM_GetAllAccommodations_Response{Data: data}, nil
+}
+
 func (c AccommodationController) Create(ctx context.Context, request *accommodation.AM_CreateAccommodation_Request) (*accommodation.AM_CreateAccommodation_Response, error) {
+	//get host id from auth
 	id, err := c.AccommodationService.Create(&model.Accommodation{
 		Name:      request.Name,
 		Benefits:  request.Benefits,

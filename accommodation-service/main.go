@@ -5,6 +5,7 @@ import (
 	"accommodation_service/controller"
 	"accommodation_service/database"
 	"accommodation_service/handlers"
+	"accommodation_service/infrastructure"
 	"accommodation_service/proto/accommodation"
 	"accommodation_service/services"
 	"google.golang.org/grpc"
@@ -37,11 +38,16 @@ func main() {
 	grpcServer := grpc.NewServer()
 	reflection.Register(grpcServer)
 
+	authClient := infrastructure.GetAuthClient(&cfg)
+
 	accommodationHandler := handlers.AccommodationHandler{
 		AccommodationController: &controller.AccommodationController{
 			AccommodationService: &services.AccommodationService{DB: db},
 			PeriodService:        &services.PeriodService{DB: db},
 			DiscountService:      &services.DiscountService{DB: db},
+			AuthService: &services.AuthService{
+				AuthClient: authClient,
+			},
 		},
 		PeriodController: &controller.PeriodController{
 			PeriodService: &services.PeriodService{DB: db},
