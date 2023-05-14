@@ -41,14 +41,14 @@ func (s PeriodService) GetAllByAccommodation(id uuid.UUID) ([]*model.Period, err
 func (s PeriodService) Create(p *model.Period) (uuid.UUID, error) {
 	errorMessage := "error while creating period"
 
-	free, err := s.isAvailableForGivenInterval(p.Start, p.End)
+	free, err := s.isAvailableForGivenInterval(p.AccommodationId, p.Start, p.End)
 	if err != nil {
 		return uuid.Nil, errors.New("please choose valid start and end dates")
 	}
 	if !free {
 		return uuid.Nil, errors.New("accommodation is not available for the given time interval")
 	}
-	hasSpace, err := s.hasEnoughSpaceForGivenInterval(p.Start, p.End)
+	hasSpace, err := s.hasEnoughSpaceForGivenInterval(p.AccommodationId, p.Start, p.End)
 	if err != nil {
 		return uuid.Nil, errors.New("please choose valid start and end dates")
 	}
@@ -74,29 +74,29 @@ func (s PeriodService) Create(p *model.Period) (uuid.UUID, error) {
 	return id, nil
 }
 
-func (s PeriodService) isAvailableForGivenInterval(start, end time.Time) (bool, error) {
+func (s PeriodService) isAvailableForGivenInterval(accommodationId uuid.UUID, start, end time.Time) (bool, error) {
 	stmt, err := s.DB.Prepare(`
 		SELECT COUNT(*) AS accommodation_count FROM Period p
-		WHERE (p.p_start, p.p_end) OVERLAPS ($1, $2) AND user_id IS NULL
+		WHERE p.accommodation_id = $1 AND (p.p_start, p.p_end) OVERLAPS ($2, $3) AND user_id IS NULL
 	`)
 	defer stmt.Close()
 	if err != nil {
 		return false, err
 	}
 	var count int
-	err = stmt.QueryRow(start, end).Scan(&count)
+	err = stmt.QueryRow(accommodationId, start, end).Scan(&count)
 	if err != nil {
 		return false, err
 	}
 	return count == 0, nil
 }
 
-func (s PeriodService) hasEnoughSpaceForGivenInterval(start, end time.Time) (bool, error) {
+func (s PeriodService) hasEnoughSpaceForGivenInterval(accommodationId uuid.UUID, start, end time.Time) (bool, error) {
 	stmt, err := s.DB.Prepare(`
 		SELECT p.accommodation_id, COUNT(*) AS accommodation_count, a.max_guests
 		FROM Period p
 		INNER JOIN Accommodation a ON a.id = p.accommodation_id
-		WHERE (p.p_start, p.p_end) OVERLAPS ($1, $2) AND p.user_id IS NOT NULL
+		WHERE p.accommodation_id = $1 AND (p.p_start, p.p_end) OVERLAPS ($2, $3) AND p.user_id IS NOT NULL
 		GROUP BY p.accommodation_id, a.max_guests
 	`)
 	defer stmt.Close()
@@ -107,7 +107,7 @@ func (s PeriodService) hasEnoughSpaceForGivenInterval(start, end time.Time) (boo
 	var count int
 	var id string
 	var maxGuests int
-	err = stmt.QueryRow(start, end).Scan(&id, &count, &maxGuests)
+	err = stmt.QueryRow(accommodationId, start, end).Scan(&id, &count, &maxGuests)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return true, nil
