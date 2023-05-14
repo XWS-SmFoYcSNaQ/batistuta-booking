@@ -8,8 +8,7 @@ namespace user_service.domain.Enums
 {
     public enum UserRole
     {
-        Nonauthenticated = 0,
-        Host = 1,
-        Guest = 2
+        Host = 0,
+        Guest = 1
     }
 }

@@ -1,10 +1,10 @@
 ﻿using user_service.domain.Enums;
 
-namespace user_service.domain.Entities
+namespace user_service.Models
 {
     public class User
     {
-        public Guid Id { get; set; }
+        public required Guid Id { get; set; }
         public required UserRole Role { get; set; }
         public required string Username { get; set; }
         public required string Password { get; set; }

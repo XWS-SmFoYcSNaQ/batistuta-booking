@@ -11,8 +11,8 @@ using user_service.data.Db;
 namespace user_service.data.Migrations
 {
     [DbContext(typeof(UserServiceDbContext))]
-    [Migration("20230513163435_InitMigration")]
-    partial class InitMigration
+    [Migration("20230514182535_InitMigrationWithSeedData")]
+    partial class InitMigrationWithSeedData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -74,23 +74,12 @@ namespace user_service.data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("00695ec1-8ed0-4781-a432-9fdd98bd6cde"),
-                            Email = "nonauthenticated@test.com",
-                            FirstName = "Non",
-                            LastName = "Authenticated",
-                            LivingPlace = "Beograd, Srbija",
-                            Password = "AMhtGKXzeetCyumUykEQ2R0YxxLzYTJPzeQbaLQeseWBqf8bQiEmcUQV/0XRUkvQUA==",
-                            Role = "Nonauthenticated",
-                            Username = "nonauthenticated"
-                        },
-                        new
-                        {
                             Id = new Guid("422bd1e1-6d70-42cc-adc6-89a09b313c01"),
                             Email = "guest@test.com",
                             FirstName = "Guest",
                             LastName = "Guest",
                             LivingPlace = "Novi Sad, Srbija",
-                            Password = "AHD4mlEmnCAhyWDp4D6H3lcLzr5WVROCnshsLiuitVapL7GWNshdiY4pFElnRqN0qQ==",
+                            Password = "10000.GhMJYLVMJDUSKPYAt3G+oA==.2d2SyAT1CWcY/eNqJiKXKdTvjrWY2TftfJsHiOCy54g=",
                             Role = "Guest",
                             Username = "guest"
                         },
@@ -101,7 +90,7 @@ namespace user_service.data.Migrations
                             FirstName = "Host",
                             LastName = "Host",
                             LivingPlace = "Sabac, Srbija",
-                            Password = "AEYedJWK/IHAD3NNv03runGcGLeN1CDKyKZS8ni/3x3gFKP8AwN5m+F2vX2kH/McjQ==",
+                            Password = "10000.pUrW8b1z1nt7+RFCVYWpWg==.jp+r7PJ49rgJwwZVAfLhCb2YMyCAZR3gXgrLnson2UQ=",
                             Role = "Host",
                             Username = "host"
                         });
