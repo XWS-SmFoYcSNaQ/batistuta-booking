@@ -16,6 +16,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import HouseIcon from '@mui/icons-material/House';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonIcon from '@mui/icons-material/Person';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { ToastContainer } from 'react-toastify';
 import { AppState, appStore } from './core/store';
 
@@ -50,6 +51,11 @@ export default function App() {
       text: 'Accommodations',
       icon: <HouseIcon/>
     },
+    {
+      route: '/profile',
+      text: 'Profile',
+      icon: <AccountBoxIcon/>
+    }
   ];
 
   const lowerNavItems: NavItem[] = [
@@ -68,6 +74,10 @@ export default function App() {
   const filteredLowerNavItems = isAuthenticated
     ? lowerNavItems.filter(item => item.route !== '/login' && item.route !== '/register')
     : lowerNavItems;
+  
+  const filteredUpperNavItems = !isAuthenticated
+    ? upperNavItems.filter(item => item.route !== '/profile')
+    : upperNavItems;
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -98,7 +108,7 @@ export default function App() {
         <Divider />
         {/* Upper nav items */}
         <List>
-          {upperNavItems.map((navItem, index) => (
+          {filteredUpperNavItems.map((navItem, index) => (
             <NavLink to={navItem.route} key={navItem.route}>
               <ListItem disablePadding>
                 <ListItemButton>
