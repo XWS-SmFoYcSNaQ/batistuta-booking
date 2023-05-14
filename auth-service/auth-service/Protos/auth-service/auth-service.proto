@@ -37,10 +37,20 @@ message Authentication_Request {
   string Password = 2;
 }
 
+message User {
+  UserRole Role = 1;
+  string Username = 2;
+  string FirstName = 3;
+  string LastName = 4;
+  string Email = 5;
+  string LivingPlace = 6;
+}
+
 message Authentication_Response {
   string Token = 1;
   bool Success = 2;
   string ErrorMessage = 3;
+  User User = 4;
 }
 
 message Register_Request {

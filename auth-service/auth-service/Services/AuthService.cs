@@ -122,7 +122,7 @@ namespace auth_service.Services
             }
         }
 
-        private Authentication_Response GenerateAuthenticationResponseForUser(User newUser)
+        private Authentication_Response GenerateAuthenticationResponseForUser(UserServiceClient.User newUser)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret!);
@@ -145,7 +145,8 @@ namespace auth_service.Services
             return new Authentication_Response
             {
                 Success = true,
-                Token = tokenHandler.WriteToken(token)
+                Token = tokenHandler.WriteToken(token),
+                User = _mapper.Map<auth_service.User>(newUser)
             };
         }
 
