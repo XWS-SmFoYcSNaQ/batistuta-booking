@@ -10,6 +10,11 @@ service AccommodationService {
       get: "/accommodation"
     };
   }
+  rpc GetMyAccommodations(AM_GetAllAccommodations_Request) returns (AM_GetAllAccommodations_Response) {
+    option (google.api.http) = {
+      get: "/accommodation/me"
+    };
+  }
   rpc CreateAccommodation(AM_CreateAccommodation_Request) returns (AM_CreateAccommodation_Response) {
     option (google.api.http) = {
       post: "/accommodation"

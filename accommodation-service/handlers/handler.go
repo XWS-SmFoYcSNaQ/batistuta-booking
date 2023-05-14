@@ -17,6 +17,10 @@ func (h AccommodationHandler) GetAllAccommodations(ctx context.Context, request 
 	return h.AccommodationController.GetAll(ctx, request)
 }
 
+func (h AccommodationHandler) GetMyAccommodations(ctx context.Context, request *accommodation.AM_GetAllAccommodations_Request) (*accommodation.AM_GetAllAccommodations_Response, error) {
+	return h.AccommodationController.GetAllByHost(ctx, request)
+}
+
 func (h AccommodationHandler) CreateAccommodation(ctx context.Context, request *accommodation.AM_CreateAccommodation_Request) (*accommodation.AM_CreateAccommodation_Response, error) {
 	return h.AccommodationController.Create(ctx, request)
 }

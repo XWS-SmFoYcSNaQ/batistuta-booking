@@ -4,28 +4,11 @@ option go_package = "proto/auth";
 
 package auth;
 
-import "google/api/annotations.proto";
-
 // The auth service definition.
 service AuthService {
-  rpc Verify (Empty_Request) returns (Verify_Response) {
-    option (google.api.http) = {
-      post: "/api/auth/verify",
-      body: "*"
-    };
-  }
-  rpc Register (Register_Request) returns (Register_Response) {
-    option (google.api.http) = {
-      post: "/api/auth/register",
-      body: "*"
-    };
-  }
-  rpc Login (Authentication_Request) returns (Authentication_Response) {
-    option (google.api.http) = {
-      post: "/api/auth/login",
-      body: "*"
-    };
-  }
+  rpc Verify (Empty_Request) returns (Verify_Response);
+  rpc Register (Register_Request) returns (Register_Response);
+  rpc Login (Authentication_Request) returns (Authentication_Response);
 }
 
 message Empty_Request {
@@ -44,16 +27,6 @@ enum UserRole {
     Guest = 1;
 };
 
-message User {
-  UserRole Role = 1;
-  string Username = 2;
-  string FirstName = 3;
-  string LastName = 4;
-  string Email = 5;
-  string LivingPlace = 6;
-}
-
-
 message Error {
   string PropertyName = 1; 
   string ErrorMessage = 2;
@@ -68,7 +41,6 @@ message Authentication_Response {
   string Token = 1;
   bool Success = 2;
   string ErrorMessage = 3;
-  User User = 4;
 }
 
 message Register_Request {

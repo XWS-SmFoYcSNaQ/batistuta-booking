@@ -4,6 +4,7 @@ option go_package = "proto/accommodation";
 
 service AccommodationService {
   rpc GetAllAccommodations(AM_GetAllAccommodations_Request) returns (AM_GetAllAccommodations_Response) {}
+  rpc GetMyAccommodations(AM_GetAllAccommodations_Request) returns (AM_GetAllAccommodations_Response) {}
   rpc CreateAccommodation(AM_CreateAccommodation_Request) returns (AM_CreateAccommodation_Response) {}
   rpc GetAccommodationWithPeriods(AM_GetAccommodationWithPeriods_Request) returns (AM_GetAccommodationWithPeriods_Response) {}
   rpc GetAccommodationWithDiscounts(AM_GetAccommodationWithDiscounts_Request) returns (AM_GetAccommodationWithDiscounts_Response) {}

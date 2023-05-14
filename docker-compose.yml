@@ -31,6 +31,7 @@ services:
     restart: always
     environment:
       ACCOMMODATION_SERVICE_ADDRESS: ${ACCOMMODATION_SERVICE_ADDRESS}
+      AUTH_SERVICE_ADDRESS: auth_service${AUTH_SERVICE_ADDRESS}
       ACCOMMODATION_DATABASE_ADDRESS: accommodation_database:5432
       ACCOMMODATION_DATABASE_USERNAME: ${ACCOMMODATION_DATABASE_USERNAME}
       ACCOMMODATION_DATABASE_PASSWORD: ${ACCOMMODATION_DATABASE_PASSWORD}
@@ -115,7 +116,7 @@ services:
     hostname: auth_service
     build:
       context: ./auth-service
-      dockerfile: auth-service\Dockerfile 
+      dockerfile: auth-service\Dockerfile
     environment:
       ASPNETCORE_URLS: http://localhost:${AUTH_SERVICE_ADDRESS}
       Services__USER_SERVICE_ADDRESS: http://host.docker.internal${USER_SERVICE_ADDRESS}
@@ -123,18 +124,18 @@ services:
     depends_on:
       - user_service
       
-  # public_app:
-  #   image: public_app
-  #   container_name: public_app
-  #   hostname: public_app
-  #   build:
-  #     context: ./public-app/.
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "10000:3000"
-  #   restart: always
-  #   depends_on:
-  #     - api_gateway
+  public_app:
+    image: public_app
+    container_name: public_app
+    hostname: public_app
+    build:
+      context: ./public-app/.
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    restart: always
+    depends_on:
+      - api_gateway
 
 volumes:
   user_database-mysql-data:

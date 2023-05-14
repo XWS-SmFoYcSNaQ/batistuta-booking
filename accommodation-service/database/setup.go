@@ -14,6 +14,7 @@ func SetupDatabase(db *sql.DB) {
 
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS Accommodation (
 		id uuid NOT NULL PRIMARY KEY,
+		host_id uuid NOT NULL,
 		name TEXT NOT NULL,
 		benefits TEXT,
 		min_guests integer,
