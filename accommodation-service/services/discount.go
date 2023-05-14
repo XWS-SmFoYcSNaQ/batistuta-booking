@@ -14,7 +14,10 @@ type DiscountService struct {
 
 func (s DiscountService) GetAllByAccommodation(id uuid.UUID) ([]*model.Discount, error) {
 	errorMessage := "error while fetching prices"
-	stmt, err := s.DB.Prepare("SELECT * FROM Discount WHERE accommodation_id = $1 AND user_id IS NULL")
+	stmt, err := s.DB.Prepare(`
+		SELECT * FROM Discount
+		WHERE accommodation_id = $1 AND user_id IS NULL
+	`)
 	if err != nil {
 		return nil, errors.New(errorMessage)
 	}

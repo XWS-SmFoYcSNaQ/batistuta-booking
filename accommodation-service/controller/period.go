@@ -58,6 +58,7 @@ func (c PeriodController) Create(ctx context.Context, request *accommodation.AM_
 		End:             end,
 		AccommodationId: accommodationId,
 		UserId:          userId,
+		Guests:          int(request.Guests),
 	})
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())

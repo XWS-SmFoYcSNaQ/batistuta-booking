@@ -16,6 +16,17 @@ service AccommodationService {
       body: "*"
     };
   }
+  rpc GetAccommodationWithPeriods(AM_GetAccommodationWithPeriods_Request) returns (AM_GetAccommodationWithPeriods_Response) {
+    option (google.api.http) = {
+      get: "/accommodation/details/periods/{id}"
+    };
+  }
+  rpc GetAccommodationWithDiscounts(AM_GetAccommodationWithDiscounts_Request) returns (AM_GetAccommodationWithDiscounts_Response) {
+    option (google.api.http) = {
+      get: "/accommodation/details/discounts/{id}"
+    };
+  }
+
   rpc GetAllPeriodsByAccommodation(AM_GetAllPeriodsByAccommodation_Request) returns (AM_GetAllPeriodsByAccommodation_Response) {
     option (google.api.http) = {
       get: "/accommodation/period/{accommodationId}"
@@ -27,6 +38,8 @@ service AccommodationService {
       body: "*"
     };
   }
+
+
   rpc GetAllDiscountsByAccommodation(AM_GetAllDiscountsByAccommodation_Request) returns (AM_GetAllDiscountsByAccommodation_Response) {
     option (google.api.http) = {
       get: "/accommodation/discount/{accommodationId}"
@@ -65,6 +78,34 @@ message AM_CreateAccommodation_Response {
   string id = 1;
 }
 
+message AM_GetAccommodationWithPeriods_Request {
+  string id = 1;
+}
+
+message AM_GetAccommodationWithPeriods_Response {
+  string id = 1;
+  string name = 2;
+  string benefits = 3;
+  int32 minGuests = 4;
+  int32 maxGuests = 5;
+  double basePrice = 6;
+  repeated PeriodDTO periods = 7;
+}
+
+message AM_GetAccommodationWithDiscounts_Request {
+  string id = 1;
+}
+
+message AM_GetAccommodationWithDiscounts_Response {
+  string id = 1;
+  string name = 2;
+  string benefits = 3;
+  int32 minGuests = 4;
+  int32 maxGuests = 5;
+  double basePrice = 6;
+  repeated DiscountDTO discounts = 7;
+}
+
 //Periods
 
 message AM_GetAllPeriodsByAccommodation_Request {
@@ -80,6 +121,7 @@ message AM_CreatePeriod_Request {
   string end = 2;
   string accommodationId = 3;
   string userId = 4;
+  int32 guests = 5;
 }
 
 message AM_CreatePeriod_Response {

@@ -22,10 +22,12 @@ export const Discounts = () => {
   const createDiscount = appStore(
     (state: AppState) => state.discount.createDiscount
   );
-  const fetchDiscounts = appStore(
-    (state: AppState) => state.discount.fetchDiscounts
+  const fetchAccommodationDetails = appStore(
+    (state: AppState) => state.accommodation.fetchDetails
   );
-  const discounts = appStore((state: AppState) => state.discount.data);
+  const accommodation = appStore(
+    (state: AppState) => state.accommodation.accommodation
+  );
 
   const [events, setEvents] = useState<CalendarEvent[]>([]);
 
@@ -36,14 +38,14 @@ export const Discounts = () => {
       await createDiscount({ ...data, accommodationId: params.id, userId: "" });
       toast.success("Discount created successfully");
       setData(getInitialData());
-      fetchDiscounts(params.id ?? "");
+      fetchAccommodationDetails(params.id ?? "", "discounts");
     } catch (e: any) {
       toast.error(e.message);
     }
   };
 
   const renderEventContent = (eventInfo: any) => {
-    return <Box sx={{padding: "0px 5px"}}>{eventInfo.event.title}</Box>;
+    return <Box sx={{ padding: "0px 5px" }}>{eventInfo.event.title}</Box>;
   };
 
   const selectHandler = (e: any) => {
@@ -57,19 +59,21 @@ export const Discounts = () => {
   };
 
   useEffect(() => {
-    fetchDiscounts(params.id ?? "");
-  }, [fetchDiscounts, params.id]);
+    fetchAccommodationDetails(params.id ?? "", "discounts");
+  }, [fetchAccommodationDetails, params.id]);
 
   useEffect(() => {
-    setEvents(
-      discounts.map((d: Discount) => ({
-        title: !d.userId || d.userId === "" ? `discount(${d.discount}%)` : "",
-        start: new Date(d.start ?? "") ?? undefined,
-        end: new Date(d.end ?? "") ?? undefined,
-        color: "green",
-      }))
-    );
-  }, [discounts]);
+    if (accommodation?.discounts) {
+      setEvents(
+        accommodation.discounts.map((d: Discount) => ({
+          title: !d.userId || d.userId === "" ? `discount(${d.discount}%)` : "",
+          start: new Date(d.start ?? "") ?? undefined,
+          end: new Date(d.end ?? "") ?? undefined,
+          color: "green",
+        }))
+      );
+    }
+  }, [accommodation]);
 
   return (
     <Container>
@@ -88,6 +92,9 @@ export const Discounts = () => {
         renderEventContent={renderEventContent}
       />
       <Box sx={{ marginTop: "30px" }}>
+        <Box sx={{ marginBottom: "25px" }}>
+          Base Price: {accommodation?.basePrice}&nbsp;EUR
+        </Box>
         <form onSubmit={handleSubmit}>
           <div>
             <TextField
