@@ -28,16 +28,6 @@ namespace user_service.Services
             _passwordHasher = passwordHasher;
         }
 
-        public override Task<US_Response> GetUser(US_Request request, ServerCallContext context)
-        {
-            _logger.LogInformation("GetUser triggered.");
-            Console.WriteLine(_dbContext.Users.Count());
-            return Task.FromResult(new US_Response
-            {
-                Message = $"Hello {request.Name}"
-            });
-        }
-
         public override async Task<RegisterUser_Response> RegisterUser(RegisterUser_Request request, ServerCallContext context)
         {
             var validationResult = await _validator.ValidateAsync(request);
@@ -48,7 +38,7 @@ namespace user_service.Services
                 {
                     Message = "Error not all fields are valid."
                 };
-                errorResponse.Errors.AddRange(validationResult.Errors.Select(x => new RegisterUser_Response.Types.Error
+                errorResponse.Errors.AddRange(validationResult.Errors.Select(x => new user_service.Error
                 {
                     PropertyName = x.PropertyName,
                     ErrorMessage = x.ErrorMessage
@@ -69,7 +59,8 @@ namespace user_service.Services
                     return new RegisterUser_Response
                     {
                         Success = true,
-                        Message = "User successfully registred"
+                        Message = "User successfully registred",
+                        User = _mapper.Map<user_service.User>(userEntity)
                     };
                 }
                 return new RegisterUser_Response
@@ -95,6 +86,43 @@ namespace user_service.Services
             response.Users.AddRange(users.Select(x => _mapper.Map<user_service.GetAllUsers_Response.Types.User>(x)));
 
             return response;
+        }
+
+        public override async Task<VerifyUser_Response> VerifyUserPassword(VerifyUser_Request request, ServerCallContext context)
+        {
+            var username = request.Username;
+            var password = request.Password;
+            var user = await _dbContext.Users
+                .Where(x => x.Username == username)
+                .FirstOrDefaultAsync();
+
+            _logger.LogInformation($"User: {user?.Id}");
+            if (user == null)
+            {
+                _logger.LogInformation($"User with username: {username} doesnt exist");
+                return new VerifyUser_Response
+                {
+                    ErrorMessage = $"User with username: {username} doesnt exist"
+                };
+            }
+
+            var (verified, needsUpgrade) = _passwordHasher.Check(user.Password, password);
+
+            _logger.LogInformation($"User verified: {verified}");
+            if (!verified)
+            {
+                _logger.LogInformation($"Wrong password.");
+                return new VerifyUser_Response
+                {
+                    ErrorMessage = $"Wrong password."
+                };
+            }
+
+            return new VerifyUser_Response
+            {
+                Verified = true,
+                User = _mapper.Map<User>(user)
+            };
         }
     }
 }

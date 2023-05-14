@@ -6,9 +6,9 @@ package user;
 
 // The user service definition.
 service UserService {
-  rpc GetUser (US_Request) returns (US_Response);
   rpc RegisterUser (RegisterUser_Request) returns (RegisterUser_Response);
   rpc GetAllUsers (Empty_Request) returns (GetAllUsers_Response);
+  rpc VerifyUserPassword (VerifyUser_Request) returns (VerifyUser_Response);
 }
 
 enum UserRole {
@@ -20,12 +20,19 @@ message Empty_Request {
 
 }
 
-message US_Request {
-  string name = 1;
+message Error {
+  string PropertyName = 1; 
+  string ErrorMessage = 2;
 }
 
-message US_Response {
-  string message = 1;
+message User {
+  string Id = 1;
+  UserRole Role = 2;
+  string Username = 3;
+  string FirstName = 4;
+  string LastName = 5;
+  string Email = 6;
+  string LivingPlace = 7;
 }
 
 message RegisterUser_Request {
@@ -41,13 +48,8 @@ message RegisterUser_Request {
 message RegisterUser_Response {
   bool Success = 1;
   string Message = 2;
-  
-  message Error {
-    string PropertyName = 1; 
-    string ErrorMessage = 2;
-  }
-
-  repeated Error errors = 3;
+  repeated Error Errors = 3;
+  User User = 4;
 }
 
 message GetAllUsers_Response {
@@ -59,5 +61,16 @@ message GetAllUsers_Response {
     string Email = 5;
     string LivingPlace = 6;
   }
-  repeated User users = 1;
+  repeated User Users = 1;
+}
+
+message VerifyUser_Request {
+  string Username = 1;
+  string Password = 2;
+}
+
+message VerifyUser_Response {
+  bool Verified = 1;
+  string ErrorMessage = 2;
+  User User = 3;
 }

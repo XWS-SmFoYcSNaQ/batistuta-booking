@@ -10,6 +10,9 @@ namespace user_service.MappingProfiles
             CreateMap<RegisterUser_Request, User>();
             CreateMap<user_service.Models.User, user_service.domain.Entities.User>();
             CreateMap<user_service.domain.Entities.User, user_service.GetAllUsers_Response.Types.User>();
+            CreateMap<RegisterUser_Request, user_service.User>();
+            CreateMap<RegisterUser_Request, user_service.Models.User>();
+            CreateMap<user_service.domain.Entities.User, user_service.User>();
         }
     }
 }

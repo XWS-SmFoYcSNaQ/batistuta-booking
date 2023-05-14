@@ -33,7 +33,7 @@ namespace user_service.Services
 
         public (bool Verified, bool NeedsUpgrade) Check(string hash, string password)
         {
-            var parts = hash.Split(',', 3);
+            var parts = hash.Split('.', 3);
 
             if (parts.Length != 3)
             {
