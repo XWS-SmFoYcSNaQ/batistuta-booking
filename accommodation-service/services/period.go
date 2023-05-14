@@ -14,24 +14,23 @@ type PeriodService struct {
 }
 
 func (s PeriodService) GetAllByAccommodation(id uuid.UUID) ([]*model.Period, error) {
-	errorMessage := "error while fetching periods"
-	stmt, err := s.DB.Prepare("SELECT * FROM Period WHERE accommodation_id = $1")
+	stmt, err := s.DB.Prepare(`SELECT * FROM Period WHERE accommodation_id = $1 AND user_id IS NULL`)
 	if err != nil {
-		return nil, errors.New(errorMessage)
+		return nil, err
 	}
 
 	rows, err := stmt.Query(id)
 	if err != nil {
-		return nil, errors.New(errorMessage)
+		return nil, err
 	}
 	defer rows.Close()
 
 	var data []*model.Period
 	for rows.Next() {
 		var d model.Period
-		err := rows.Scan(&d.ID, &d.Start, &d.End, &d.AccommodationId, &d.UserId)
+		err := rows.Scan(&d.ID, &d.Start, &d.End, &d.AccommodationId, &d.UserId, &d.Guests)
 		if err != nil {
-			return nil, errors.New(errorMessage)
+			return nil, err
 		}
 		data = append(data, &d)
 	}
@@ -48,7 +47,7 @@ func (s PeriodService) Create(p *model.Period) (uuid.UUID, error) {
 	if !free {
 		return uuid.Nil, errors.New("accommodation is not available for the given time interval")
 	}
-	hasSpace, err := s.hasEnoughSpaceForGivenInterval(p.AccommodationId, p.Start, p.End)
+	hasSpace, err := s.hasEnoughSpaceForGivenInterval(p.AccommodationId, p.Start, p.End, p.Guests)
 	if err != nil {
 		return uuid.Nil, errors.New("please choose valid start and end dates")
 	}
@@ -56,16 +55,16 @@ func (s PeriodService) Create(p *model.Period) (uuid.UUID, error) {
 		return uuid.Nil, errors.New("there is not enough space for the given time interval")
 	}
 
-	stmt, err := s.DB.Prepare(`INSERT INTO Period VALUES ($1, $2, $3, $4, $5)`)
+	stmt, err := s.DB.Prepare(`INSERT INTO Period VALUES ($1, $2, $3, $4, $5, $6)`)
 	if err != nil {
 		return uuid.Nil, errors.New(errorMessage)
 	}
 	defer stmt.Close()
 	id := uuid.New()
 	if p.UserId == uuid.Nil {
-		_, err = stmt.Exec(id, p.Start, p.End, p.AccommodationId, nil)
+		_, err = stmt.Exec(id, p.Start, p.End, p.AccommodationId, nil, 0)
 	} else {
-		_, err = stmt.Exec(id, p.Start, p.End, p.AccommodationId, p.UserId)
+		_, err = stmt.Exec(id, p.Start, p.End, p.AccommodationId, p.UserId, p.Guests)
 	}
 	if err != nil {
 		return uuid.Nil, errors.New(errorMessage)
@@ -91,9 +90,9 @@ func (s PeriodService) isAvailableForGivenInterval(accommodationId uuid.UUID, st
 	return count == 0, nil
 }
 
-func (s PeriodService) hasEnoughSpaceForGivenInterval(accommodationId uuid.UUID, start, end time.Time) (bool, error) {
+func (s PeriodService) hasEnoughSpaceForGivenInterval(accommodationId uuid.UUID, start, end time.Time, guests int) (bool, error) {
 	stmt, err := s.DB.Prepare(`
-		SELECT p.accommodation_id, COUNT(*) AS accommodation_count, a.max_guests
+		SELECT p.accommodation_id, COUNT(*) AS accommodation_count, a.max_guests, SUM(p.guests) AS guest_number
 		FROM Period p
 		INNER JOIN Accommodation a ON a.id = p.accommodation_id
 		WHERE p.accommodation_id = $1 AND (p.p_start, p.p_end) OVERLAPS ($2, $3) AND p.user_id IS NOT NULL
@@ -107,7 +106,8 @@ func (s PeriodService) hasEnoughSpaceForGivenInterval(accommodationId uuid.UUID,
 	var count int
 	var id string
 	var maxGuests int
-	err = stmt.QueryRow(accommodationId, start, end).Scan(&id, &count, &maxGuests)
+	var existingGuests int
+	err = stmt.QueryRow(accommodationId, start, end).Scan(&id, &count, &maxGuests, &existingGuests)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return true, nil
@@ -115,5 +115,5 @@ func (s PeriodService) hasEnoughSpaceForGivenInterval(accommodationId uuid.UUID,
 		log.Println(err.Error())
 		return false, err
 	}
-	return maxGuests > count, nil
+	return maxGuests >= existingGuests+guests, nil
 }

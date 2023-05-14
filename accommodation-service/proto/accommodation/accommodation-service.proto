@@ -5,10 +5,19 @@ option go_package = "proto/accommodation";
 service AccommodationService {
   rpc GetAllAccommodations(AM_GetAllAccommodations_Request) returns (AM_GetAllAccommodations_Response) {}
   rpc CreateAccommodation(AM_CreateAccommodation_Request) returns (AM_CreateAccommodation_Response) {}
+  rpc GetAccommodationWithPeriods(AM_GetAccommodationWithPeriods_Request) returns (AM_GetAccommodationWithPeriods_Response) {}
+  rpc GetAccommodationWithDiscounts(AM_GetAccommodationWithDiscounts_Request) returns (AM_GetAccommodationWithDiscounts_Response) {}
+
   rpc GetAllPeriodsByAccommodation(AM_GetAllPeriodsByAccommodation_Request) returns (AM_GetAllPeriodsByAccommodation_Response) {}
   rpc CreatePeriod(AM_CreatePeriod_Request) returns (AM_CreatePeriod_Response) {}
   rpc SearchAccommodations(AM_SearchAccommodations_Request) returns (AM_SearchAccommodations_Response) {}
+
+  rpc GetAllDiscountsByAccommodation(AM_GetAllDiscountsByAccommodation_Request) returns (AM_GetAllDiscountsByAccommodation_Response) {}
+  rpc GetAllDiscountsByAccommodationAndInterval(AM_GetAllDiscountsByAccommodationAndInterval_Request) returns (AM_GetAllDiscountsByAccommodationAndInterval_Response) {}
+  rpc CreateDiscount(AM_CreateDiscount_Request) returns (AM_CreateDiscount_Response) {}
 }
+
+//Accommodations
 
 message AM_GetAllAccommodations_Request {}
 
@@ -28,8 +37,38 @@ message AM_CreateAccommodation_Response {
   string id = 1;
 }
 
-message AM_GetAllPeriodsByAccommodation_Request {
+message AM_GetAccommodationWithPeriods_Request {
   string id = 1;
+}
+
+message AM_GetAccommodationWithPeriods_Response {
+  string id = 1;
+  string name = 2;
+  string benefits = 3;
+  int32 minGuests = 4;
+  int32 maxGuests = 5;
+  double basePrice = 6;
+  repeated PeriodDTO periods = 7;
+}
+
+message AM_GetAccommodationWithDiscounts_Request {
+  string id = 1;
+}
+
+message AM_GetAccommodationWithDiscounts_Response {
+  string id = 1;
+  string name = 2;
+  string benefits = 3;
+  int32 minGuests = 4;
+  int32 maxGuests = 5;
+  double basePrice = 6;
+  repeated DiscountDTO discounts = 7;
+}
+
+//Periods
+
+message AM_GetAllPeriodsByAccommodation_Request {
+  string accommodationId = 1;
 }
 
 message AM_GetAllPeriodsByAccommodation_Response {
@@ -41,6 +80,7 @@ message AM_CreatePeriod_Request {
   string end = 2;
   string accommodationId = 3;
   string userId = 4;
+  int32 guests = 5;
 }
 
 message AM_CreatePeriod_Response {
@@ -57,6 +97,41 @@ message AM_SearchAccommodations_Request {
 message AM_SearchAccommodations_Response {
   repeated SearchedAccommodationsDTO data = 1;
 }
+
+//Discounts
+
+message AM_GetAllDiscountsByAccommodation_Request {
+  string accommodationId = 1;
+}
+
+message AM_GetAllDiscountsByAccommodation_Response {
+  repeated DiscountDTO data = 1;
+}
+
+message AM_GetAllDiscountsByAccommodationAndInterval_Request {
+  string accommodationId = 1;
+  string start = 2;
+  string end = 3;
+  string userId = 4;
+}
+
+message AM_GetAllDiscountsByAccommodationAndInterval_Response {
+  repeated DiscountDTO data = 1;
+}
+
+message AM_CreateDiscount_Request {
+  string start = 1;
+  string end = 2;
+  string accommodationId = 3;
+  string userId = 4;
+  double discount = 5;
+}
+
+message AM_CreateDiscount_Response {
+  string id = 1;
+}
+
+//Models
 
 message AccommodationDTO {
   string id = 1;
@@ -84,4 +159,12 @@ message SearchedAccommodationsDTO {
   string location = 6;
   double basePrice = 7;
   double totalPrice = 8;
+}
+message DiscountDTO {
+  string id = 1;
+  string start = 2;
+  string end = 3;
+  string accommodationId = 4;
+  string userId = 5;
+  double discount = 6;
 }

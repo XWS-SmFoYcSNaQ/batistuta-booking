@@ -5,6 +5,7 @@ import (
 	"accommodation_service/proto/accommodation"
 	"database/sql"
 	"errors"
+
 	"github.com/google/uuid"
 )
 
@@ -75,4 +76,20 @@ func (s AccommodationService) GetSearchedAccommodations(a *accommodation.AM_Sear
 	}
 
 	return accommodations, nil
+}
+
+func (s AccommodationService) GetById(id uuid.UUID) (*model.Accommodation, error) {
+	stmt, err := s.DB.Prepare(`
+		SELECT * FROM Accommodation WHERE id = $1
+	`)
+	if err != nil {
+		return nil, errors.New("accommodation not found")
+	}
+	defer stmt.Close()
+	var a model.Accommodation
+	err = stmt.QueryRow(id).Scan(&a.ID, &a.Name, &a.Benefits, &a.MinGuests, &a.MaxGuests, &a.BasePrice)
+	if err != nil {
+		return nil, errors.New("error while fetching accommodation")
+	}
+	return &a, nil
 }
