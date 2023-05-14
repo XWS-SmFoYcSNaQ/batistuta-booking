@@ -32,13 +32,14 @@ func main() {
 			log.Fatal(err)
 		}
 	}(listener)
-	
+
 	grpcServer := grpc.NewServer()
 	reflection.Register(grpcServer)
 
 	accommodationHandler := handlers.AccommodationHandler{
 		DB:                   db,
 		AccommodationService: &services.AccommodationService{DB: db},
+		PeriodService:        &services.PeriodService{DB: db},
 	}
 	accommodation.RegisterAccommodationServiceServer(grpcServer, accommodationHandler)
 

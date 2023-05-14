@@ -31,7 +31,7 @@ export const AccommodationList = () => {
             <CircularProgress />
           </Box>
         )}
-        {!loading && (
+        {!loading && accommodations.length > 0 && (
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="accommodation table">
               <TableHead>
@@ -39,8 +39,8 @@ export const AccommodationList = () => {
                   <TableCell align="right">Name</TableCell>
                   <TableCell align="right">Price</TableCell>
                   <TableCell align="right">Benefits</TableCell>
-                  <TableCell align="right">Max Guests</TableCell>
                   <TableCell align="right">Min Guests</TableCell>
+                  <TableCell align="right">Max Guests</TableCell>
                   <TableCell align="center">Action</TableCell>
                 </TableRow>
               </TableHead>
@@ -58,7 +58,7 @@ export const AccommodationList = () => {
                     <TableCell align="right">{d.minGuests}</TableCell>
                     <TableCell align="right">{d.maxGuests}</TableCell>
                     <TableCell align="right">
-                      <Stack direction="row">
+                      <Stack direction="row" justifyContent="right">
                         <Button
                           variant="outlined"
                           color="error"
@@ -85,6 +85,7 @@ export const AccommodationList = () => {
             </Table>
           </TableContainer>
         )}
+        {!loading && accommodations.length === 0 && <div>Nema nista prika</div>}
         <Box sx={{ marginTop: "30px" }}>
           {location.pathname === "/accommodation" && (
             <Link to="/accommodation/create">

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/google/uuid"
+	"log"
 	"time"
 )
 
@@ -39,20 +40,33 @@ func (s PeriodService) GetAllByAccommodation(id uuid.UUID) ([]*model.Period, err
 
 func (s PeriodService) Create(p *model.Period) (uuid.UUID, error) {
 	errorMessage := "error while creating period"
-	overlap, err := s.checkOverlap(p.Start, p.End)
+
+	free, err := s.isAvailableForGivenInterval(p.Start, p.End)
 	if err != nil {
-		return uuid.Nil, errors.New(errorMessage)
+		return uuid.Nil, errors.New("please choose valid start and end dates")
 	}
-	if overlap {
-		return uuid.Nil, errors.New("timestamps are overlapping")
+	if !free {
+		return uuid.Nil, errors.New("accommodation is not available for the given time interval")
+	}
+	hasSpace, err := s.hasEnoughSpaceForGivenInterval(p.Start, p.End)
+	if err != nil {
+		return uuid.Nil, errors.New("please choose valid start and end dates")
+	}
+	if !hasSpace {
+		return uuid.Nil, errors.New("there is not enough space for the given time interval")
 	}
 
-	stmt, err := s.DB.Prepare(`INSERT INTO Period VALUES ($1, $2, $4, $5, $6)`)
+	stmt, err := s.DB.Prepare(`INSERT INTO Period VALUES ($1, $2, $3, $4, $5)`)
 	if err != nil {
 		return uuid.Nil, errors.New(errorMessage)
 	}
+	defer stmt.Close()
 	id := uuid.New()
-	_, err = stmt.Exec(id, p.Start, p.End, p.AccommodationId, p.UserId)
+	if p.UserId == uuid.Nil {
+		_, err = stmt.Exec(id, p.Start, p.End, p.AccommodationId, nil)
+	} else {
+		_, err = stmt.Exec(id, p.Start, p.End, p.AccommodationId, p.UserId)
+	}
 	if err != nil {
 		return uuid.Nil, errors.New(errorMessage)
 	}
@@ -60,11 +74,12 @@ func (s PeriodService) Create(p *model.Period) (uuid.UUID, error) {
 	return id, nil
 }
 
-func (s PeriodService) checkOverlap(start, end time.Time) (bool, error) {
+func (s PeriodService) isAvailableForGivenInterval(start, end time.Time) (bool, error) {
 	stmt, err := s.DB.Prepare(`
-		SELECT COUNT(*) as c FROM Period p INNER JOIN Accommodation a ON a.id = p.accommodation_id
-		WHERE (p_start, p_end) OVERLAPS ($1, $2) AND (a.max_guests >= c OR p.user_id = NULL)
+		SELECT COUNT(*) AS accommodation_count FROM Period p
+		WHERE (p.p_start, p.p_end) OVERLAPS ($1, $2) AND user_id IS NULL
 	`)
+	defer stmt.Close()
 	if err != nil {
 		return false, err
 	}
@@ -73,5 +88,32 @@ func (s PeriodService) checkOverlap(start, end time.Time) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	return count > 0, nil
+	return count == 0, nil
+}
+
+func (s PeriodService) hasEnoughSpaceForGivenInterval(start, end time.Time) (bool, error) {
+	stmt, err := s.DB.Prepare(`
+		SELECT p.accommodation_id, COUNT(*) AS accommodation_count, a.max_guests
+		FROM Period p
+		INNER JOIN Accommodation a ON a.id = p.accommodation_id
+		WHERE (p.p_start, p.p_end) OVERLAPS ($1, $2) AND p.user_id IS NOT NULL
+		GROUP BY p.accommodation_id, a.max_guests
+	`)
+	defer stmt.Close()
+	if err != nil {
+		log.Println(err.Error())
+		return false, err
+	}
+	var count int
+	var id string
+	var maxGuests int
+	err = stmt.QueryRow(start, end).Scan(&id, &count, &maxGuests)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return true, nil
+		}
+		log.Println(err.Error())
+		return false, err
+	}
+	return maxGuests > count, nil
 }
