@@ -8,14 +8,16 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useState } from "react";
 import "./App.css";
-import { Outlet } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
 import { ListItemIcon, Button } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import HouseIcon from '@mui/icons-material/House';
+import LoginIcon from '@mui/icons-material/Login';
+import PersonIcon from '@mui/icons-material/Person';
 import { ToastContainer } from 'react-toastify';
+import { AppState, appStore } from './core/store';
 
 const drawerWidth = 240;
 
@@ -26,7 +28,16 @@ interface NavItem {
 }
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const isAuthenticated = appStore((state: AppState) => state.auth.user != null);
+  const logoutUser = appStore((state: AppState) => state.auth.logout);
+  const currentUser = appStore((state: AppState) => state.auth.user);
+  const navigate = useNavigate();
+
+  function logout() {
+    window.localStorage.removeItem("jwt");
+    logoutUser();
+    navigate("/login");
+  }
 
   const upperNavItems: NavItem[] = [
     {
@@ -41,7 +52,18 @@ export default function App() {
     },
   ];
 
-  const lowerNavItems: NavItem[] = [];
+  const lowerNavItems: NavItem[] = [
+    {
+      route: '/login',
+      text: 'Login',
+      icon: <LoginIcon/>,      
+    },
+    {
+      route: '/register',
+      text: 'Register',
+      icon: <PersonIcon/>
+    }
+  ];
 
   const filteredLowerNavItems = isAuthenticated
     ? lowerNavItems.filter(item => item.route !== '/login' && item.route !== '/register')
@@ -56,7 +78,7 @@ export default function App() {
       >
         <Toolbar>
           <Typography variant="h5" noWrap component="div">
-            Welcome to Batistuta Booking
+            Welcome {currentUser && currentUser?.FirstName} {currentUser && currentUser?.LastName} to Batistuta Booking
           </Typography>
         </Toolbar>
       </AppBar>
@@ -105,7 +127,7 @@ export default function App() {
             </NavLink>
           ))}
         </List>
-        {isAuthenticated && <Button>Logout</Button>}
+        {isAuthenticated && <Button onClick={logout}>Logout</Button>}
       </Drawer>
       <Box
         component="main"
