@@ -73,7 +73,14 @@ message AM_CreatePeriod_Response {
 }
 
 message AM_SearchAccommodations_Request {
+  string start = 1;
+  string end =  2;
+  int32 numberOfGuests = 3;
+  string location = 4;
+}
 
+message AM_SearchAccommodations_Response {
+  repeated SearchedAccommodationsDTO data = 1;
 }
 
 message AccommodationDTO {
@@ -91,4 +98,15 @@ message PeriodDTO {
   string end = 3;
   string accommodationId = 4;
   string userId = 5;
+}
+
+message SearchedAccommodationsDTO {
+  string id = 1;
+  string name = 2;
+  string benefits = 3;
+  int32 minGuests = 4;
+  int32 maxGuests = 5;
+  string location = 6;
+  double basePrice = 7;
+  double totalPrice = 8;
 }

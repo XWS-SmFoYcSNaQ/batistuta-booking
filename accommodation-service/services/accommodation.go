@@ -2,6 +2,7 @@ package services
 
 import (
 	"accommodation_service/model"
+	"accommodation_service/proto/accommodation"
 	"database/sql"
 	"errors"
 	"github.com/google/uuid"
@@ -9,6 +10,7 @@ import (
 
 type AccommodationService struct {
 	DB *sql.DB
+	PeriodService
 }
 
 func (s AccommodationService) GetAll() ([]*model.Accommodation, error) {
@@ -49,4 +51,28 @@ func (s AccommodationService) Create(a *model.Accommodation) (uuid.UUID, error) 
 	}
 
 	return id, nil
+}
+
+func (s AccommodationService) GetSearchedAccommodations(a *accommodation.AM_SearchAccommodations_Request) ([]*model.Accommodation, error) {
+	errorMessage := "error while fetching accommodations"
+	rows, err := s.DB.Query("SELECT * FROM Accommodation WHERE min_guests <= $3 AND max_guests >= $3", a)
+	if err != nil {
+		return nil, errors.New(errorMessage)
+	}
+	defer rows.Close()
+
+	var accommodations []*model.Accommodation
+	for rows.Next() {
+		var p model.Accommodation
+		err := rows.Scan(&p.ID, &p.Name, &p.Benefits, &p.MinGuests, &p.MaxGuests, &p.BasePrice)
+		if err != nil {
+			return nil, errors.New(errorMessage)
+		}
+		accommodations = append(accommodations, &p)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errors.New(errorMessage)
+	}
+
+	return accommodations, nil
 }
