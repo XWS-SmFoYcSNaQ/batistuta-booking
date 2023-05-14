@@ -9,12 +9,20 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
 		<PackageReference Include="Grpc.AspNetCore" Version="2.53.0" />
-		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+		<PackageReference Include="Grpc.Net.Client" Version="2.53.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Protobuf Include="Protos\auth-service\auth-service.proto" />
+		<Protobuf Include="Protos\user-service\user-service.proto" GrpcServices="Client" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Protos\user-service\" />
 	</ItemGroup>
 
 </Project>

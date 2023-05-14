@@ -67,6 +67,8 @@ services:
       context: ./user-service
       dockerfile: user-service\Dockerfile
     restart: always
+    ports:
+      - '12001:12001'
     environment:
       ASPNETCORE_URLS: http://localhost:${USER_SERVICE_ADDRESS}
       MySqlConfig__Server: ${USER_DATABASE_SERVER}
@@ -98,9 +100,12 @@ services:
     build:
       context: ./auth-service
       dockerfile: auth-service\Dockerfile 
-    restart: always
     environment:
       ASPNETCORE_URLS: http://localhost:${AUTH_SERVICE_ADDRESS}
+      Services__USER_SERVICE_ADDRESS: http://host.docker.internal${USER_SERVICE_ADDRESS}
+    restart: always
+    depends_on:
+      - user_service
       
   # public_app:
   #   image: public_app
