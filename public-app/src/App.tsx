@@ -15,6 +15,7 @@ import { ListItemIcon, Button } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import HouseIcon from '@mui/icons-material/House';
+import BedIcon from '@mui/icons-material/Bed';
 import { ToastContainer } from 'react-toastify';
 
 const drawerWidth = 240;
@@ -39,6 +40,11 @@ export default function App() {
       text: 'Accommodations',
       icon: <HouseIcon/>
     },
+    {
+      route: '/rooms',
+      text: 'Rooms',
+      icon: <BedIcon/>
+    }
   ];
 
   const lowerNavItems: NavItem[] = [];
