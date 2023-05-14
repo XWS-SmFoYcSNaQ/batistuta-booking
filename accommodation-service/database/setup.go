@@ -36,13 +36,13 @@ func SetupDatabase(db *sql.DB) {
 		log.Fatalln(err)
 	}
 
-	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS Price (
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS Discount (
     	id uuid NOT NULL PRIMARY KEY,
-    	p_start TIMESTAMPTZ NOT NULL,
-    	p_end TIMESTAMPTZ NOT NULL,
+    	d_start TIMESTAMPTZ NOT NULL,
+    	d_end TIMESTAMPTZ NOT NULL,
     	accommodation_id uuid NOT NULL,
     	user_id uuid,
-    	price DOUBLE PRECISION NOT NULL,
+    	discount DOUBLE PRECISION NOT NULL,
     	FOREIGN KEY (accommodation_id) REFERENCES Accommodation (id)
 	)`)
 	if err != nil {

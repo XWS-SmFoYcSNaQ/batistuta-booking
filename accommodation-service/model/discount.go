@@ -5,11 +5,11 @@ import (
 	"time"
 )
 
-type Price struct {
+type Discount struct {
 	ID              uuid.UUID
 	Start           time.Time
 	End             time.Time
 	AccommodationId uuid.UUID
 	UserId          uuid.UUID
-	Price           float64
+	Discount        float64
 }
