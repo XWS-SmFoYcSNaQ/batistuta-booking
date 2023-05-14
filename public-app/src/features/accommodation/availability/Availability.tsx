@@ -1,13 +1,11 @@
-import FullCalendar from "@fullcalendar/react";
 import { Box, Button, Container } from "@mui/material";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin from "@fullcalendar/interaction";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Link, useParams } from "react-router-dom";
 import { Period } from "../../../shared/model";
 import { useEffect, useState } from "react";
 import { AppState, appStore } from "../../../core/store";
 import { toast } from "react-toastify";
+import { Calendar, CalendarEvent } from "../../../shared";
 
 const getInitialData = (): Period => {
   return {
@@ -16,29 +14,14 @@ const getInitialData = (): Period => {
   };
 };
 
-interface Event {
-  title: string;
-  start?: Date;
-  end?: Date;
-  color?: string;
-}
-
-export const Details = () => {
+export const Availability = () => {
   const params = useParams();
   const [data, setData] = useState<Period>(getInitialData());
   const createPeriod = appStore((state: AppState) => state.period.createPeriod);
-  const fetchPeriods = appStore((state: AppState) => state.period.fetchPeriods);
-  const periods = appStore((state: AppState) => state.period.data);
+  const fetchAccommodationDetails = appStore((state: AppState) => state.accommodation.fetchDetails)
+  const accommodation = appStore((state: AppState) => state.accommodation.accommodation)
 
-  const [events, setEvents] = useState<Event[]>([]);
-
-  const renderEventContent = (eventInfo: any) => {
-    return (
-      <>
-        <i>{eventInfo.event.title}</i>
-      </>
-    );
-  };
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -47,10 +30,18 @@ export const Details = () => {
       await createPeriod({ ...data, accommodationId: params.id, userId: "" });
       toast.success("Period created successfully");
       setData(getInitialData());
-      fetchPeriods(params.id ?? "");
+      fetchAccommodationDetails(params.id ?? "", 'periods');
     } catch (e: any) {
       toast.error(e.message);
     }
+  };
+
+  const renderEventContent = (eventInfo: any) => {
+    return (
+      <>
+        <i>{eventInfo.event.title}</i>
+      </>
+    );
   };
 
   const selectHandler = (e: any) => {
@@ -63,19 +54,21 @@ export const Details = () => {
   };
 
   useEffect(() => {
-    fetchPeriods(params.id ?? "");
-  }, [fetchPeriods, params.id]);
+    fetchAccommodationDetails(params.id ?? "", 'periods')
+  }, [fetchAccommodationDetails, params.id]);
 
   useEffect(() => {
-    setEvents(
-      periods.map((p: Period) => ({
-        title: !p.userId || p.userId === "" ? "Unavailable" : "",
-        start: new Date(p.start ?? "") ?? undefined,
-        end: new Date(p.end ?? "") ?? undefined,
-        color: !p.userId || p.userId === "" ? "#800" : "green",
-      }))
-    );
-  }, [periods]);
+    if(accommodation?.periods){
+      setEvents(
+        accommodation.periods.map((p: Period) => ({
+          title: !p.userId || p.userId === "" ? "Unavailable" : "",
+          start: new Date(p.start ?? "") ?? undefined,
+          end: new Date(p.end ?? "") ?? undefined,
+          color: !p.userId || p.userId === "" ? "#800" : "green",
+        }))
+      );
+    }
+  }, [accommodation]);
   return (
     <Container>
       <Box sx={{ margin: "10px 0px" }}>
@@ -86,16 +79,12 @@ export const Details = () => {
           </Button>
         </Link>
       </Box>
-      <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        weekends={true}
-        events={events}
-        eventContent={renderEventContent}
-        selectable={true}
-        select={selectHandler}
-      />
+      <h1>Availability</h1>
+      <Calendar events={events} selectHandler={selectHandler} renderEventContent={renderEventContent}/>
       <Box sx={{marginTop: "30px"}}>
+        <Box sx={{ marginBottom: "25px" }}>
+          Maxiumum Guests: {accommodation?.maxGuests}
+        </Box>
         <form onSubmit={handleSubmit}>
           <Button type="submit" variant="outlined">
             Set Unavailable

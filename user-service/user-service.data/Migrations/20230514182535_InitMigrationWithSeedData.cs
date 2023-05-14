@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace user_service.data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitMigration : Migration
+    public partial class InitMigrationWithSeedData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -42,9 +42,8 @@ namespace user_service.data.Migrations
                 columns: new[] { "Id", "Email", "FirstName", "LastName", "LivingPlace", "Password", "Role", "Username" },
                 values: new object[,]
                 {
-                    { new Guid("00695ec1-8ed0-4781-a432-9fdd98bd6cde"), "nonauthenticated@test.com", "Non", "Authenticated", "Beograd, Srbija", "AMhtGKXzeetCyumUykEQ2R0YxxLzYTJPzeQbaLQeseWBqf8bQiEmcUQV/0XRUkvQUA==", "Nonauthenticated", "nonauthenticated" },
-                    { new Guid("422bd1e1-6d70-42cc-adc6-89a09b313c01"), "guest@test.com", "Guest", "Guest", "Novi Sad, Srbija", "AHD4mlEmnCAhyWDp4D6H3lcLzr5WVROCnshsLiuitVapL7GWNshdiY4pFElnRqN0qQ==", "Guest", "guest" },
-                    { new Guid("87abe34c-9935-44c4-aad5-af82f9442c77"), "host@test.com", "Host", "Host", "Sabac, Srbija", "AEYedJWK/IHAD3NNv03runGcGLeN1CDKyKZS8ni/3x3gFKP8AwN5m+F2vX2kH/McjQ==", "Host", "host" }
+                    { new Guid("422bd1e1-6d70-42cc-adc6-89a09b313c01"), "guest@test.com", "Guest", "Guest", "Novi Sad, Srbija", "10000.GhMJYLVMJDUSKPYAt3G+oA==.2d2SyAT1CWcY/eNqJiKXKdTvjrWY2TftfJsHiOCy54g=", "Guest", "guest" },
+                    { new Guid("87abe34c-9935-44c4-aad5-af82f9442c77"), "host@test.com", "Host", "Host", "Sabac, Srbija", "10000.pUrW8b1z1nt7+RFCVYWpWg==.jp+r7PJ49rgJwwZVAfLhCb2YMyCAZR3gXgrLnson2UQ=", "Host", "host" }
                 });
         }
 

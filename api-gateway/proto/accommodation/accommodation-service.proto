@@ -10,15 +10,31 @@ service AccommodationService {
       get: "/accommodation"
     };
   }
+  rpc GetMyAccommodations(AM_GetAllAccommodations_Request) returns (AM_GetAllAccommodations_Response) {
+    option (google.api.http) = {
+      get: "/accommodation/my"
+    };
+  }
   rpc CreateAccommodation(AM_CreateAccommodation_Request) returns (AM_CreateAccommodation_Response) {
     option (google.api.http) = {
       post: "/accommodation"
       body: "*"
     };
   }
+  rpc GetAccommodationWithPeriods(AM_GetAccommodationWithPeriods_Request) returns (AM_GetAccommodationWithPeriods_Response) {
+    option (google.api.http) = {
+      get: "/accommodation/details/periods/{id}"
+    };
+  }
+  rpc GetAccommodationWithDiscounts(AM_GetAccommodationWithDiscounts_Request) returns (AM_GetAccommodationWithDiscounts_Response) {
+    option (google.api.http) = {
+      get: "/accommodation/details/discounts/{id}"
+    };
+  }
+
   rpc GetAllPeriodsByAccommodation(AM_GetAllPeriodsByAccommodation_Request) returns (AM_GetAllPeriodsByAccommodation_Response) {
     option (google.api.http) = {
-      get: "/accommodation/period/{id}"
+      get: "/accommodation/period/{accommodationId}"
     };
   }
   rpc CreatePeriod(AM_CreatePeriod_Request) returns (AM_CreatePeriod_Response) {
@@ -27,7 +43,27 @@ service AccommodationService {
       body: "*"
     };
   }
+
+
+  rpc GetAllDiscountsByAccommodation(AM_GetAllDiscountsByAccommodation_Request) returns (AM_GetAllDiscountsByAccommodation_Response) {
+    option (google.api.http) = {
+      get: "/accommodation/discount/{accommodationId}"
+    };
+  }
+  rpc GetAllDiscountsByAccommodationAndInterval(AM_GetAllDiscountsByAccommodationAndInterval_Request) returns (AM_GetAllDiscountsByAccommodationAndInterval_Response) {
+    option (google.api.http) = {
+      get: "/accommodation/discount/interval/{accommodationId}"
+    };
+  }
+  rpc CreateDiscount(AM_CreateDiscount_Request) returns (AM_CreateDiscount_Response) {
+    option (google.api.http) = {
+      post: "/accommodation/discount",
+      body: "*"
+    };
+  }
 }
+
+//Accommodations
 
 message AM_GetAllAccommodations_Request {}
 
@@ -47,8 +83,38 @@ message AM_CreateAccommodation_Response {
   string id = 1;
 }
 
-message AM_GetAllPeriodsByAccommodation_Request {
+message AM_GetAccommodationWithPeriods_Request {
   string id = 1;
+}
+
+message AM_GetAccommodationWithPeriods_Response {
+  string id = 1;
+  string name = 2;
+  string benefits = 3;
+  int32 minGuests = 4;
+  int32 maxGuests = 5;
+  double basePrice = 6;
+  repeated PeriodDTO periods = 7;
+}
+
+message AM_GetAccommodationWithDiscounts_Request {
+  string id = 1;
+}
+
+message AM_GetAccommodationWithDiscounts_Response {
+  string id = 1;
+  string name = 2;
+  string benefits = 3;
+  int32 minGuests = 4;
+  int32 maxGuests = 5;
+  double basePrice = 6;
+  repeated DiscountDTO discounts = 7;
+}
+
+//Periods
+
+message AM_GetAllPeriodsByAccommodation_Request {
+  string accommodationId = 1;
 }
 
 message AM_GetAllPeriodsByAccommodation_Response {
@@ -60,11 +126,47 @@ message AM_CreatePeriod_Request {
   string end = 2;
   string accommodationId = 3;
   string userId = 4;
+  int32 guests = 5;
 }
 
 message AM_CreatePeriod_Response {
   string id = 1;
 }
+
+//Discounts
+
+message AM_GetAllDiscountsByAccommodation_Request {
+  string accommodationId = 1;
+}
+
+message AM_GetAllDiscountsByAccommodation_Response {
+  repeated DiscountDTO data = 1;
+}
+
+message AM_GetAllDiscountsByAccommodationAndInterval_Request {
+  string accommodationId = 1;
+  string start = 2;
+  string end = 3;
+  string userId = 4;
+}
+
+message AM_GetAllDiscountsByAccommodationAndInterval_Response {
+  repeated DiscountDTO data = 1;
+}
+
+message AM_CreateDiscount_Request {
+  string start = 1;
+  string end = 2;
+  string accommodationId = 3;
+  string userId = 4;
+  double discount = 5;
+}
+
+message AM_CreateDiscount_Response {
+  string id = 1;
+}
+
+//Models
 
 message AccommodationDTO {
   string id = 1;
@@ -81,4 +183,13 @@ message PeriodDTO {
   string end = 3;
   string accommodationId = 4;
   string userId = 5;
+}
+
+message DiscountDTO {
+  string id = 1;
+  string start = 2;
+  string end = 3;
+  string accommodationId = 4;
+  string userId = 5;
+  double discount = 6;
 }
