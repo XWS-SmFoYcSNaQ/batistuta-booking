@@ -486,7 +486,7 @@ func RegisterAccommodationServiceHandlerServer(ctx context.Context, mux *runtime
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.AccommodationService/GetMyAccommodations", runtime.WithHTTPPathPattern("/accommodation/my"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.AccommodationService/GetMyAccommodations", runtime.WithHTTPPathPattern("/accommodation/me"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -772,7 +772,7 @@ func RegisterAccommodationServiceHandlerClient(ctx context.Context, mux *runtime
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.AccommodationService/GetMyAccommodations", runtime.WithHTTPPathPattern("/accommodation/my"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.AccommodationService/GetMyAccommodations", runtime.WithHTTPPathPattern("/accommodation/me"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -970,7 +970,7 @@ func RegisterAccommodationServiceHandlerClient(ctx context.Context, mux *runtime
 var (
 	pattern_AccommodationService_GetAllAccommodations_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"accommodation"}, ""))
 
-	pattern_AccommodationService_GetMyAccommodations_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"accommodation", "my"}, ""))
+	pattern_AccommodationService_GetMyAccommodations_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"accommodation", "me"}, ""))
 
 	pattern_AccommodationService_CreateAccommodation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"accommodation"}, ""))
 

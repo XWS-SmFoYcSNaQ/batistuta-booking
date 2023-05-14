@@ -53,9 +53,19 @@ func (c AccommodationController) GetAllByHost(ctx context.Context, request *acco
 }
 
 func (c AccommodationController) Create(ctx context.Context, request *accommodation.AM_CreateAccommodation_Request) (*accommodation.AM_CreateAccommodation_Response, error) {
-	//get host id from auth
+	res, err := c.AuthService.ValidateToken(&ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, err.Error())
+	}
+
+	hostId, err := uuid.Parse(res.UserId)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "Error while parsing host id")
+	}
+
 	id, err := c.AccommodationService.Create(&model.Accommodation{
 		Name:      request.Name,
+		HostId:    hostId,
 		Benefits:  request.Benefits,
 		MinGuests: int(request.MinGuests),
 		MaxGuests: int(request.MaxGuests),

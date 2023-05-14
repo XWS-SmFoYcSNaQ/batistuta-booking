@@ -22,8 +22,8 @@ export const Create = () => {
   const createAccommodation = appStore(
     (state: AppState) => state.accommodation.createAccommodation
   );
-  const fetchAccommodations = appStore(
-    (state: AppState) => state.accommodation.fetchAccommodations
+  const fetchMyAccommodations = appStore(
+    (state: AppState) => state.accommodation.fetchMyAccommodations
   )
 
   const handleSubmit = async (e: any) => {
@@ -32,7 +32,7 @@ export const Create = () => {
       await createAccommodation(data);
       navigate("/accommodation");
       toast.success("Accommodation created successfully")
-      fetchAccommodations()
+      fetchMyAccommodations()
     } catch (e: any) {
       toast.error(e.error)
     }

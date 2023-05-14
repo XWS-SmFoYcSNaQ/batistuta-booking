@@ -19,16 +19,16 @@ import { appStore, AppState } from "../../../core/store";
 export const AccommodationList = () => {
   const location = useLocation();
   const loading = appStore((state: AppState) => state.accommodation.loading);
-  const fetchAccommodations = appStore(
-    (state: AppState) => state.accommodation.fetchAccommodations
+  const fetchMyAccommodations = appStore(
+    (state: AppState) => state.accommodation.fetchMyAccommodations
   );
   const accommodations = appStore(
     (state: AppState) => state.accommodation.data
   );
 
   useEffect(() => {
-    fetchAccommodations();
-  }, [fetchAccommodations]);
+    fetchMyAccommodations();
+  }, [fetchMyAccommodations]);
   return (
     <div>
       <h2>Accommodations</h2>

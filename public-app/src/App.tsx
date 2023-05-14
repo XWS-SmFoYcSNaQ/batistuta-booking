@@ -19,7 +19,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import { ToastContainer } from 'react-toastify';
 import { AppState, appStore } from './core/store';
 
-const drawerWidth = 240;
+const drawerWidth = 300;
 
 interface NavItem {
   route: string;
@@ -47,7 +47,7 @@ export default function App() {
     },
     {
       route: '/accommodation',
-      text: 'Accommodations',
+      text: 'My accommodations',
       icon: <HouseIcon/>
     },
   ];
