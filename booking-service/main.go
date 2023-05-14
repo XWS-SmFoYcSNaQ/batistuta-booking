@@ -2,8 +2,10 @@ package main
 
 import (
 	"booking_service/config"
+	"booking_service/database"
 	"booking_service/handlers"
 	"booking_service/proto/booking"
+	"booking_service/services"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
@@ -15,6 +17,9 @@ import (
 
 func main() {
 	cfg := config.LoadConfig()
+
+	db := database.Connect(cfg)
+	defer db.Close()
 
 	listener, err := net.Listen("tcp", cfg.Address)
 	if err != nil {
@@ -33,7 +38,9 @@ func main() {
 	reflection.Register(grpcServer)
 
 	// Bootstrap gRPC service server and respond to request.
-	bookingHandler := handlers.BookingHandler{}
+	bookingHandler := handlers.BookingHandler{
+		DB:                    db,
+		BookingRequestService: &services.BookingRequestsService{DB: db}}
 	booking.RegisterBookingServiceServer(grpcServer, bookingHandler)
 
 	go func() {

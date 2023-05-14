@@ -58,6 +58,22 @@ services:
     restart: always
     environment:
       BOOKING_SERVICE_ADDRESS: ${BOOKING_SERVICE_ADDRESS}
+      BOOKING_DATABASE_ADDRESS: booking_database:5432
+      BOOKING_DATABASE_USERNAME: ${BOOKING_DATABASE_USERNAME}
+      BOOKING_DATABASE_PASSWORD: ${BOOKING_DATABASE_PASSWORD}
+    depends_on:
+      - booking_database
+
+  booking_database:
+    image: postgres:15.0-alpine
+    container_name: booking_database
+    hostname: booking_database
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '12103:5432'
+    restart: always
 
   user_service:
     image: user_service
