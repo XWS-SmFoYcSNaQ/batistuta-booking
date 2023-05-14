@@ -9,6 +9,7 @@ import {
   Select,
   TextField,
 } from '@mui/material';
+import { Accommodation } from '../../../shared/model';
 
 interface ReservationFormData {
   checkIn: string;
@@ -20,8 +21,15 @@ interface ReservationFormProps {
   onSubmit: (data: ReservationFormData) => void;
 }
 
-function ReservationForm(props: ReservationFormProps) {
-  const { onSubmit } = props;
+function ReservationForm(room: Accommodation | null) {
+
+  const availableDates = ['2023-05-15', '2023-05-16', '2023-05-17'];
+
+  const isDateDisabled = (date: string): boolean => {
+    return !availableDates.includes(date);
+  };
+
+  // const { onSubmit } = props;
 
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
@@ -29,7 +37,7 @@ function ReservationForm(props: ReservationFormProps) {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onSubmit({ checkIn, checkOut, guests });
+    // onSubmit({ checkIn, checkOut, guests });
   };
 
   return (
