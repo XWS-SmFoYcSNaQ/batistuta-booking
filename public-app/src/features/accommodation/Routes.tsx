@@ -1,7 +1,8 @@
 import { RouteObject } from "react-router-dom";
 import { Create } from "./create";
-import { Details } from "./details";
+import { Availability } from "./availability";
 import { AccommodationList } from "./list";
+import { Discounts } from "./discounts";
 
 export const accommodationRoutes: RouteObject[] = [
   {
@@ -15,7 +16,11 @@ export const accommodationRoutes: RouteObject[] = [
     ]
   },
   {
-    path: ":id",
-    element: <Details />,
+    path: "availability/:id",
+    element: <Availability />,
+  },
+  {
+    path: "discounts/:id",
+    element: <Discounts />,
   },
 ];

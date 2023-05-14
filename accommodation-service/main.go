@@ -2,6 +2,7 @@ package main
 
 import (
 	"accommodation_service/config"
+	"accommodation_service/controller"
 	"accommodation_service/database"
 	"accommodation_service/handlers"
 	"accommodation_service/proto/accommodation"
@@ -37,9 +38,15 @@ func main() {
 	reflection.Register(grpcServer)
 
 	accommodationHandler := handlers.AccommodationHandler{
-		DB:                   db,
-		AccommodationService: &services.AccommodationService{DB: db},
-		PeriodService:        &services.PeriodService{DB: db},
+		AccommodationController: &controller.AccommodationController{
+			AccommodationService: &services.AccommodationService{DB: db},
+		},
+		PeriodController: &controller.PeriodController{
+			PeriodService: &services.PeriodService{DB: db},
+		},
+		DiscountController: &controller.DiscountController{
+			DiscountService: &services.DiscountService{DB: db},
+		},
 	}
 	accommodation.RegisterAccommodationServiceServer(grpcServer, accommodationHandler)
 

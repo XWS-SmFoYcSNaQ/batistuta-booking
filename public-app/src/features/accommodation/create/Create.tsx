@@ -28,10 +28,9 @@ export const Create = () => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log(data);
     try {
       await createAccommodation(data);
-      navigate("/accommodation/list");
+      navigate("/accommodation");
       toast.success("Accommodation created successfully")
       fetchAccommodations()
     } catch (e: any) {

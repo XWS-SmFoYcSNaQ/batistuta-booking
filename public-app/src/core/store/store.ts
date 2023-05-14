@@ -6,10 +6,13 @@ import { mockAccommodationStore } from "./mock/mockAccommodationStore";
 import { AccommodationStoreType, accommodationStore } from "./stores/accommodationStore";
 import { PeriodStoreType, periodStore } from "./stores/periodStore";
 import { mockPeriodStore } from "./mock/mockPeriodStore";
+import { DiscountStoreType, discountStore } from "./stores/discountStore";
+import { mockDiscountStore } from "./mock/mockDiscountStore";
 
 export interface AppState {
   accommodation: AccommodationStoreType
   period: PeriodStoreType
+  discount: DiscountStoreType
 }
 
 export const isStoreMocked = process.env.REACT_APP_USE_MOCK_STORE === "true"
@@ -23,7 +26,10 @@ const storeGenerator = (set: SetAppState, get: GetAppState): AppState => ({
     : { ...accommodationStore(set, get), ...mockAccommodationStore(set, get) },
   period: !isStoreMocked
     ? periodStore(set, get)
-    : {...periodStore(set, get), ...mockPeriodStore(set, get)}
+    : { ...periodStore(set, get), ...mockPeriodStore(set, get) },
+  discount: !isStoreMocked
+    ? discountStore(set, get)
+    : { ...discountStore(set, get), ...mockDiscountStore(set, get) }
 })
 
 const storeMerge = (persistedState: any, currentState: any) => {
