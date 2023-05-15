@@ -39,7 +39,7 @@ func (c AccommodationController) GetAllByHost(ctx context.Context, request *acco
 
 	id, err := uuid.Parse(res.UserId)
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "Error while parsing host id")
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 	accommodations, err := c.AccommodationService.GetAll(id)
 	if err != nil {
@@ -77,7 +77,7 @@ func (c AccommodationController) Create(ctx context.Context, request *accommodat
 	return &accommodation.AM_CreateAccommodation_Response{Id: id.String()}, nil
 }
 
-func (c AccommodationController) GetByIdWithPeriods(ctx context.Context, request *accommodation.AM_GetAccommodationWithPeriods_Request) (*accommodation.AM_GetAccommodationWithPeriods_Response, error) {
+func (c AccommodationController) GetById(ctx context.Context, request *accommodation.AM_GetAccommodation_Request) (*accommodation.AM_GetAccommodation_Response, error) {
 	id, err := uuid.Parse(request.Id)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "Error while parsing accommodation id")
@@ -87,28 +87,5 @@ func (c AccommodationController) GetByIdWithPeriods(ctx context.Context, request
 		return nil, status.Error(codes.InvalidArgument, "Error while fetching accommodation")
 	}
 
-	periods, err := c.PeriodService.GetAllByAccommodation(id)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "Error while fetching periods")
-	}
-
-	return utility.AccommodationWithPeriodsToDTO(a, periods)
-}
-
-func (c AccommodationController) GetByIdWithDiscounts(ctx context.Context, request *accommodation.AM_GetAccommodationWithDiscounts_Request) (*accommodation.AM_GetAccommodationWithDiscounts_Response, error) {
-	id, err := uuid.Parse(request.Id)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "Error while parsing accommodation id")
-	}
-	a, err := c.AccommodationService.GetById(id)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "Error while fetching accommodation")
-	}
-
-	discounts, err := c.DiscountService.GetAllByAccommodation(id)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "Error while fetching discounts")
-	}
-
-	return utility.AccommodationWithDiscountsToDTO(a, discounts)
+	return utility.AccommodationDetailsToDTO(a)
 }

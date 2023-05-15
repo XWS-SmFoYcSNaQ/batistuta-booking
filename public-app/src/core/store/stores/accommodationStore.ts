@@ -9,7 +9,7 @@ export interface AccommodationStoreType {
   loading: boolean
   fetchAccommodations: () => Promise<void>
   fetchMyAccommodations: () => Promise<void>
-  fetchDetails: (id: string, type: 'periods' | 'discounts') => Promise<void>
+  fetchDetails: (id: string) => Promise<void>
   createAccommodation: (data: Accommodation) => Promise<void>
   clearData: () => void
   setLoading: (val: boolean) => void
@@ -58,11 +58,11 @@ export const accommodationStore = (
     }
     get().accommodation.setLoading(false)
   },
-  fetchDetails: async (id: string, type: 'periods' | 'discounts') => {
+  fetchDetails: async (id: string) => {
     get().accommodation.setLoading(true)
     get().accommodation.clearData()
     try {
-      const res = await axios.get(`${apiUrl}/accommodation/details/${type}/${id}`)
+      const res = await axios.get(`${apiUrl}/accommodation/${id}`)
       set(
         produce((draft: AppState) => {
           draft.accommodation.accommodation = res.data

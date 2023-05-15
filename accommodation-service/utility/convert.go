@@ -82,12 +82,13 @@ func DiscountSliceToDTOSlice(data []*model.Discount) ([]*accommodation.DiscountD
 	return res, nil
 }
 
-func AccommodationWithPeriodsToDTO(a *model.Accommodation, p []*model.Period) (*accommodation.AM_GetAccommodationWithPeriods_Response, error) {
-	periods, err := PeriodSliceToDTOSlice(p)
+func AccommodationDetailsToDTO(a *model.Accommodation) (*accommodation.AM_GetAccommodation_Response, error) {
+	periods, err := PeriodSliceToDTOSlice(a.Periods)
+	discounts, err := DiscountSliceToDTOSlice(a.Discounts)
 	if err != nil {
 		return nil, err
 	}
-	return &accommodation.AM_GetAccommodationWithPeriods_Response{
+	return &accommodation.AM_GetAccommodation_Response{
 		Id:        a.ID.String(),
 		Name:      a.Name,
 		Benefits:  a.Benefits,
@@ -95,21 +96,6 @@ func AccommodationWithPeriodsToDTO(a *model.Accommodation, p []*model.Period) (*
 		MaxGuests: int32(a.MaxGuests),
 		BasePrice: a.BasePrice,
 		Periods:   periods,
-	}, nil
-}
-
-func AccommodationWithDiscountsToDTO(a *model.Accommodation, d []*model.Discount) (*accommodation.AM_GetAccommodationWithDiscounts_Response, error) {
-	discounts, err := DiscountSliceToDTOSlice(d)
-	if err != nil {
-		return nil, err
-	}
-	return &accommodation.AM_GetAccommodationWithDiscounts_Response{
-		Id:        a.ID.String(),
-		Name:      a.Name,
-		Benefits:  a.Benefits,
-		MinGuests: int32(a.MinGuests),
-		MaxGuests: int32(a.MaxGuests),
-		BasePrice: a.BasePrice,
 		Discounts: discounts,
 	}, nil
 }

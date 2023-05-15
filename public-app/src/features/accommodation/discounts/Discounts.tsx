@@ -38,7 +38,7 @@ export const Discounts = () => {
       await createDiscount({ ...data, accommodationId: params.id, userId: "" });
       toast.success("Discount created successfully");
       setData(getInitialData());
-      fetchAccommodationDetails(params.id ?? "", "discounts");
+      fetchAccommodationDetails(params.id ?? "");
     } catch (e: any) {
       toast.error(e.message);
     }
@@ -59,7 +59,7 @@ export const Discounts = () => {
   };
 
   useEffect(() => {
-    fetchAccommodationDetails(params.id ?? "", "discounts");
+    fetchAccommodationDetails(params.id ?? "");
   }, [fetchAccommodationDetails, params.id]);
 
   useEffect(() => {

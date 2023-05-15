@@ -10,4 +10,6 @@ type Accommodation struct {
 	MinGuests int
 	MaxGuests int
 	BasePrice float64
+	Periods   []*Period
+	Discounts []*Discount
 }

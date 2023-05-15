@@ -3,6 +3,7 @@ package services
 import (
 	"accommodation_service/model"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"github.com/google/uuid"
 )
@@ -67,16 +68,30 @@ func (s AccommodationService) Create(a *model.Accommodation) (uuid.UUID, error) 
 
 func (s AccommodationService) GetById(id uuid.UUID) (*model.Accommodation, error) {
 	stmt, err := s.DB.Prepare(`
-		SELECT * FROM Accommodation WHERE id = $1
+		SELECT a.id, a.host_id, a.name, a.benefits, a.min_guests, a.max_guests, a.base_price, array_agg(p) as periods, array_agg(d) as discounts
+		FROM accommodation a 
+		JOIN period p ON a.id = p.accommodation_id
+		JOIN discount d on a.id = d.accommodation_id
+		WHERE a.id = $1 GROUP BY a.id, a.host_id, a.name, a.benefits, a.min_guests, a.max_guests, a.base_price
 	`)
 	if err != nil {
 		return nil, errors.New("accommodation not found")
 	}
 	defer stmt.Close()
 	var a model.Accommodation
-	err = stmt.QueryRow(id).Scan(&a.ID, &a.HostId, &a.Name, &a.Benefits, &a.MinGuests, &a.MaxGuests, &a.BasePrice)
+	var periodsJSON []byte
+	var discountsJSON []byte
+	err = stmt.QueryRow(id).Scan(&a.ID, &a.HostId, &a.Name, &a.Benefits, &a.MinGuests, &a.MaxGuests, &a.BasePrice, &periodsJSON, &discountsJSON)
 	if err != nil {
-		return nil, errors.New("error while fetching accommodation")
+		return nil, err
+	}
+	err = json.Unmarshal(periodsJSON, &a.Periods)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(discountsJSON, &a.Discounts)
+	if err != nil {
+		return nil, err
 	}
 	return &a, nil
 }
