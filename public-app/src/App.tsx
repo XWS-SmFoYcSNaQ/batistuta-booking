@@ -19,6 +19,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import PersonIcon from '@mui/icons-material/Person';
 import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import BookOnlineIcon from '@mui/icons-material/BookOnline';
 import { ToastContainer } from 'react-toastify';
 import { AppState, appStore } from './core/store';
 import 'rsuite/dist/rsuite.min.css';
@@ -47,27 +48,32 @@ export default function App() {
     {
       route: '/',
       text: 'Home',
-      icon: <HomeIcon/>
+      icon: <HomeIcon />
     },
     {
       route: '/all-accommodations',
       text: 'All accommodations',
-      icon: <MapsHomeWorkIcon/>
+      icon: <MapsHomeWorkIcon />
     },
     {
       route: '/accommodation',
       text: 'My accommodations',
-      icon: <HouseIcon/>
+      icon: <HouseIcon />
     },
     {
       route: '/rooms',
       text: 'Rooms',
-      icon: <BedIcon/>
+      icon: <BedIcon />
     },
     {
       route: '/profile',
       text: 'Profile',
-      icon: <AccountBoxIcon/>
+      icon: <AccountBoxIcon />
+    },
+    {
+      route: '/reservations',
+      text: 'My reservations',
+      icon: <BookOnlineIcon />
     }
   ];
 
@@ -75,19 +81,19 @@ export default function App() {
     {
       route: '/login',
       text: 'Login',
-      icon: <LoginIcon/>,      
+      icon: <LoginIcon />,
     },
     {
       route: '/register',
       text: 'Register',
-      icon: <PersonIcon/>
+      icon: <PersonIcon />
     }
   ];
 
   const filteredLowerNavItems = isAuthenticated
     ? lowerNavItems.filter(item => item.route !== '/login' && item.route !== '/register')
     : lowerNavItems;
-  
+
   const filteredUpperNavItems = !isAuthenticated
     ? upperNavItems.filter(item => item.route !== '/profile')
     : upperNavItems;
@@ -144,7 +150,7 @@ export default function App() {
                   <ListItemIcon>
                     {navItem.icon}
                   </ListItemIcon>
-                    {navItem.text}
+                  {navItem.text}
                 </ListItemButton>
               </ListItem>
             </NavLink>

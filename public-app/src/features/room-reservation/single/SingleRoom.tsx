@@ -44,7 +44,7 @@ const handleDateRangeChange = (value: DateRange | null) => {
   };
 
   const isDisabled = (day : Date) : boolean  => {
-      if(room?.periods != undefined && room?.periods?.length! != 0)
+      if(room?.periods !== undefined && room?.periods?.length! !== 0)
       {
         for (let i = 0; i < room?.periods?.length!; i++) {
             const startDate = new Date(room?.periods?.at(i)?.start!)
