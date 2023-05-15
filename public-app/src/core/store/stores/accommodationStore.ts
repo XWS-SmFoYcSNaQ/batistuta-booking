@@ -62,7 +62,7 @@ export const accommodationStore = (
     get().accommodation.setLoading(true)
     get().accommodation.clearData()
     try {
-      const res = await axios.get(`${apiUrl}/accommodation/${id}`)
+      const res = await axios.get(`${apiUrl}/accommodation/details/${id}`)
       set(
         produce((draft: AppState) => {
           draft.accommodation.accommodation = res.data
@@ -82,8 +82,8 @@ export const accommodationStore = (
         }
       })
     } catch (e: any) {
-      if(e.message){
-        throw new Error(e.message)
+      if(e.response && e.response.data && e.response.data.message){
+        throw new Error(e.response.data.message)
       }
       throw new Error("Error while creating accommodation.")
     }

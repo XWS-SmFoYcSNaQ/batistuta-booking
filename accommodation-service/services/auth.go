@@ -23,7 +23,6 @@ func (s AuthService) ValidateToken(ctx *context.Context) (*auth.Verify_Response,
 	}
 
 	authHeader := authHeaders[0]
-	//token := strings.TrimPrefix(authHeader, "Bearer ")
 	authCtx := metadata.AppendToOutgoingContext(*ctx, "Authorization", authHeader)
 
 	res, err := (*s.AuthClient).Verify(authCtx, &auth.Empty_Request{})

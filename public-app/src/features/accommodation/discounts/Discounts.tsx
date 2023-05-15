@@ -34,7 +34,10 @@ export const Discounts = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
-      if (!data.start || !data.end) return;
+      if (!data.start || !data.end){
+        toast.warn("Please select starting and ending dates")
+        return
+      }
       await createDiscount({ ...data, accommodationId: params.id, userId: "" });
       toast.success("Discount created successfully");
       setData(getInitialData());

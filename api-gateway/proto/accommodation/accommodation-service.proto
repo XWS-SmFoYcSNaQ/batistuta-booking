@@ -23,7 +23,7 @@ service AccommodationService {
   }
   rpc GetAccommodation(AM_GetAccommodation_Request) returns (AM_GetAccommodation_Response) {
     option (google.api.http) = {
-      get: "/accommodation/{id}"
+      get: "/accommodation/details/{id}"
     };
   }
 

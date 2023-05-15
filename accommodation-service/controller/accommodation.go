@@ -3,6 +3,7 @@ package controller
 import (
 	"accommodation_service/model"
 	"accommodation_service/proto/accommodation"
+	"accommodation_service/proto/auth"
 	"accommodation_service/services"
 	"accommodation_service/utility"
 	"context"
@@ -37,7 +38,7 @@ func (c AccommodationController) GetAllByHost(ctx context.Context, request *acco
 		return nil, status.Error(codes.Unauthenticated, err.Error())
 	}
 
-	id, err := uuid.Parse(res.UserId)
+	id, err := uuid.Parse((*res).UserId)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -57,7 +58,9 @@ func (c AccommodationController) Create(ctx context.Context, request *accommodat
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, err.Error())
 	}
-
+	if res.UserRole != auth.UserRole_Host {
+		return nil, status.Error(codes.Unauthenticated, "User is not a host")
+	}
 	hostId, err := uuid.Parse(res.UserId)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "Error while parsing host id")
@@ -84,7 +87,7 @@ func (c AccommodationController) GetById(ctx context.Context, request *accommoda
 	}
 	a, err := c.AccommodationService.GetById(id)
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "Error while fetching accommodation")
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	return utility.AccommodationDetailsToDTO(a)

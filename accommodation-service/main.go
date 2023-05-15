@@ -3,9 +3,9 @@ package main
 import (
 	"accommodation_service/config"
 	"accommodation_service/controller"
-	"accommodation_service/database"
 	"accommodation_service/handlers"
 	"accommodation_service/infrastructure"
+	"accommodation_service/infrastructure/database"
 	"accommodation_service/proto/accommodation"
 	"accommodation_service/services"
 	"google.golang.org/grpc"

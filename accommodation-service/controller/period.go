@@ -43,13 +43,13 @@ func (c PeriodController) Create(ctx context.Context, request *accommodation.AM_
 
 	accommodationId, err := uuid.Parse(request.AccommodationId)
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		return nil, status.Error(codes.InvalidArgument, "Error while parsing accommodation id")
 	}
 	userId := uuid.Nil
 	if request.UserId != "" {
 		userId, err = uuid.Parse(request.UserId)
 		if err != nil {
-			return nil, status.Error(codes.InvalidArgument, err.Error())
+			return nil, status.Error(codes.InvalidArgument, "Error while parsing user id")
 		}
 	}
 
