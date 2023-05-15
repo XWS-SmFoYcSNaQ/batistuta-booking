@@ -60,7 +60,8 @@ namespace auth_service.Services
             {
                 Success = authenticationResponse.Success,
                 Message = "Registration successfull.",
-                Token = authenticationResponse.Token
+                Token = authenticationResponse.Token,
+                User = _mapper.Map<auth_service.User>(response.User)
             };
         }
 
