@@ -4,6 +4,7 @@ import { RoomsRoot, roomRoutes } from "./features/room-reservation";
 import Login from "./features/auth/login/Login";
 import { ErrorPage } from "./shared/ErrorPage";
 import { createBrowserRouter } from "react-router-dom";
+import { AllAccommodations } from "./features/accommodation/AllAccommodations";
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
       {
         path: "login",
         element: <Login/>
+      },
+      {
+        path: "all-accommodations",
+        element: <AllAccommodations/>
       }
     ]
   },

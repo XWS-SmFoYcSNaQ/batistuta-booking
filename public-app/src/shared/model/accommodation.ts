@@ -7,6 +7,7 @@ export interface Accommodation {
   minGuests?: number;
   maxGuests?: number;
   basePrice?: number;
+  location?: string;
   periods?: Period[];
   discounts?: Discount[];
 }

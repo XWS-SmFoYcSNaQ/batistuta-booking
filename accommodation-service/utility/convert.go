@@ -14,6 +14,7 @@ func AccommodationToDTO(d *model.Accommodation) (*accommodation.AccommodationDTO
 		MinGuests: int32(d.MinGuests),
 		MaxGuests: int32(d.MaxGuests),
 		BasePrice: d.BasePrice,
+		Location:  d.Location,
 	}, nil
 }
 

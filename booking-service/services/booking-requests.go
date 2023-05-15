@@ -13,22 +13,6 @@ type BookingRequestsService struct {
 
 func (s BookingRequestsService) GetAll() ([]*model.BookingRequest, error) {
 	errorMessage := "error while fetching booking requests"
-	//
-	//// Establish a connection to the remote microservice.
-	//client, err := rpc.Dial("tcp", "remote-microservice-address:port")
-	//if err != nil {
-	//	return nil, errors.New(errorMessage)
-	//}
-	//defer client.Close()
-	//
-	//// Call the remote method using RPC.
-	//var response booking.AM_CreateBookingRequest_Response
-	//err = client.Call("AccommodationHandler.GetAllAccommodations", new(booking.AM_GetAllAccommodations_Request), &response)
-	//if err != nil {
-	//	return nil, errors.New(errorMessage)
-	//}
-	//
-	//return response, nil
 	rows, err := s.DB.Query("SELECT * FROM BookingRequest")
 	if err != nil {
 		return nil, errors.New(errorMessage)
@@ -46,6 +30,34 @@ func (s BookingRequestsService) GetAll() ([]*model.BookingRequest, error) {
 	}
 	if err := rows.Err(); err != nil {
 		return nil, errors.New(errorMessage)
+	}
+
+	return requests, nil
+}
+
+func (s BookingRequestsService) GetAllByUserId(userId string) ([]*model.BookingRequest, error) {
+	var rows *sql.Rows
+	stmt, err := s.DB.Prepare("SELECT * FROM BookingRequest WHERE user_id = $1")
+	if err != nil {
+		return nil, err
+	}
+	rows, err = stmt.Query(userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var requests []*model.BookingRequest
+	for rows.Next() {
+		var p model.BookingRequest
+		err := rows.Scan(&p.ID, &p.AccommodationId, &p.StartDate, &p.EndDate, &p.NumberOfGuests, &p.UserId)
+		if err != nil {
+			return nil, err
+		}
+		requests = append(requests, &p)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return requests, nil

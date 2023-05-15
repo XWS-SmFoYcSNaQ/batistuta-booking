@@ -13,6 +13,7 @@ const getInitialData = (): Accommodation => {
     minGuests: 0,
     maxGuests: 0,
     basePrice: 0,
+    location: ""
   };
 };
 
@@ -94,6 +95,13 @@ export const Create = () => {
                   e.target.value === "" ? undefined : parseFloat(e.target.value),
               })
             }
+          />
+
+                    <TextField
+            required
+            label="Location"
+            value={data.location ?? ""}
+            onChange={(e) => setData({ ...data, location: e.target.value })}
           />
         </div>
         <Box marginTop="20px" sx={{ display: "flex", justifyContent: "right", gap: "15px" }}>

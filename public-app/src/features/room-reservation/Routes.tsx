@@ -12,5 +12,5 @@ export const roomRoutes: RouteObject[] = [
   {
     path: ":id",
     element: <SingleRoom />,
-  },
+  }
 ];

@@ -17,8 +17,10 @@ import HouseIcon from '@mui/icons-material/House';
 import BedIcon from '@mui/icons-material/Bed';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonIcon from '@mui/icons-material/Person';
+import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
 import { ToastContainer } from 'react-toastify';
 import { AppState, appStore } from './core/store';
+import 'rsuite/dist/rsuite.min.css';
 
 const drawerWidth = 300;
 
@@ -45,6 +47,11 @@ export default function App() {
       route: '/',
       text: 'Home',
       icon: <HomeIcon/>
+    },
+    {
+      route: '/all-accommodations',
+      text: 'All accommodations',
+      icon: <MapsHomeWorkIcon/>
     },
     {
       route: '/accommodation',

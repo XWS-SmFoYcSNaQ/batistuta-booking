@@ -40,7 +40,7 @@ func (s AccommodationService) GetAll(hostId uuid.UUID) ([]*model.Accommodation, 
 	var accommodations []*model.Accommodation
 	for rows.Next() {
 		var p model.Accommodation
-		err := rows.Scan(&p.ID, &p.HostId, &p.Name, &p.Benefits, &p.MinGuests, &p.MaxGuests, &p.BasePrice)
+		err := rows.Scan(&p.ID, &p.HostId, &p.Name, &p.Benefits, &p.MinGuests, &p.MaxGuests, &p.BasePrice, &p.Location)
 		if err != nil {
 			return nil, err
 		}
@@ -54,13 +54,13 @@ func (s AccommodationService) GetAll(hostId uuid.UUID) ([]*model.Accommodation, 
 }
 
 func (s AccommodationService) Create(a *model.Accommodation) (uuid.UUID, error) {
-	stmt, err := s.DB.Prepare("INSERT INTO Accommodation VALUES ($1, $2, $3, $4, $5, $6, $7)")
+	stmt, err := s.DB.Prepare("INSERT INTO Accommodation VALUES ($1, $2, $3, $4, $5, $6, $7, $8)")
 	if err != nil {
 		return uuid.Nil, err
 	}
 	defer stmt.Close()
 	id := uuid.New()
-	_, err = stmt.Exec(id, a.HostId, a.Name, a.Benefits, a.MinGuests, a.MaxGuests, a.BasePrice)
+	_, err = stmt.Exec(id, a.HostId, a.Name, a.Benefits, a.MinGuests, a.MaxGuests, a.BasePrice, a.Location)
 	if err != nil {
 		return uuid.Nil, err
 	}
@@ -80,7 +80,7 @@ func (s AccommodationService) GetSearchedAccommodations(a *accommodation.AM_Sear
 	var accommodations []*model.Accommodation
 	for rows.Next() {
 		var p model.Accommodation
-		err := rows.Scan(&p.ID, &p.Name, &p.Benefits, &p.MinGuests, &p.MaxGuests, &p.BasePrice)
+		err := rows.Scan(&p.ID, &p.HostId, &p.Name, &p.Benefits, &p.MinGuests, &p.MaxGuests, &p.BasePrice, &p.Location)
 		if err != nil {
 			return nil, errors.New("lose appendovao")
 		}
@@ -102,7 +102,7 @@ func (s AccommodationService) GetById(id uuid.UUID) (*model.Accommodation, error
 	}
 	defer stmt.Close()
 	var a model.Accommodation
-	err = stmt.QueryRow(id).Scan(&a.ID, &a.HostId, &a.Name, &a.Benefits, &a.MinGuests, &a.MaxGuests, &a.BasePrice)
+	err = stmt.QueryRow(id).Scan(&a.ID, &a.HostId, &a.Name, &a.Benefits, &a.MinGuests, &a.MaxGuests, &a.BasePrice, &a.Location)
 	if err != nil {
 		return nil, errors.New("error while fetching accommodation")
 	}

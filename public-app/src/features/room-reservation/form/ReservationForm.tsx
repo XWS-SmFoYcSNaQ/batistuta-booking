@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -9,7 +9,9 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import { Accommodation } from '../../../shared/model';
+import { Accommodation, Period } from '../../../shared/model';
+import DateRangePicker, { DateRange } from 'rsuite/esm/DateRangePicker';
+import { AppState, appStore } from '../../../core/store';
 
 interface ReservationFormData {
   checkIn: string;
@@ -21,51 +23,64 @@ interface ReservationFormProps {
   onSubmit: (data: ReservationFormData) => void;
 }
 
-function ReservationForm(room: Accommodation | null) {
+export const ReservationForm = (room: any, periods: Period[]) => {
 
   const availableDates = ['2023-05-15', '2023-05-16', '2023-05-17'];
 
-  const isDateDisabled = (date: string): boolean => {
-    return !availableDates.includes(date);
+  const isDateDisabled = (date: string) => {
   };
 
-  // const { onSubmit } = props;
-
-  const [checkIn, setCheckIn] = useState('');
-  const [checkOut, setCheckOut] = useState('');
   const [guests, setGuests] = useState(0);
+  const [selectedDates, setSelectedDates] = useState<[Date, Date]>([
+    new Date(),
+    new Date()
+  ]);
+
+const handleDateRangeChange = (value: DateRange | null) => {
+    if (value !== null) {
+      setSelectedDates([value[0], value[1]]);
+    }
+  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // onSubmit({ checkIn, checkOut, guests });
   };
 
+  const isDisabled = (day : Date) : boolean  => {
+    console.log(periods.length)
+      if(periods != undefined && periods.length != 0)
+      {
+        for (let i = 0; i < periods.length; i++) {
+            const startDate = new Date(periods[i].start!)
+            const endDate = new Date(periods[i].end!)
+            if(day.getDate > startDate.getDate && day.getDate < endDate.getDate)
+              return true
+
+        }
+      }
+      return false;
+  }
+
   return (
     <form onSubmit={handleSubmit}>
       <Grid container spacing={2}>
         <Grid item xs={12} md={4}>
-          <TextField
-            fullWidth
-            required
-            id="check-in"
-            label="Check In"
-            type="date"
-            value={checkIn}
-            onChange={(event) => setCheckIn(event.target.value)}
-            InputLabelProps={{ shrink: true }}
-          />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <TextField
-            fullWidth
-            required
-            id="check-out"
-            label="Check Out"
-            type="date"
-            value={checkOut}
-            onChange={(event) => setCheckOut(event.target.value)}
-            InputLabelProps={{ shrink: true }}
-          />
+        <DateRangePicker
+        style={{ width: 300 }}
+        placeholder="Select Date Range"
+        title="Select Date Range"
+        onChange={handleDateRangeChange}
+        value={selectedDates}
+        shouldDisableDate={(day : Date) => {
+          var now = new Date();
+          if(day < now)
+            return true;
+          if(isDisabled(day))
+            return true
+          return false;
+        }}
+      />
         </Grid>
         <Grid item xs={12} md={4}>
           <FormControl fullWidth required>
@@ -95,5 +110,3 @@ function ReservationForm(room: Accommodation | null) {
     </form>
   );
 }
-
-export default ReservationForm;

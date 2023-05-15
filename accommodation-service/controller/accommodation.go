@@ -9,6 +9,8 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"strconv"
+	"strings"
 )
 
 type AccommodationController struct {
@@ -70,6 +72,7 @@ func (c AccommodationController) Create(ctx context.Context, request *accommodat
 		MinGuests: int(request.MinGuests),
 		MaxGuests: int(request.MaxGuests),
 		BasePrice: request.BasePrice,
+		Location:  request.Location,
 	})
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
@@ -115,7 +118,7 @@ func (c AccommodationController) GetByIdWithDiscounts(ctx context.Context, reque
 
 func (c AccommodationController) SearchAccommodations(ctx context.Context, request *accommodation.AM_SearchAccommodations_Request) (*accommodation.AM_SearchAccommodations_Response, error) {
 	if request.NumberOfGuests <= 0 {
-		return nil, status.Error(codes.InvalidArgument, "number of guests must be greater than 0")
+		return nil, status.Error(codes.InvalidArgument, "number of guests must be greater than 0 "+strconv.Itoa(int(request.NumberOfGuests)))
 	}
 
 	accommodations, err := c.AccommodationService.GetSearchedAccommodations(&accommodation.AM_SearchAccommodations_Request{
@@ -142,7 +145,7 @@ func (c AccommodationController) SearchAccommodations(ctx context.Context, reque
 		if err != nil {
 			return nil, status.Error(codes.Internal, err.Error())
 		}
-		if available {
+		if available && strings.Contains(a.Location, request.Location) {
 			availableAccommodations = append(availableAccommodations, a)
 		}
 	}
@@ -156,7 +159,7 @@ func (c AccommodationController) SearchAccommodations(ctx context.Context, reque
 			MinGuests:  int32(d.MinGuests),
 			MaxGuests:  int32(d.MaxGuests),
 			BasePrice:  d.BasePrice,
-			Location:   "nema jos",
+			Location:   d.Location,
 			TotalPrice: 0.0,
 		}
 		res = append(res, &a)

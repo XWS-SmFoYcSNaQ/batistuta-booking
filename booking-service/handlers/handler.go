@@ -37,13 +37,34 @@ func (h BookingHandler) GetAll(ctx context.Context, request *booking.AM_GetAllBo
 	return &booking.AM_GetAllBookingRequests_Response{Data: res}, nil
 }
 
+func (h BookingHandler) GetAllByUserId(ctx context.Context, request *booking.AM_GetAllBookingRequestsByUserId_Request) (*booking.AM_GetAllBookingRequests_Response, error) {
+	bookingRequests, err := h.BookingRequestService.GetAllByUserId(request.Id)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	var res []*booking.BookingRequestsDTO
+	for _, d := range bookingRequests {
+		a := booking.BookingRequestsDTO{
+			Id:              d.ID.String(),
+			AccommodationId: d.AccommodationId,
+			StartDate:       d.StartDate,
+			EndDate:         d.EndDate,
+			NumberOfGuests:  int32(d.NumberOfGuests),
+			UserId:          d.UserId,
+		}
+		res = append(res, &a)
+	}
+
+	return &booking.AM_GetAllBookingRequests_Response{Data: res}, nil
+}
+
 func (h BookingHandler) MakeBookingRequest(ctx context.Context, request *booking.AM_BookingRequest_Request) (*booking.AM_CreateBookingRequest_Response, error) {
 	id, err := h.BookingRequestService.MakeBookingRequest(&model.BookingRequest{
 		AccommodationId: request.AccommodationId,
 		StartDate:       request.StartDate,
 		EndDate:         request.EndDate,
-		NumberOfGuests:  int(request.NumberOfGuests),
 		UserId:          request.UserId,
+		NumberOfGuests:  int(request.NumberOfGuests),
 	})
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())

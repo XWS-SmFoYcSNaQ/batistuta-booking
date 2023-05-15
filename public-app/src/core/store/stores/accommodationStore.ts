@@ -9,6 +9,7 @@ export interface AccommodationStoreType {
   loading: boolean
   fetchAccommodations: () => Promise<void>
   fetchMyAccommodations: () => Promise<void>
+  fetchSearchedAccommodations: (requestBody: any) => Promise<void>
   fetchDetails: (id: string, type: 'periods' | 'discounts') => Promise<void>
   createAccommodation: (data: Accommodation) => Promise<void>
   clearData: () => void
@@ -43,6 +44,26 @@ export const accommodationStore = (
     get().accommodation.clearData()
     try {
       const res = await axios.get(`${apiUrl}/accommodation/me`, {
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("jwt")}`
+        }
+      })
+      set(
+        produce((draft: AppState) => {
+          draft.accommodation.data = res.data.data
+          return draft
+        })
+      )
+    } catch (e) {
+      console.log(e)
+    }
+    get().accommodation.setLoading(false)
+  },
+  fetchSearchedAccommodations: async (requestBody: any) => {
+    get().accommodation.setLoading(true)
+    get().accommodation.clearData()
+    try {
+      const res = await axios.post("http://localhost:11000/accommodation/search",requestBody, {
         headers: {
           Authorization: `Bearer ${window.localStorage.getItem("jwt")}`
         }

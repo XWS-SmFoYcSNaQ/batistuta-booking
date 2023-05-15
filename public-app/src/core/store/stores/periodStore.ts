@@ -2,6 +2,7 @@ import axios from "axios"
 import { Period } from "../../../shared/model"
 import { AppState, GetAppState, SetAppState, apiUrl } from "../store"
 import { produce } from "immer"
+import { roomRoutes } from "../../../features/room-reservation"
 
 export interface PeriodStoreType {
   data: Period[]
@@ -25,7 +26,7 @@ export const periodStore = (
       const res = await axios.get(`${apiUrl}/accommodation/period/${accommodationId}`)
       set(
         produce((draft: AppState) => {
-          draft.period.data = res.data.data
+          draft.period.data = res.data.data.periods
           return draft
         })
       )

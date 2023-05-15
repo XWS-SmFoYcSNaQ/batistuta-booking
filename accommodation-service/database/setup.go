@@ -19,7 +19,8 @@ func SetupDatabase(db *sql.DB) {
 		benefits TEXT,
 		min_guests integer,
 		max_guests integer NOT NULL,
-		base_price DOUBLE PRECISION NOT NULL)
+		base_price DOUBLE PRECISION NOT NULL,
+    	location TEXT)
     `)
 	if err != nil {
 		log.Fatalln(err)

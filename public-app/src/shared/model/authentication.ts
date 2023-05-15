@@ -8,6 +8,13 @@ export interface AuthenticationResponse {
   User: User;
 }
 
+export interface VerifyResponse {
+  Verified?: boolean;
+  ErrorMessage?: string;
+  UserId?: string;
+  UserRole?: string;
+}
+
 export interface AuthenticationRequest {
   Username?: string;
   Password?: string;

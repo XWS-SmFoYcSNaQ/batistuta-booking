@@ -29,9 +29,10 @@ message AM_GetAllAccommodations_Response {
 message AM_CreateAccommodation_Request {
   string name = 1;
   string benefits = 2;
-  int32 minGuests = 3;
-  int32 maxGuests = 4;
-  double basePrice = 5;
+  string location = 3;
+  int32 minGuests = 4;
+  int32 maxGuests = 5;
+  double basePrice = 6;
 }
 
 message AM_CreateAccommodation_Response {
@@ -91,8 +92,8 @@ message AM_CreatePeriod_Response {
 message AM_SearchAccommodations_Request {
   string start = 1;
   string end =  2;
-  int32 numberOfGuests = 3;
-  string location = 4;
+  string location = 3;
+  int32 numberOfGuests = 4;
 }
 
 message AM_SearchAccommodations_Response {
@@ -138,9 +139,10 @@ message AccommodationDTO {
   string id = 1;
   string name = 2;
   string benefits = 3;
-  int32 minGuests = 4;
-  int32 maxGuests = 5;
-  double basePrice = 6;
+  string location = 4;
+  int32 minGuests = 5;
+  int32 maxGuests = 6;
+  double basePrice = 7;
 }
 
 message PeriodDTO {
@@ -155,9 +157,9 @@ message SearchedAccommodationsDTO {
   string id = 1;
   string name = 2;
   string benefits = 3;
-  int32 minGuests = 4;
-  int32 maxGuests = 5;
-  string location = 6;
+  string location = 4;
+  int32 minGuests = 5;
+  int32 maxGuests = 6;
   double basePrice = 7;
   double totalPrice = 8;
 }
