@@ -99,7 +99,7 @@ export const AccommodationList = () => {
           </Table>
         </TableContainer>
       )}
-      {!loading && accommodations.length === 0 && <div>Nema nista prika</div>}
+      {!loading && accommodations.length === 0 && <div>No accommodations to display</div>}
       <Box sx={{ marginTop: "30px" }}>
         {location.pathname === "/accommodation" && (
           <Link to="/accommodation/create">

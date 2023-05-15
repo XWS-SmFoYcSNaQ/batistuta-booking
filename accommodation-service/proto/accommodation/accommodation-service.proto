@@ -6,8 +6,7 @@ service AccommodationService {
   rpc GetAllAccommodations(AM_GetAllAccommodations_Request) returns (AM_GetAllAccommodations_Response) {}
   rpc GetMyAccommodations(AM_GetAllAccommodations_Request) returns (AM_GetAllAccommodations_Response) {}
   rpc CreateAccommodation(AM_CreateAccommodation_Request) returns (AM_CreateAccommodation_Response) {}
-  rpc GetAccommodationWithPeriods(AM_GetAccommodationWithPeriods_Request) returns (AM_GetAccommodationWithPeriods_Response) {}
-  rpc GetAccommodationWithDiscounts(AM_GetAccommodationWithDiscounts_Request) returns (AM_GetAccommodationWithDiscounts_Response) {}
+  rpc GetAccommodation(AM_GetAccommodation_Request) returns (AM_GetAccommodation_Response) {}
 
   rpc GetAllPeriodsByAccommodation(AM_GetAllPeriodsByAccommodation_Request) returns (AM_GetAllPeriodsByAccommodation_Response) {}
   rpc CreatePeriod(AM_CreatePeriod_Request) returns (AM_CreatePeriod_Response) {}
@@ -37,11 +36,11 @@ message AM_CreateAccommodation_Response {
   string id = 1;
 }
 
-message AM_GetAccommodationWithPeriods_Request {
+message AM_GetAccommodation_Request {
   string id = 1;
 }
 
-message AM_GetAccommodationWithPeriods_Response {
+message AM_GetAccommodation_Response {
   string id = 1;
   string name = 2;
   string benefits = 3;
@@ -49,20 +48,7 @@ message AM_GetAccommodationWithPeriods_Response {
   int32 maxGuests = 5;
   double basePrice = 6;
   repeated PeriodDTO periods = 7;
-}
-
-message AM_GetAccommodationWithDiscounts_Request {
-  string id = 1;
-}
-
-message AM_GetAccommodationWithDiscounts_Response {
-  string id = 1;
-  string name = 2;
-  string benefits = 3;
-  int32 minGuests = 4;
-  int32 maxGuests = 5;
-  double basePrice = 6;
-  repeated DiscountDTO discounts = 7;
+  repeated DiscountDTO discounts = 8;
 }
 
 //Periods

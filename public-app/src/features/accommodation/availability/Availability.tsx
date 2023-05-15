@@ -26,11 +26,14 @@ export const Availability = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
-      if (!data.start || !data.end) return;
+      if (!data.start || !data.end){
+        toast.warn("Please select starting and ending dates")
+        return
+      }
       await createPeriod({ ...data, accommodationId: params.id, userId: "" });
       toast.success("Period created successfully");
       setData(getInitialData());
-      fetchAccommodationDetails(params.id ?? "", 'periods');
+      fetchAccommodationDetails(params.id ?? "");
     } catch (e: any) {
       toast.error(e.message);
     }
@@ -54,7 +57,7 @@ export const Availability = () => {
   };
 
   useEffect(() => {
-    fetchAccommodationDetails(params.id ?? "", 'periods')
+    fetchAccommodationDetails(params.id ?? "")
   }, [fetchAccommodationDetails, params.id]);
 
   useEffect(() => {
