@@ -9,19 +9,16 @@ namespace user_service.Services
 {
     public class UserService : user_service.UserService.UserServiceBase
     {
-        private readonly ILogger<UserService> _logger;
         private readonly UserServiceDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly IValidator<RegisterUser_Request> _validator;
         private readonly IPasswordHasher _passwordHasher;
 
-        public UserService(ILogger<UserService> logger,
-            UserServiceDbContext dbContext,
+        public UserService(UserServiceDbContext dbContext,
             IMapper mapper,
             IValidator<RegisterUser_Request> validator,
             IPasswordHasher passwordHasher)
         {
-            _logger = logger;
             _dbContext = dbContext;
             _mapper = mapper;
             _validator = validator;
@@ -34,6 +31,7 @@ namespace user_service.Services
 
             if (!validationResult.IsValid)
             {
+
                 var errorResponse = new RegisterUser_Response
                 {
                     Message = "Error not all fields are valid."
@@ -44,6 +42,7 @@ namespace user_service.Services
                     ErrorMessage = x.ErrorMessage
                 }));
 
+                context.Status = new Status(StatusCode.InvalidArgument, "Not all fields are valid.");
                 return errorResponse;
             }
 
@@ -63,6 +62,8 @@ namespace user_service.Services
                         User = _mapper.Map<user_service.User>(userEntity)
                     };
                 }
+
+                context.Status = new Status(StatusCode.Internal, "An unknown error occured while trying to register user.");
                 return new RegisterUser_Response
                 {
                     Message = "An unknown error occured while trying to register user."
@@ -70,59 +71,81 @@ namespace user_service.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.ToString());
-                return new RegisterUser_Response
+                if (ex is RpcException rpcException)
                 {
-                    Message = ex.InnerException?.Message ?? ex.Message
-                };
+                    throw new RpcException(rpcException.Status, rpcException.Trailers);
+                }
+                throw new RpcException(new Status(StatusCode.Internal, ex.InnerException?.Message ?? ex.Message));
             }
         }
 
         public override async Task<GetAllUsers_Response> GetAllUsers(Empty_Request request, ServerCallContext context)
         {
-            var users = await _dbContext.Users.ToListAsync();
-            var response = new GetAllUsers_Response();
+            try
+            {
+                var users = await _dbContext.Users.ToListAsync();
+                var response = new GetAllUsers_Response();
 
-            response.Users.AddRange(users.Select(x => _mapper.Map<user_service.GetAllUsers_Response.Types.User>(x)));
+                response.Users.AddRange(users.Select(x => _mapper.Map<user_service.GetAllUsers_Response.Types.User>(x)));
 
-            return response;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                if (ex is RpcException rpcException)
+                {
+                    throw new RpcException(rpcException.Status, rpcException.Trailers);
+                }
+                throw new RpcException(new Status(StatusCode.Internal, ex.InnerException?.Message ?? ex.Message), Metadata.Empty);
+            }
+
         }
 
         public override async Task<VerifyUser_Response> VerifyUserPassword(VerifyUser_Request request, ServerCallContext context)
         {
-            var username = request.Username;
-            var password = request.Password;
-            var user = await _dbContext.Users
-                .Where(x => x.Username == username)
-                .FirstOrDefaultAsync();
-
-            _logger.LogInformation($"User: {user?.Id}");
-            if (user == null)
+            try
             {
-                _logger.LogInformation($"User with username: {username} doesnt exist");
+                var username = request.Username;
+                var password = request.Password;
+                var user = await _dbContext.Users
+                    .Where(x => x.Username == username)
+                    .FirstOrDefaultAsync();
+
+                if (user == null)
+                {
+                    context.Status = new Status(StatusCode.NotFound, $"User with username: {username} doesnt exist");
+                    return new VerifyUser_Response
+                    {
+                        ErrorMessage = $"User with username: {username} doesnt exist"
+                    };
+                }
+
+                var (verified, needsUpgrade) = _passwordHasher.Check(user.Password, password);
+
+                if (!verified)
+                {
+                    context.Status = new Status(StatusCode.InvalidArgument, "Wrong password.");
+                    return new VerifyUser_Response
+                    {
+                        ErrorMessage = "Wrong password."
+                    };
+                }
+
                 return new VerifyUser_Response
                 {
-                    ErrorMessage = $"User with username: {username} doesnt exist"
+                    Verified = true,
+                    User = _mapper.Map<User>(user)
                 };
             }
-
-            var (verified, needsUpgrade) = _passwordHasher.Check(user.Password, password);
-
-            _logger.LogInformation($"User verified: {verified}");
-            if (!verified)
+            catch (Exception ex)
             {
-                _logger.LogInformation($"Wrong password.");
-                return new VerifyUser_Response
+                if (ex is RpcException rpcException)
                 {
-                    ErrorMessage = $"Wrong password."
-                };
+                    throw new RpcException(rpcException.Status, rpcException.Trailers);
+                }
+                throw new RpcException(new Status(StatusCode.Internal, ex.InnerException?.Message ?? ex.Message), Metadata.Empty);
             }
 
-            return new VerifyUser_Response
-            {
-                Verified = true,
-                User = _mapper.Map<User>(user)
-            };
         }
     }
 }
