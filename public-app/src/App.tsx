@@ -18,6 +18,7 @@ import BedIcon from '@mui/icons-material/Bed';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonIcon from '@mui/icons-material/Person';
 import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { ToastContainer } from 'react-toastify';
 import { AppState, appStore } from './core/store';
 import 'rsuite/dist/rsuite.min.css';
@@ -62,6 +63,11 @@ export default function App() {
       route: '/rooms',
       text: 'Rooms',
       icon: <BedIcon/>
+    },
+    {
+      route: '/profile',
+      text: 'Profile',
+      icon: <AccountBoxIcon/>
     }
   ];
 
@@ -81,6 +87,10 @@ export default function App() {
   const filteredLowerNavItems = isAuthenticated
     ? lowerNavItems.filter(item => item.route !== '/login' && item.route !== '/register')
     : lowerNavItems;
+  
+  const filteredUpperNavItems = !isAuthenticated
+    ? upperNavItems.filter(item => item.route !== '/profile')
+    : upperNavItems;
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -111,7 +121,7 @@ export default function App() {
         <Divider />
         {/* Upper nav items */}
         <List>
-          {upperNavItems.map((navItem, index) => (
+          {filteredUpperNavItems.map((navItem, index) => (
             <NavLink to={navItem.route} key={navItem.route}>
               <ListItem disablePadding>
                 <ListItemButton>

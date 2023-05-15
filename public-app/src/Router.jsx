@@ -2,6 +2,8 @@ import App from "./App";
 import { AccommodationRoot, accommodationRoutes } from "./features/accommodation";
 import { RoomsRoot, roomRoutes } from "./features/room-reservation";
 import Login from "./features/auth/login/Login";
+import Register from "./features/auth/register/Register";
+import UserProfile from "./features/profile/UserProfile";
 import { ErrorPage } from "./shared/ErrorPage";
 import { createBrowserRouter } from "react-router-dom";
 import { AllAccommodations } from "./features/accommodation/AllAccommodations";
@@ -29,6 +31,14 @@ export const router = createBrowserRouter([
       {
         path: "all-accommodations",
         element: <AllAccommodations/>
+      },
+      {
+        path: "register",
+        element: <Register/>
+      },
+      {
+        path: "profile",
+        element: <UserProfile/>
       }
     ]
   },

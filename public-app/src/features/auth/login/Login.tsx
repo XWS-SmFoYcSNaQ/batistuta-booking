@@ -18,8 +18,6 @@ const Login = () => {
     if (success) {
       toast.success(`Logged in successfully`);
       navigate("/");
-    } else {
-      toast.error("Error logging in");
     }
   }
 
@@ -48,6 +46,7 @@ const Login = () => {
               <TextField 
                 id="password" 
                 required 
+                type="password"
                 label="Password" 
                 variant="standard" 
                 value={password}

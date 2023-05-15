@@ -86,4 +86,5 @@ message Register_Response {
   string Token = 2;
   repeated Error errors = 3;
   string Message = 4;
+  User User = 5;
 }
