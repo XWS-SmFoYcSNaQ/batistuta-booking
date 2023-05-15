@@ -30,6 +30,7 @@ const (
 	AccommodationService_GetAllDiscountsByAccommodation_FullMethodName            = "/AccommodationService/GetAllDiscountsByAccommodation"
 	AccommodationService_GetAllDiscountsByAccommodationAndInterval_FullMethodName = "/AccommodationService/GetAllDiscountsByAccommodationAndInterval"
 	AccommodationService_CreateDiscount_FullMethodName                            = "/AccommodationService/CreateDiscount"
+	AccommodationService_GetAutomaticReservationValue_FullMethodName              = "/AccommodationService/GetAutomaticReservationValue"
 )
 
 // AccommodationServiceClient is the client API for AccommodationService service.
@@ -47,6 +48,7 @@ type AccommodationServiceClient interface {
 	GetAllDiscountsByAccommodation(ctx context.Context, in *AM_GetAllDiscountsByAccommodation_Request, opts ...grpc.CallOption) (*AM_GetAllDiscountsByAccommodation_Response, error)
 	GetAllDiscountsByAccommodationAndInterval(ctx context.Context, in *AM_GetAllDiscountsByAccommodationAndInterval_Request, opts ...grpc.CallOption) (*AM_GetAllDiscountsByAccommodationAndInterval_Response, error)
 	CreateDiscount(ctx context.Context, in *AM_CreateDiscount_Request, opts ...grpc.CallOption) (*AM_CreateDiscount_Response, error)
+	GetAutomaticReservationValue(ctx context.Context, in *AM_GetAutomaticReservation_Request, opts ...grpc.CallOption) (*AM_GetAutomaticReservation_Response, error)
 }
 
 type accommodationServiceClient struct {
@@ -156,6 +158,15 @@ func (c *accommodationServiceClient) CreateDiscount(ctx context.Context, in *AM_
 	return out, nil
 }
 
+func (c *accommodationServiceClient) GetAutomaticReservationValue(ctx context.Context, in *AM_GetAutomaticReservation_Request, opts ...grpc.CallOption) (*AM_GetAutomaticReservation_Response, error) {
+	out := new(AM_GetAutomaticReservation_Response)
+	err := c.cc.Invoke(ctx, AccommodationService_GetAutomaticReservationValue_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AccommodationServiceServer is the server API for AccommodationService service.
 // All implementations must embed UnimplementedAccommodationServiceServer
 // for forward compatibility
@@ -171,6 +182,7 @@ type AccommodationServiceServer interface {
 	GetAllDiscountsByAccommodation(context.Context, *AM_GetAllDiscountsByAccommodation_Request) (*AM_GetAllDiscountsByAccommodation_Response, error)
 	GetAllDiscountsByAccommodationAndInterval(context.Context, *AM_GetAllDiscountsByAccommodationAndInterval_Request) (*AM_GetAllDiscountsByAccommodationAndInterval_Response, error)
 	CreateDiscount(context.Context, *AM_CreateDiscount_Request) (*AM_CreateDiscount_Response, error)
+	GetAutomaticReservationValue(context.Context, *AM_GetAutomaticReservation_Request) (*AM_GetAutomaticReservation_Response, error)
 	mustEmbedUnimplementedAccommodationServiceServer()
 }
 
@@ -210,6 +222,9 @@ func (UnimplementedAccommodationServiceServer) GetAllDiscountsByAccommodationAnd
 }
 func (UnimplementedAccommodationServiceServer) CreateDiscount(context.Context, *AM_CreateDiscount_Request) (*AM_CreateDiscount_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateDiscount not implemented")
+}
+func (UnimplementedAccommodationServiceServer) GetAutomaticReservationValue(context.Context, *AM_GetAutomaticReservation_Request) (*AM_GetAutomaticReservation_Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAutomaticReservationValue not implemented")
 }
 func (UnimplementedAccommodationServiceServer) mustEmbedUnimplementedAccommodationServiceServer() {}
 
@@ -422,6 +437,24 @@ func _AccommodationService_CreateDiscount_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccommodationService_GetAutomaticReservationValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AM_GetAutomaticReservation_Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccommodationServiceServer).GetAutomaticReservationValue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccommodationService_GetAutomaticReservationValue_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccommodationServiceServer).GetAutomaticReservationValue(ctx, req.(*AM_GetAutomaticReservation_Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AccommodationService_ServiceDesc is the grpc.ServiceDesc for AccommodationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -472,6 +505,10 @@ var AccommodationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateDiscount",
 			Handler:    _AccommodationService_CreateDiscount_Handler,
+		},
+		{
+			MethodName: "GetAutomaticReservationValue",
+			Handler:    _AccommodationService_GetAutomaticReservationValue_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

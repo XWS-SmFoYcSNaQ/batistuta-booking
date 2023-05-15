@@ -65,6 +65,12 @@ service AccommodationService {
       body: "*"
     };
   }
+  rpc GetAutomaticReservationValue(AM_GetAutomaticReservation_Request) returns (AM_GetAutomaticReservation_Response) {
+    option (google.api.http) = {
+      post: "/accommodation/automatic-reservation",
+      body: "*"
+    };
+  }
 }
 
 //Accommodations
@@ -81,7 +87,8 @@ message AM_CreateAccommodation_Request {
   string location = 3;
   int32 minGuests = 4;
   int32 maxGuests = 5;
-  double basePrice = 6;
+  int32 automaticReservation = 6;
+  double basePrice = 7;
 }
 
 message AM_CreateAccommodation_Response {
@@ -114,6 +121,14 @@ message AM_GetAccommodationWithDiscounts_Response {
   int32 maxGuests = 5;
   double basePrice = 6;
   repeated DiscountDTO discounts = 7;
+}
+
+message AM_GetAutomaticReservation_Request {
+  string id = 1;
+}
+
+message AM_GetAutomaticReservation_Response {
+  int32 automaticReservation = 1;
 }
 
 //Periods

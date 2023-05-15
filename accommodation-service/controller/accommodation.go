@@ -66,13 +66,14 @@ func (c AccommodationController) Create(ctx context.Context, request *accommodat
 	}
 
 	id, err := c.AccommodationService.Create(&model.Accommodation{
-		Name:      request.Name,
-		HostId:    hostId,
-		Benefits:  request.Benefits,
-		MinGuests: int(request.MinGuests),
-		MaxGuests: int(request.MaxGuests),
-		BasePrice: request.BasePrice,
-		Location:  request.Location,
+		Name:                 request.Name,
+		HostId:               hostId,
+		Benefits:             request.Benefits,
+		MinGuests:            int(request.MinGuests),
+		MaxGuests:            int(request.MaxGuests),
+		BasePrice:            request.BasePrice,
+		Location:             request.Location,
+		AutomaticReservation: int(request.AutomaticReservation),
 	})
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
@@ -166,4 +167,12 @@ func (c AccommodationController) SearchAccommodations(ctx context.Context, reque
 	}
 
 	return &accommodation.AM_SearchAccommodations_Response{Data: res}, nil
+}
+
+func (c AccommodationController) GetAutomaticReservationValue(ctx context.Context, request *accommodation.AM_GetAutomaticReservation_Request) (*accommodation.AM_GetAutomaticReservation_Response, error) {
+	resp, err := c.AccommodationService.GetAutomaticReservationValue(request.Id)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return &accommodation.AM_GetAutomaticReservation_Response{AutomaticReservation: int32(resp)}, nil
 }

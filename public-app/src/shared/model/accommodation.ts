@@ -10,4 +10,5 @@ export interface Accommodation {
   location?: string;
   periods?: Period[];
   discounts?: Discount[];
+  automaticReservation?: number;
 }

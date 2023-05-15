@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Accommodation } from "../../../shared/model";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField, Checkbox, FormControlLabel } from "@mui/material";
 import { AppState, appStore } from "../../../core/store";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
@@ -13,13 +13,15 @@ const getInitialData = (): Accommodation => {
     minGuests: 0,
     maxGuests: 0,
     basePrice: 0,
-    location: ""
+    location: "",
+    automaticReservation: 1
   };
 };
 
 export const Create = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<Accommodation>(getInitialData());
+  const [checked, setChecked] = useState<boolean>(true)
   const createAccommodation = appStore(
     (state: AppState) => state.accommodation.createAccommodation
   );
@@ -30,6 +32,10 @@ export const Create = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
+      if(checked)
+        data.automaticReservation = 1;
+      else
+        data.automaticReservation = 0;
       await createAccommodation(data);
       navigate("/accommodation");
       toast.success("Accommodation created successfully")
@@ -103,6 +109,7 @@ export const Create = () => {
             value={data.location ?? ""}
             onChange={(e) => setData({ ...data, location: e.target.value })}
           />
+          <FormControlLabel control={<Checkbox checked={checked}  onChange={() => setChecked(!checked)}/>} label="Automatic reservation" />
         </div>
         <Box marginTop="20px" sx={{ display: "flex", justifyContent: "right", gap: "15px" }}>
           <Link to="/accommodation">

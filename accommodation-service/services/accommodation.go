@@ -40,7 +40,7 @@ func (s AccommodationService) GetAll(hostId uuid.UUID) ([]*model.Accommodation, 
 	var accommodations []*model.Accommodation
 	for rows.Next() {
 		var p model.Accommodation
-		err := rows.Scan(&p.ID, &p.HostId, &p.Name, &p.Benefits, &p.MinGuests, &p.MaxGuests, &p.BasePrice, &p.Location)
+		err := rows.Scan(&p.ID, &p.HostId, &p.Name, &p.Benefits, &p.MinGuests, &p.MaxGuests, &p.BasePrice, &p.Location, &p.AutomaticReservation)
 		if err != nil {
 			return nil, err
 		}
@@ -54,13 +54,13 @@ func (s AccommodationService) GetAll(hostId uuid.UUID) ([]*model.Accommodation, 
 }
 
 func (s AccommodationService) Create(a *model.Accommodation) (uuid.UUID, error) {
-	stmt, err := s.DB.Prepare("INSERT INTO Accommodation VALUES ($1, $2, $3, $4, $5, $6, $7, $8)")
+	stmt, err := s.DB.Prepare("INSERT INTO Accommodation VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)")
 	if err != nil {
 		return uuid.Nil, err
 	}
 	defer stmt.Close()
 	id := uuid.New()
-	_, err = stmt.Exec(id, a.HostId, a.Name, a.Benefits, a.MinGuests, a.MaxGuests, a.BasePrice, a.Location)
+	_, err = stmt.Exec(id, a.HostId, a.Name, a.Benefits, a.MinGuests, a.MaxGuests, a.BasePrice, a.Location, a.AutomaticReservation)
 	if err != nil {
 		return uuid.Nil, err
 	}
@@ -107,4 +107,20 @@ func (s AccommodationService) GetById(id uuid.UUID) (*model.Accommodation, error
 		return nil, errors.New("error while fetching accommodation")
 	}
 	return &a, nil
+}
+
+func (s AccommodationService) GetAutomaticReservationValue(id string) (int, error) {
+	var automaticReservation int
+	stmt, err := s.DB.Prepare("SELECT automatic_reservation FROM Accommodation WHERE id = $1")
+	if err != nil {
+		return -1, err
+	}
+	defer stmt.Close()
+
+	err = stmt.QueryRow(id).Scan(&automaticReservation)
+	if err != nil {
+		return -1, err
+	}
+
+	return automaticReservation, nil
 }
