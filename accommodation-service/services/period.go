@@ -42,6 +42,7 @@ func (s PeriodService) Create(p *model.Period) (uuid.UUID, error) {
 
 	free, err := s.IsAvailableForGivenInterval(p.AccommodationId, p.Start, p.End)
 	if err != nil {
+		log.Println(err)
 		return uuid.Nil, errors.New("please choose valid start and end dates")
 	}
 	if !free {
@@ -49,6 +50,7 @@ func (s PeriodService) Create(p *model.Period) (uuid.UUID, error) {
 	}
 	hasSpace, err := s.hasEnoughSpaceForGivenInterval(p.AccommodationId, p.Start, p.End, p.Guests)
 	if err != nil {
+		log.Println(err)
 		return uuid.Nil, errors.New("please choose valid start and end dates")
 	}
 	if !hasSpace {
@@ -57,6 +59,7 @@ func (s PeriodService) Create(p *model.Period) (uuid.UUID, error) {
 
 	stmt, err := s.DB.Prepare(`INSERT INTO Period VALUES ($1, $2, $3, $4, $5, $6)`)
 	if err != nil {
+		log.Println(err)
 		return uuid.Nil, errors.New(errorMessage)
 	}
 	defer stmt.Close()
@@ -67,6 +70,7 @@ func (s PeriodService) Create(p *model.Period) (uuid.UUID, error) {
 		_, err = stmt.Exec(id, p.Start, p.End, p.AccommodationId, p.UserId, p.Guests)
 	}
 	if err != nil {
+		log.Println(err)
 		return uuid.Nil, errors.New(errorMessage)
 	}
 
@@ -100,7 +104,6 @@ func (s PeriodService) hasEnoughSpaceForGivenInterval(accommodationId uuid.UUID,
 	`)
 	defer stmt.Close()
 	if err != nil {
-		log.Println(err.Error())
 		return false, err
 	}
 	var count int
@@ -112,7 +115,6 @@ func (s PeriodService) hasEnoughSpaceForGivenInterval(accommodationId uuid.UUID,
 		if err == sql.ErrNoRows {
 			return true, nil
 		}
-		log.Println(err.Error())
 		return false, err
 	}
 	return maxGuests >= existingGuests+guests, nil

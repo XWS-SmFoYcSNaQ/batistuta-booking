@@ -33,54 +33,80 @@ namespace auth_service.Services
 
         public override async Task<Register_Response> Register(Register_Request request, ServerCallContext context)
         {
-            foreach (var header in context.RequestHeaders)
+            try
             {
-                _logger.LogInformation($"{header.Key} : {header.Value}");
-            }
-            _logger.LogInformation($"Registration for user: {request.Username} started.");
-            _logger.LogInformation(_servicesConfig.USER_SERVICE_ADDRESS);
-            using var channel = GrpcChannel.ForAddress(_servicesConfig.USER_SERVICE_ADDRESS);
-            var client = new UserService.UserServiceClient(channel);
-            var registerUserRequest = _mapper.Map<RegisterUser_Request>(request);
-            var response = await client.RegisterUserAsync(registerUserRequest);
-
-            if (response == null || !response.Success)
-            {
-                _logger.LogInformation($"Failed to register user: {request.Username}.");
-                var registerResponse = new Register_Response()
+                foreach (var header in context.RequestHeaders)
                 {
-                    Message = response?.Message
+                    _logger.LogInformation($"{header.Key} : {header.Value}");
+                }
+                _logger.LogInformation($"Registration for user: {request.Username} started.");
+                _logger.LogInformation(_servicesConfig.USER_SERVICE_ADDRESS);
+                using var channel = GrpcChannel.ForAddress(_servicesConfig.USER_SERVICE_ADDRESS);
+                var client = new UserService.UserServiceClient(channel);
+                var registerUserRequest = _mapper.Map<RegisterUser_Request>(request);
+                var response = await client.RegisterUserAsync(registerUserRequest);
+
+                if (response == null || !response.Success)
+                {
+                    _logger.LogInformation($"Failed to register user: {request.Username}.");
+                    var registerResponse = new Register_Response()
+                    {
+                        Message = response?.Message
+                    };
+
+                    registerResponse.Errors.AddRange(response?.Errors.Select(_mapper.Map<auth_service.Error>));
+                    context.Status = new Status(StatusCode.Unknown, response?.Message ?? "Unknown error occured.");
+                    return registerResponse;
+                }
+                _logger.LogInformation($"User: {request.Username} successfully registred.");
+                var authenticationResponse = GenerateAuthenticationResponseForUser(response.User);
+                return new Register_Response
+                {
+                    Success = authenticationResponse.Success,
+                    Message = "Registration successfull.",
+                    Token = authenticationResponse.Token,
+                    User = _mapper.Map<auth_service.User>(response.User)
                 };
-                registerResponse.Errors.AddRange(response?.Errors.Select(_mapper.Map<auth_service.Error>));
-                return registerResponse;
             }
-            _logger.LogInformation($"User: {request.Username} successfully registred.");
-            var authenticationResponse = GenerateAuthenticationResponseForUser(response.User);
-            return new Register_Response
+            catch (Exception ex)
             {
-                Success = authenticationResponse.Success,
-                Message = "Registration successfull.",
-                Token = authenticationResponse.Token,
-                User = _mapper.Map<auth_service.User>(response.User)
-            };
+                if (ex is RpcException rpcException)
+                {
+                    throw new RpcException(rpcException.Status, rpcException.Trailers);
+                }
+                throw new RpcException(new Status(StatusCode.Internal, ex.InnerException?.Message ?? ex.Message));
+            }
+
         }
 
         public override async Task<Authentication_Response> Login(Authentication_Request request, ServerCallContext context)
         {
-            using var channel = GrpcChannel.ForAddress(_servicesConfig.USER_SERVICE_ADDRESS);
-            var client = new UserService.UserServiceClient(channel);
-            var verifyUserResponse = await client.VerifyUserPasswordAsync(_mapper.Map<VerifyUser_Request>(request));
-
-            if (!verifyUserResponse.Verified || verifyUserResponse.User == null)
+            try
             {
-                _logger.LogError($"Failed to login, user id: {verifyUserResponse.User}");
-                return new Authentication_Response
-                {
-                    ErrorMessage = verifyUserResponse.ErrorMessage ?? "Error"
-                };
-            }
+                using var channel = GrpcChannel.ForAddress(_servicesConfig.USER_SERVICE_ADDRESS);
+                var client = new UserService.UserServiceClient(channel);
+                var verifyUserResponse = await client.VerifyUserPasswordAsync(_mapper.Map<VerifyUser_Request>(request));
 
-            return GenerateAuthenticationResponseForUser(verifyUserResponse.User);
+                if (!verifyUserResponse.Verified || verifyUserResponse.User == null)
+                {
+                    _logger.LogError($"Failed to login, user id: {verifyUserResponse.User}");
+                    context.Status = new Status(StatusCode.InvalidArgument, verifyUserResponse.ErrorMessage ?? "Error");
+                    return new Authentication_Response
+                    {
+                        ErrorMessage = verifyUserResponse.ErrorMessage ?? "Error"
+                    };
+                }
+
+                return GenerateAuthenticationResponseForUser(verifyUserResponse.User);
+            }
+            catch (Exception ex)
+            {
+                if (ex is RpcException rpcException)
+                {
+                    throw new RpcException(rpcException.Status, rpcException.Trailers);
+                }
+                throw new RpcException(new Status(StatusCode.Internal, ex.InnerException?.Message ?? ex.Message), Metadata.Empty);
+            }
         }
 
         public override Task<Verify_Response> Verify(Empty_Request request, ServerCallContext context)
@@ -90,6 +116,7 @@ namespace auth_service.Services
                 var authorizationHeader = context.RequestHeaders.Get("Authorization")?.Value;
                 if (authorizationHeader == null)
                 {
+                    context.Status = new Status(StatusCode.Unauthenticated, "Missing authorization header");
                     return Task.FromResult(new Verify_Response
                     {
                         ErrorMessage = "Missing authorization header"
@@ -101,6 +128,7 @@ namespace auth_service.Services
 
                 if (claimsPrinciple == null)
                 {
+                    context.Status = new Status(StatusCode.Unauthenticated, "Invalid token");
                     return Task.FromResult(new Verify_Response
                     {
                         ErrorMessage = "Invalid token"
@@ -115,11 +143,11 @@ namespace auth_service.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.ToString());
-                return Task.FromResult(new Verify_Response
+                if (ex is RpcException rpcException)
                 {
-                    ErrorMessage = ex.Message.ToString()
-                });
+                    throw new RpcException(rpcException.Status, rpcException.Trailers);
+                }
+                throw new RpcException(new Status(StatusCode.Internal, ex.InnerException?.Message ?? ex.Message), Metadata.Empty);
             }
         }
 

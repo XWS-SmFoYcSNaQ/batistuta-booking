@@ -1,4 +1,5 @@
 using auth_service.Extensions;
+using auth_service.Interceptors;
 using auth_service.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpc(opts =>
 {
     opts.EnableDetailedErrors = true;
+    opts.Interceptors.Add<ExceptionInterceptor>();
 });
 builder.Services.AddAutoMapper(typeof(Program));
 builder.AddServicesConfig();

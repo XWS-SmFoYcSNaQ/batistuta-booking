@@ -22,8 +22,7 @@ const (
 	AccommodationService_GetAllAccommodations_FullMethodName                      = "/AccommodationService/GetAllAccommodations"
 	AccommodationService_GetMyAccommodations_FullMethodName                       = "/AccommodationService/GetMyAccommodations"
 	AccommodationService_CreateAccommodation_FullMethodName                       = "/AccommodationService/CreateAccommodation"
-	AccommodationService_GetAccommodationWithPeriods_FullMethodName               = "/AccommodationService/GetAccommodationWithPeriods"
-	AccommodationService_GetAccommodationWithDiscounts_FullMethodName             = "/AccommodationService/GetAccommodationWithDiscounts"
+	AccommodationService_GetAccommodation_FullMethodName                          = "/AccommodationService/GetAccommodation"
 	AccommodationService_GetAllPeriodsByAccommodation_FullMethodName              = "/AccommodationService/GetAllPeriodsByAccommodation"
 	AccommodationService_CreatePeriod_FullMethodName                              = "/AccommodationService/CreatePeriod"
 	AccommodationService_SearchAccommodations_FullMethodName                      = "/AccommodationService/SearchAccommodations"
@@ -40,8 +39,7 @@ type AccommodationServiceClient interface {
 	GetAllAccommodations(ctx context.Context, in *AM_GetAllAccommodations_Request, opts ...grpc.CallOption) (*AM_GetAllAccommodations_Response, error)
 	GetMyAccommodations(ctx context.Context, in *AM_GetAllAccommodations_Request, opts ...grpc.CallOption) (*AM_GetAllAccommodations_Response, error)
 	CreateAccommodation(ctx context.Context, in *AM_CreateAccommodation_Request, opts ...grpc.CallOption) (*AM_CreateAccommodation_Response, error)
-	GetAccommodationWithPeriods(ctx context.Context, in *AM_GetAccommodationWithPeriods_Request, opts ...grpc.CallOption) (*AM_GetAccommodationWithPeriods_Response, error)
-	GetAccommodationWithDiscounts(ctx context.Context, in *AM_GetAccommodationWithDiscounts_Request, opts ...grpc.CallOption) (*AM_GetAccommodationWithDiscounts_Response, error)
+	GetAccommodation(ctx context.Context, in *AM_GetAccommodation_Request, opts ...grpc.CallOption) (*AM_GetAccommodation_Response, error)
 	GetAllPeriodsByAccommodation(ctx context.Context, in *AM_GetAllPeriodsByAccommodation_Request, opts ...grpc.CallOption) (*AM_GetAllPeriodsByAccommodation_Response, error)
 	CreatePeriod(ctx context.Context, in *AM_CreatePeriod_Request, opts ...grpc.CallOption) (*AM_CreatePeriod_Response, error)
 	SearchAccommodations(ctx context.Context, in *AM_SearchAccommodations_Request, opts ...grpc.CallOption) (*AM_SearchAccommodations_Response, error)
@@ -86,18 +84,9 @@ func (c *accommodationServiceClient) CreateAccommodation(ctx context.Context, in
 	return out, nil
 }
 
-func (c *accommodationServiceClient) GetAccommodationWithPeriods(ctx context.Context, in *AM_GetAccommodationWithPeriods_Request, opts ...grpc.CallOption) (*AM_GetAccommodationWithPeriods_Response, error) {
-	out := new(AM_GetAccommodationWithPeriods_Response)
-	err := c.cc.Invoke(ctx, AccommodationService_GetAccommodationWithPeriods_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *accommodationServiceClient) GetAccommodationWithDiscounts(ctx context.Context, in *AM_GetAccommodationWithDiscounts_Request, opts ...grpc.CallOption) (*AM_GetAccommodationWithDiscounts_Response, error) {
-	out := new(AM_GetAccommodationWithDiscounts_Response)
-	err := c.cc.Invoke(ctx, AccommodationService_GetAccommodationWithDiscounts_FullMethodName, in, out, opts...)
+func (c *accommodationServiceClient) GetAccommodation(ctx context.Context, in *AM_GetAccommodation_Request, opts ...grpc.CallOption) (*AM_GetAccommodation_Response, error) {
+	out := new(AM_GetAccommodation_Response)
+	err := c.cc.Invoke(ctx, AccommodationService_GetAccommodation_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -174,8 +163,7 @@ type AccommodationServiceServer interface {
 	GetAllAccommodations(context.Context, *AM_GetAllAccommodations_Request) (*AM_GetAllAccommodations_Response, error)
 	GetMyAccommodations(context.Context, *AM_GetAllAccommodations_Request) (*AM_GetAllAccommodations_Response, error)
 	CreateAccommodation(context.Context, *AM_CreateAccommodation_Request) (*AM_CreateAccommodation_Response, error)
-	GetAccommodationWithPeriods(context.Context, *AM_GetAccommodationWithPeriods_Request) (*AM_GetAccommodationWithPeriods_Response, error)
-	GetAccommodationWithDiscounts(context.Context, *AM_GetAccommodationWithDiscounts_Request) (*AM_GetAccommodationWithDiscounts_Response, error)
+	GetAccommodation(context.Context, *AM_GetAccommodation_Request) (*AM_GetAccommodation_Response, error)
 	GetAllPeriodsByAccommodation(context.Context, *AM_GetAllPeriodsByAccommodation_Request) (*AM_GetAllPeriodsByAccommodation_Response, error)
 	CreatePeriod(context.Context, *AM_CreatePeriod_Request) (*AM_CreatePeriod_Response, error)
 	SearchAccommodations(context.Context, *AM_SearchAccommodations_Request) (*AM_SearchAccommodations_Response, error)
@@ -199,11 +187,8 @@ func (UnimplementedAccommodationServiceServer) GetMyAccommodations(context.Conte
 func (UnimplementedAccommodationServiceServer) CreateAccommodation(context.Context, *AM_CreateAccommodation_Request) (*AM_CreateAccommodation_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAccommodation not implemented")
 }
-func (UnimplementedAccommodationServiceServer) GetAccommodationWithPeriods(context.Context, *AM_GetAccommodationWithPeriods_Request) (*AM_GetAccommodationWithPeriods_Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAccommodationWithPeriods not implemented")
-}
-func (UnimplementedAccommodationServiceServer) GetAccommodationWithDiscounts(context.Context, *AM_GetAccommodationWithDiscounts_Request) (*AM_GetAccommodationWithDiscounts_Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAccommodationWithDiscounts not implemented")
+func (UnimplementedAccommodationServiceServer) GetAccommodation(context.Context, *AM_GetAccommodation_Request) (*AM_GetAccommodation_Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAccommodation not implemented")
 }
 func (UnimplementedAccommodationServiceServer) GetAllPeriodsByAccommodation(context.Context, *AM_GetAllPeriodsByAccommodation_Request) (*AM_GetAllPeriodsByAccommodation_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllPeriodsByAccommodation not implemented")
@@ -293,38 +278,20 @@ func _AccommodationService_CreateAccommodation_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AccommodationService_GetAccommodationWithPeriods_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AM_GetAccommodationWithPeriods_Request)
+func _AccommodationService_GetAccommodation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AM_GetAccommodation_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccommodationServiceServer).GetAccommodationWithPeriods(ctx, in)
+		return srv.(AccommodationServiceServer).GetAccommodation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AccommodationService_GetAccommodationWithPeriods_FullMethodName,
+		FullMethod: AccommodationService_GetAccommodation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccommodationServiceServer).GetAccommodationWithPeriods(ctx, req.(*AM_GetAccommodationWithPeriods_Request))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AccommodationService_GetAccommodationWithDiscounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AM_GetAccommodationWithDiscounts_Request)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AccommodationServiceServer).GetAccommodationWithDiscounts(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AccommodationService_GetAccommodationWithDiscounts_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccommodationServiceServer).GetAccommodationWithDiscounts(ctx, req.(*AM_GetAccommodationWithDiscounts_Request))
+		return srv.(AccommodationServiceServer).GetAccommodation(ctx, req.(*AM_GetAccommodation_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -475,12 +442,8 @@ var AccommodationService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AccommodationService_CreateAccommodation_Handler,
 		},
 		{
-			MethodName: "GetAccommodationWithPeriods",
-			Handler:    _AccommodationService_GetAccommodationWithPeriods_Handler,
-		},
-		{
-			MethodName: "GetAccommodationWithDiscounts",
-			Handler:    _AccommodationService_GetAccommodationWithDiscounts_Handler,
+			MethodName: "GetAccommodation",
+			Handler:    _AccommodationService_GetAccommodation_Handler,
 		},
 		{
 			MethodName: "GetAllPeriodsByAccommodation",

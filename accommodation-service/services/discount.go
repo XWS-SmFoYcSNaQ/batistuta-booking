@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/google/uuid"
+	"log"
 	"time"
 )
 
@@ -19,10 +20,12 @@ func (s DiscountService) GetAllByAccommodation(id uuid.UUID) ([]*model.Discount,
 		WHERE accommodation_id = $1 AND user_id IS NULL
 	`)
 	if err != nil {
+		log.Println(err)
 		return nil, errors.New(errorMessage)
 	}
 	rows, err := stmt.Query(id)
 	if err != nil {
+		log.Println(err)
 		return nil, errors.New(errorMessage)
 	}
 	defer rows.Close()
@@ -32,6 +35,7 @@ func (s DiscountService) GetAllByAccommodation(id uuid.UUID) ([]*model.Discount,
 		var d model.Discount
 		err := rows.Scan(&d.ID, &d.Start, &d.End, &d.AccommodationId, &d.UserId, &d.Discount)
 		if err != nil {
+			log.Println(err)
 			return nil, errors.New(errorMessage)
 		}
 		data = append(data, &d)
@@ -52,10 +56,12 @@ func (s DiscountService) GetAllByAccommodationAndInterval(id uuid.UUID, start, e
 		`)
 	}
 	if err != nil {
+		log.Println(err)
 		return nil, errors.New(errorMessage)
 	}
 	rows, err := stmt.Query(id, start, end, userId)
 	if err != nil {
+		log.Println(err)
 		return nil, errors.New(errorMessage)
 	}
 	defer rows.Close()
@@ -65,6 +71,7 @@ func (s DiscountService) GetAllByAccommodationAndInterval(id uuid.UUID, start, e
 		var d model.Discount
 		err := rows.Scan(&d.ID, &d.Start, &d.End, &d.AccommodationId, &d.UserId, &d.Discount)
 		if err != nil {
+			log.Println(err)
 			return nil, errors.New(errorMessage)
 		}
 		data = append(data, &d)
@@ -74,11 +81,12 @@ func (s DiscountService) GetAllByAccommodationAndInterval(id uuid.UUID, start, e
 
 func (s DiscountService) Create(d *model.Discount) (uuid.UUID, error) {
 	errorMessage := "error while creating discount"
-	if d.Discount <= 0 {
-		return uuid.Nil, errors.New("discount can't be zero or negative")
+	if d.Discount <= 0 || d.Discount > 100 {
+		return uuid.Nil, errors.New("discount can't be zero, negative or higher than 100")
 	}
 	stmt, err := s.DB.Prepare(`INSERT INTO Discount VALUES ($1, $2, $3, $4, $5, $6)`)
 	if err != nil {
+		log.Println(err)
 		return uuid.Nil, errors.New(errorMessage)
 	}
 	defer stmt.Close()
@@ -89,6 +97,7 @@ func (s DiscountService) Create(d *model.Discount) (uuid.UUID, error) {
 		_, err = stmt.Exec(id, d.Start, d.End, d.AccommodationId, d.UserId, d.Discount)
 	}
 	if err != nil {
+		log.Println(err)
 		return uuid.Nil, errors.New(errorMessage)
 	}
 

@@ -39,11 +39,11 @@ export const Create = () => {
       await createAccommodation(data);
       navigate("/accommodation");
       toast.success("Accommodation created successfully")
+      setData(getInitialData());
       fetchMyAccommodations()
     } catch (e: any) {
-      toast.error(e.error)
+      toast.error(e.message)
     }
-    setData(getInitialData());
   };
 
   return (

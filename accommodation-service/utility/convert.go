@@ -7,6 +7,9 @@ import (
 )
 
 func AccommodationToDTO(d *model.Accommodation) (*accommodation.AccommodationDTO, error) {
+	if d == nil {
+		return nil, nil
+	}
 	return &accommodation.AccommodationDTO{
 		Id:        d.ID.String(),
 		Name:      d.Name,
@@ -19,6 +22,9 @@ func AccommodationToDTO(d *model.Accommodation) (*accommodation.AccommodationDTO
 }
 
 func AccommodationSliceToDTOSlice(data []*model.Accommodation) ([]*accommodation.AccommodationDTO, error) {
+	if data == nil {
+		return nil, nil
+	}
 	var res []*accommodation.AccommodationDTO
 	for _, d := range data {
 		a, err := AccommodationToDTO(d)
@@ -31,6 +37,9 @@ func AccommodationSliceToDTOSlice(data []*model.Accommodation) ([]*accommodation
 }
 
 func PeriodToDTO(d *model.Period) (*accommodation.PeriodDTO, error) {
+	if d == nil {
+		return nil, nil
+	}
 	userId := ""
 	if d.UserId != uuid.Nil {
 		userId = d.UserId.String()
@@ -45,6 +54,9 @@ func PeriodToDTO(d *model.Period) (*accommodation.PeriodDTO, error) {
 }
 
 func PeriodSliceToDTOSlice(data []*model.Period) ([]*accommodation.PeriodDTO, error) {
+	if data == nil {
+		return nil, nil
+	}
 	var res []*accommodation.PeriodDTO
 	for _, d := range data {
 		a, err := PeriodToDTO(d)
@@ -57,6 +69,9 @@ func PeriodSliceToDTOSlice(data []*model.Period) ([]*accommodation.PeriodDTO, er
 }
 
 func DiscountToDTO(d *model.Discount) (*accommodation.DiscountDTO, error) {
+	if d == nil {
+		return nil, nil
+	}
 	userId := ""
 	if d.UserId != uuid.Nil {
 		userId = d.UserId.String()
@@ -72,6 +87,9 @@ func DiscountToDTO(d *model.Discount) (*accommodation.DiscountDTO, error) {
 }
 
 func DiscountSliceToDTOSlice(data []*model.Discount) ([]*accommodation.DiscountDTO, error) {
+	if data == nil {
+		return nil, nil
+	}
 	var res []*accommodation.DiscountDTO
 	for _, d := range data {
 		a, err := DiscountToDTO(d)
@@ -83,12 +101,16 @@ func DiscountSliceToDTOSlice(data []*model.Discount) ([]*accommodation.DiscountD
 	return res, nil
 }
 
-func AccommodationWithPeriodsToDTO(a *model.Accommodation, p []*model.Period) (*accommodation.AM_GetAccommodationWithPeriods_Response, error) {
-	periods, err := PeriodSliceToDTOSlice(p)
+func AccommodationDetailsToDTO(a *model.Accommodation) (*accommodation.AM_GetAccommodation_Response, error) {
+	if a == nil {
+		return nil, nil
+	}
+	periods, err := PeriodSliceToDTOSlice(a.Periods)
+	discounts, err := DiscountSliceToDTOSlice(a.Discounts)
 	if err != nil {
 		return nil, err
 	}
-	return &accommodation.AM_GetAccommodationWithPeriods_Response{
+	return &accommodation.AM_GetAccommodation_Response{
 		Id:        a.ID.String(),
 		Name:      a.Name,
 		Benefits:  a.Benefits,
@@ -96,21 +118,6 @@ func AccommodationWithPeriodsToDTO(a *model.Accommodation, p []*model.Period) (*
 		MaxGuests: int32(a.MaxGuests),
 		BasePrice: a.BasePrice,
 		Periods:   periods,
-	}, nil
-}
-
-func AccommodationWithDiscountsToDTO(a *model.Accommodation, d []*model.Discount) (*accommodation.AM_GetAccommodationWithDiscounts_Response, error) {
-	discounts, err := DiscountSliceToDTOSlice(d)
-	if err != nil {
-		return nil, err
-	}
-	return &accommodation.AM_GetAccommodationWithDiscounts_Response{
-		Id:        a.ID.String(),
-		Name:      a.Name,
-		Benefits:  a.Benefits,
-		MinGuests: int32(a.MinGuests),
-		MaxGuests: int32(a.MaxGuests),
-		BasePrice: a.BasePrice,
 		Discounts: discounts,
 	}, nil
 }

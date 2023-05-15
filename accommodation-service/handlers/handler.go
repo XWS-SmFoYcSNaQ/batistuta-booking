@@ -25,12 +25,8 @@ func (h AccommodationHandler) CreateAccommodation(ctx context.Context, request *
 	return h.AccommodationController.Create(ctx, request)
 }
 
-func (h AccommodationHandler) GetAccommodationWithPeriods(ctx context.Context, request *accommodation.AM_GetAccommodationWithPeriods_Request) (*accommodation.AM_GetAccommodationWithPeriods_Response, error) {
-	return h.AccommodationController.GetByIdWithPeriods(ctx, request)
-}
-
-func (h AccommodationHandler) GetAccommodationWithDiscounts(ctx context.Context, request *accommodation.AM_GetAccommodationWithDiscounts_Request) (*accommodation.AM_GetAccommodationWithDiscounts_Response, error) {
-	return h.AccommodationController.GetByIdWithDiscounts(ctx, request)
+func (h AccommodationHandler) GetAccommodation(ctx context.Context, request *accommodation.AM_GetAccommodation_Request) (*accommodation.AM_GetAccommodation_Response, error) {
+	return h.AccommodationController.GetById(ctx, request)
 }
 
 func (h AccommodationHandler) GetAllPeriodsByAccommodation(ctx context.Context, request *accommodation.AM_GetAllPeriodsByAccommodation_Request) (*accommodation.AM_GetAllPeriodsByAccommodation_Response, error) {
