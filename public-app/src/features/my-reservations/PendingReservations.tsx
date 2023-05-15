@@ -1,0 +1,59 @@
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import { useEffect } from 'react';
+import { Box, CircularProgress } from '@mui/material';
+import { Link } from 'react-router-dom';
+
+export const PendingReservations = () => {
+    const loading = 0 // to get
+    const fetchReservations = () => { } //to fetch
+    const pendingReservations: [] = [] // to get
+
+    useEffect(() => {
+        fetchReservations();
+    }, [fetchReservations]);
+    return (
+        <>
+            {loading && (
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        padding: "100px 0px",
+                    }}
+                >
+                    <CircularProgress />
+                </Box>
+            )}
+            {!loading && pendingReservations.length > 0 && (
+                <>
+                    <h2>Pending reservations</h2>
+                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                        {pendingReservations.map((reservation: any, index: number) => (
+                            <Card sx={{ minWidth: 250, maxWidth: 350, margin: '1rem' }}>
+                                <CardMedia
+                                    sx={{ height: 140 }}
+                                    image="" />
+                                <CardContent>
+                                    {/* <Typography gutterBottom variant="h4" component="div">
+                                        {room.name}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        {room.basePrice}€ per night
+                                    </Typography> */}
+                                </CardContent>
+                                <CardActions>
+                                    <Button variant="outlined" size="small">Cancel</Button>
+                                </CardActions>
+                            </Card>
+                        ))}
+                    </div>
+                </>
+            )}
+        </>
+    );
+};

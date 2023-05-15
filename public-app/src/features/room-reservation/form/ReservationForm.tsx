@@ -49,7 +49,7 @@ const handleDateRangeChange = (value: DateRange | null) => {
 
   const isDisabled = (day : Date) : boolean  => {
     console.log(periods.length)
-      if(periods != undefined && periods.length != 0)
+      if(periods !== undefined && periods.length !== 0)
       {
         for (let i = 0; i < periods.length; i++) {
             const startDate = new Date(periods[i].start!)

@@ -7,6 +7,7 @@ import UserProfile from "./features/profile/UserProfile";
 import { ErrorPage } from "./shared/ErrorPage";
 import { createBrowserRouter } from "react-router-dom";
 import { AllAccommodations } from "./features/accommodation/AllAccommodations";
+import { MyReservations, reservationsRoutes } from "./features/my-reservations";
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +24,11 @@ export const router = createBrowserRouter([
         path: "rooms",
         element: <RoomsRoot />,
         children: roomRoutes
+      },
+      {
+        path: "reservations",
+        element: <MyReservations/>,
+        children: reservationsRoutes
       },
       {
         path: "login",
