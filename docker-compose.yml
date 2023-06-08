@@ -43,8 +43,8 @@ services:
     container_name: accommodation_database
     hostname: accommodation_database
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=${ACCOMMODATION_DATABASE_USERNAME}
+      - POSTGRES_PASSWORD=${ACCOMMODATION_DATABASE_PASSWORD}
     ports:
       - '12102:5432'
     restart: on-failure
@@ -104,6 +104,40 @@ services:
     restart: always
     depends_on:
       - user_service
+
+  rating_service:
+    image: rating_service
+    container_name: rating_service
+    hostname: rating_service
+    build:
+      context: .
+      dockerfile: ./rating-service/Dockerfile
+    restart: on-failure
+    environment:
+      RATING_SERVICE_PORT: ${RATING_SERVICE_ADDRESS}
+      RATING_DB_HOST: rating_database
+      RATING_DB_PORT: ${RATING_DB_PORT}
+      RATING_DB_USER: ${RATING_DB_USER}
+      RATING_DB_PASS: ${RATING_DB_PASS}
+      RATING_DB_NAME: ${RATING_DB_NAME}
+      NATS_HOST: ${NATS_HOST}
+      NATS_PORT: ${NATS_PORT}
+      NATS_USER: ${NATS_USER}
+      NATS_PASS: ${NATS_PASS}
+    depends_on:
+      - rating_database
+
+  rating_database:
+    image: postgres:15.0-alpine
+    container_name: rating_database
+    hostname: rating_database
+    restart: on-failure
+    environment:
+      POSTGRES_USER: ${RATING_DB_USER}
+      POSTGRES_PASSWORD: ${RATING_DB_PASS}
+      POSTGRES_DB: ${RATING_DB_NAME}
+    ports:
+      - '12107:5432'
 
   nats:
     image: nats
