@@ -6,9 +6,9 @@ services:
     container_name: api_gateway
     hostname: api_gateway
     build:
-      context: ./api-gateway/
-      dockerfile: Dockerfile
-    restart: always
+      context: .
+      dockerfile: ./api-gateway/Dockerfile
+    restart: on-failure
     environment:
       ACCOMMODATION_SERVICE_ADDRESS: accommodation_service${ACCOMMODATION_SERVICE_ADDRESS}
       BOOKING_SERVICE_ADDRESS: booking_service${BOOKING_SERVICE_ADDRESS}
@@ -26,9 +26,9 @@ services:
     container_name: accommodation_service
     hostname: accommodation_service
     build:
-      context: accommodation-service/
-      dockerfile: Dockerfile
-    restart: always
+      context: .
+      dockerfile: ./accommodation-service/Dockerfile
+    restart: on-failure
     environment:
       ACCOMMODATION_SERVICE_ADDRESS: ${ACCOMMODATION_SERVICE_ADDRESS}
       AUTH_SERVICE_ADDRESS: auth_service${AUTH_SERVICE_ADDRESS}
@@ -47,16 +47,16 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - '12102:5432'
-    restart: always
+    restart: on-failure
 
   booking_service:
     image: booking_service
     container_name: booking_service
     hostname: booking_service
     build:
-      context: booking-service/
-      dockerfile: Dockerfile
-    restart: always
+      context: .
+      dockerfile: ./booking-service/Dockerfile
+    restart: on-failure
     environment:
       BOOKING_SERVICE_ADDRESS: ${BOOKING_SERVICE_ADDRESS}
 
@@ -105,18 +105,23 @@ services:
     depends_on:
       - user_service
 
-  public_app:
-    image: public_app
-    container_name: public_app
-    hostname: public_app
-    build:
-      context: ./public-app/.
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    restart: always
-    depends_on:
-      - api_gateway
+  nats:
+    image: nats
+    container_name: nats
+    restart: on-failure
+      
+#  public_app:
+#    image: public_app
+#    container_name: public_app
+#    hostname: public_app
+#    build:
+#      context: ./public-app/.
+#      dockerfile: Dockerfile
+#    ports:
+#      - "3000:3000"
+#    restart: always
+#    depends_on:
+#      - api_gateway
 
 volumes:
   user_database-mysql-data:

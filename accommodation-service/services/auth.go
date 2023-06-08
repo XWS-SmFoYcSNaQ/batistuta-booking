@@ -1,9 +1,9 @@
 package services
 
 import (
-	"accommodation_service/proto/auth"
 	"context"
 	"errors"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/auth"
 	"google.golang.org/grpc/metadata"
 )
 

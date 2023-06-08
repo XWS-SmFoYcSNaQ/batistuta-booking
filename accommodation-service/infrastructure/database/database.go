@@ -1,9 +1,9 @@
 package database
 
 import (
-	"accommodation_service/config"
 	"database/sql"
 	"fmt"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/config"
 	_ "github.com/lib/pq"
 	"log"
 	"strings"

@@ -1,12 +1,12 @@
 package client
 
 import (
-	"api_gateway/config"
-	"api_gateway/proto/accommodation"
-	"api_gateway/proto/auth"
-	"api_gateway/proto/booking"
-	"api_gateway/proto/user"
 	"context"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/api_gateway/config"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/accommodation"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/auth"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/booking"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/user"
 	"log"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"

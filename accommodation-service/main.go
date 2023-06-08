@@ -1,13 +1,13 @@
 package main
 
 import (
-	"accommodation_service/config"
-	"accommodation_service/controller"
-	"accommodation_service/handlers"
-	"accommodation_service/infrastructure"
-	"accommodation_service/infrastructure/database"
-	"accommodation_service/proto/accommodation"
-	"accommodation_service/services"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/config"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/controller"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/handlers"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/infrastructure"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/infrastructure/database"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/services"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/accommodation"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"api_gateway/client"
-	"api_gateway/config"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/api_gateway/client"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/api_gateway/config"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/spf13/viper"
 	"log"
