@@ -34,5 +34,6 @@ var app = builder.Build();
 app.MapGrpcService<user_service.Services.UserService>();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
+app.Urls.Add($"http://localhost:{app.Configuration["USER_SERVICE_ADDRESS"]}");
 app.ApplyMigrations();
 app.Run();

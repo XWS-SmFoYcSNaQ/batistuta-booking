@@ -1,4 +1,5 @@
 ﻿using auth_service.Configuration;
+using auth_service.Helpers;
 using AutoMapper;
 using Grpc.Core;
 using Grpc.Net.Client;
@@ -17,31 +18,28 @@ namespace auth_service.Services
         private readonly ServicesConfig _servicesConfig;
         private readonly JwtSettings _jwtSettings;
         private readonly TokenValidationParameters _tokenValidationParameters;
+        private readonly GrpcChannelBuilder _grpcChannelBuilder;
 
         public AuthService(ILogger<AuthService> logger,
             IMapper mapper,
             ServicesConfig servicesConfig,
             JwtSettings jwtSettings,
-            TokenValidationParameters tokenValidationParameters)
+            TokenValidationParameters tokenValidationParameters,
+            GrpcChannelBuilder grpcChannelBuilder)
         {
             _logger = logger;
             _mapper = mapper;
             _servicesConfig = servicesConfig;
             _jwtSettings = jwtSettings;
             _tokenValidationParameters = tokenValidationParameters;
+            _grpcChannelBuilder = grpcChannelBuilder;
         }
 
         public override async Task<Register_Response> Register(Register_Request request, ServerCallContext context)
         {
             try
             {
-                foreach (var header in context.RequestHeaders)
-                {
-                    _logger.LogInformation($"{header.Key} : {header.Value}");
-                }
-                _logger.LogInformation($"Registration for user: {request.Username} started.");
-                _logger.LogInformation(_servicesConfig.USER_SERVICE_ADDRESS);
-                using var channel = GrpcChannel.ForAddress(_servicesConfig.USER_SERVICE_ADDRESS);
+                using var channel = _grpcChannelBuilder.Build(_servicesConfig.USER_SERVICE_ADDRESS);
                 var client = new UserService.UserServiceClient(channel);
                 var registerUserRequest = _mapper.Map<RegisterUser_Request>(request);
                 var response = await client.RegisterUserAsync(registerUserRequest);
