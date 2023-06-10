@@ -7,6 +7,7 @@ import (
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/utility"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/accommodation"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/auth"
+	commonServices "github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/services"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -16,7 +17,7 @@ type AccommodationController struct {
 	AccommodationService *services.AccommodationService
 	PeriodService        *services.PeriodService
 	DiscountService      *services.DiscountService
-	AuthService          *services.AuthService
+	AuthService          *commonServices.AuthService
 }
 
 func (c AccommodationController) GetAll(ctx context.Context, request *accommodation.AM_GetAllAccommodations_Request) (*accommodation.AM_GetAllAccommodations_Response, error) {

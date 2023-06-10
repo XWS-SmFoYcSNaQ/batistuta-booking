@@ -25,17 +25,17 @@ service RatingService {
 message Empty {}
 
 message CreateAccommodationRatingDTO {
-  string accommodationId = 1;
-  uint32 value = 2;
+  string AccommodationId = 1;
+  uint32 Value = 2;
 }
 
 message CreateHostRatingDTO {
-  string hostId = 1;
-  uint32 value = 2;
+  string HostId = 1;
+  uint32 Value = 2;
 }
 
 message RatingsList {
-  repeated RatingDTO data = 1;
+  repeated RatingDTO Data = 1;
 }
 
 message RatingDTO {

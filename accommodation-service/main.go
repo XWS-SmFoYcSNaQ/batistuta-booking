@@ -8,6 +8,7 @@ import (
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/infrastructure/database"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/services"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/accommodation"
+	commonServices "github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/services"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
@@ -45,7 +46,7 @@ func main() {
 			AccommodationService: &services.AccommodationService{DB: db},
 			PeriodService:        &services.PeriodService{DB: db},
 			DiscountService:      &services.DiscountService{DB: db},
-			AuthService: &services.AuthService{
+			AuthService: &commonServices.AuthService{
 				AuthClient: authClient,
 			},
 		},

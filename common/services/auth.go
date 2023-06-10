@@ -30,7 +30,6 @@ func (s AuthService) ValidateToken(ctx *context.Context) (*auth.Verify_Response,
 
 	authHeader := authHeaders[0]
 	authCtx := metadata.AppendToOutgoingContext(*ctx, "Authorization", authHeader)
-
 	res, err := (*s.AuthClient).Verify(authCtx, &auth.Empty_Request{})
 	if err != nil || !res.Verified {
 		return nil, errors.New("missing authorization header")

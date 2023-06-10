@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"log"
 )
 
 type RatingHandler struct {
@@ -47,10 +48,13 @@ func (handler *RatingHandler) CreateAccommodationRating(ctx context.Context, req
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
+	log.Println(request.AccommodationId)
+	log.Println(request.Value)
 	targetId, err := uuid.Parse(request.AccommodationId)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
+	log.Println(targetId)
 	r := domain.Rating{
 		TargetID: targetId,
 		UserID:   userId,
