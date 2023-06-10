@@ -10,9 +10,29 @@ service RatingService {
       get: "/rating"
     };
   }
+  rpc CreateAccommodationRating(CreateAccommodationRatingDTO) returns (Empty) {
+    option (google.api.http) = {
+      post: "/rating/accommodation"
+    };
+  }
+  rpc CreateHostRating (CreateHostRatingDTO) returns (Empty){
+    option (google.api.http) = {
+      post: "/rating/host"
+    };
+  }
 }
 
 message Empty {}
+
+message CreateAccommodationRatingDTO {
+  string accommodationId = 1;
+  uint32 value = 2;
+}
+
+message CreateHostRatingDTO {
+  string hostId = 1;
+  uint32 value = 2;
+}
 
 message RatingsList {
   repeated RatingDTO data = 1;

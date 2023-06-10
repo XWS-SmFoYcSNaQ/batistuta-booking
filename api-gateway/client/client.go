@@ -6,6 +6,7 @@ import (
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/accommodation"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/auth"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/booking"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/rating"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/user"
 	"log"
 
@@ -56,6 +57,17 @@ func RegisterAuthClient(Mux *runtime.ServeMux, Cfg *config.Config) {
 		client,
 	)
 	handleError(err, "Failed to register Auth Microservice")
+}
+
+func RegisterRatingClient(Mux *runtime.ServeMux, Cfg *config.Config) {
+	conn := createConnection(Cfg.RatingServiceAddress)
+	client := rating.NewRatingServiceClient(conn)
+	err := rating.RegisterRatingServiceHandlerClient(
+		context.Background(),
+		Mux,
+		client,
+	)
+	handleError(err, "Failed to register Rating Microservice")
 }
 
 // private

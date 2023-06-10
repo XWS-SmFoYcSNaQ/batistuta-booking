@@ -6,9 +6,9 @@ type Rating struct {
 	ID       uuid.UUID `gorm:"primaryKey"`
 	UserID   uuid.UUID
 	TargetID uuid.UUID
+	Value    uint32
 
-	//host:			0
-	//accommodation:1
+	//accommodation:0
+	//host:			1
 	TargetType uint32
-	Value      uint32
 }

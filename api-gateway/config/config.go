@@ -13,6 +13,7 @@ type Config struct {
 	BookingServiceAddress       string
 	UserServiceAddress          string
 	AuthServiceAddress          string
+	RatingServiceAddress        string
 }
 
 func LoadConfig() Config {
@@ -30,6 +31,7 @@ func getConfig() Config {
 		BookingServiceAddress:       os.Getenv("BOOKING_SERVICE_ADDRESS"),
 		UserServiceAddress:          os.Getenv("USER_SERVICE_ADDRESS"),
 		AuthServiceAddress:          os.Getenv("AUTH_SERVICE_ADDRESS"),
+		RatingServiceAddress:        os.Getenv("RATING_SERVICE_ADDRESS"),
 	}
 }
 
