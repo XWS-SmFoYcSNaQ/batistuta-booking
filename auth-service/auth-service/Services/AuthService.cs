@@ -81,7 +81,7 @@ namespace auth_service.Services
         {
             try
             {
-                using var channel = GrpcChannel.ForAddress(_servicesConfig.USER_SERVICE_ADDRESS);
+                using var channel = _grpcChannelBuilder.Build(_servicesConfig.USER_SERVICE_ADDRESS);
                 var client = new UserService.UserServiceClient(channel);
                 var verifyUserResponse = await client.VerifyUserPasswordAsync(_mapper.Map<VerifyUser_Request>(request));
 
