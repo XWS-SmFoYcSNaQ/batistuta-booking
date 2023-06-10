@@ -1,4 +1,7 @@
 ﻿using auth_service.Configuration;
+using auth_service.Helpers;
+using Grpc.Core;
+using Grpc.Net.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -41,6 +44,20 @@ namespace auth_service.Extensions
                 opts.SaveToken = false;
                 opts.TokenValidationParameters = tokenValidationParameters;
             });
+        }
+
+        public static void AddGrpcChannelOptions(this WebApplicationBuilder builder)
+        {
+            var grpcChannelOptions = new GrpcChannelOptions
+            {
+                Credentials = ChannelCredentials.Insecure
+            };
+            builder.Services.AddSingleton(grpcChannelOptions);
+        }
+
+        public static void AddHelpers(this WebApplicationBuilder builder)
+        {
+            builder.Services.AddSingleton<GrpcChannelBuilder>();
         }
     }
 }

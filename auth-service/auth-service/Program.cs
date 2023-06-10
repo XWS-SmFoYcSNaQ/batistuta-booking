@@ -16,6 +16,8 @@ builder.Services.AddGrpc(opts =>
 builder.Services.AddAutoMapper(typeof(Program));
 builder.AddServicesConfig();
 builder.AddJwtAuthentication();
+builder.AddGrpcChannelOptions();
+builder.AddHelpers();
 
 var app = builder.Build();
 
@@ -25,4 +27,5 @@ app.MapGet("/", () => "Communication with gRPC endpoints must be made through a 
 
 app.UseAuthentication();
 
+app.Urls.Add($"http://localhost:{builder.Configuration["AUTH_SERVICE_ADDRESS"]}");
 app.Run();

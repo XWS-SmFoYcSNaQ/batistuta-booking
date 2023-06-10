@@ -68,10 +68,8 @@ services:
       context: ./user-service
       dockerfile: user-service\Dockerfile
     restart: always
-    ports:
-      - '12001:12001'
     environment:
-      ASPNETCORE_URLS: http://localhost:${USER_SERVICE_ADDRESS}
+      USER_SERVICE_ADDRESS: ${USER_SERVICE_ADDRESS}
       MySqlConfig__Server: ${USER_DATABASE_SERVER}
       MySqlConfig__Port: ${USER_DATABASE_PORT}
       MySqlConfig__Database: ${USER_DATABASE}
@@ -91,8 +89,7 @@ services:
       - '12101:3306'
     volumes:
       - user_database-mysql-data:/var/lib/mysql
-    restart:
-      always
+    restart: always
 
   auth_service:
     image: auth_service
@@ -102,12 +99,12 @@ services:
       context: ./auth-service
       dockerfile: auth-service\Dockerfile
     environment:
-      ASPNETCORE_URLS: http://localhost:${AUTH_SERVICE_ADDRESS}
-      Services__USER_SERVICE_ADDRESS: http://host.docker.internal${USER_SERVICE_ADDRESS}
+      AUTH_SERVICE_ADDRESS: ${AUTH_SERVICE_ADDRESS}
+      Services__USER_SERVICE_ADDRESS: user_service${USER_SERVICE_ADDRESS}
     restart: always
     depends_on:
       - user_service
-      
+
   public_app:
     image: public_app
     container_name: public_app
