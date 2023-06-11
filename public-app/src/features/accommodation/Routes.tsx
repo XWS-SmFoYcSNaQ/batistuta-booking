@@ -6,7 +6,7 @@ import { Discounts } from "./discounts";
 
 export const accommodationRoutes: RouteObject[] = [
   {
-    path: "",
+    path: "my",
     element: <AccommodationList/>,
     children: [
       {
@@ -14,6 +14,10 @@ export const accommodationRoutes: RouteObject[] = [
         element: <Create />,
       }
     ]
+  },
+  {
+    path: "all",
+    element: <AccommodationList host={false}/>
   },
   {
     path: "availability/:id",

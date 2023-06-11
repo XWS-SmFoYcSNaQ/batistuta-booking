@@ -6,6 +6,8 @@ import (
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/services"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/utility"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/accommodation"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/auth"
+	commonServices "github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/services"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -13,6 +15,7 @@ import (
 
 type PeriodController struct {
 	PeriodService *services.PeriodService
+	AuthService   *commonServices.AuthService
 }
 
 func (c PeriodController) GetAllByAccommodation(ctx context.Context, request *accommodation.AM_GetAllPeriodsByAccommodation_Request) (*accommodation.AM_GetAllPeriodsByAccommodation_Response, error) {
@@ -32,6 +35,14 @@ func (c PeriodController) GetAllByAccommodation(ctx context.Context, request *ac
 }
 
 func (c PeriodController) Create(ctx context.Context, request *accommodation.AM_CreatePeriod_Request) (*accommodation.AM_CreatePeriod_Response, error) {
+	res, err := c.AuthService.ValidateToken(&ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, err.Error())
+	}
+	if res.UserRole != auth.UserRole_Host {
+		return nil, status.Error(codes.Unauthenticated, "User is not a host")
+	}
+
 	start, err := utility.ParseISOString(request.Start)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())

@@ -11,24 +11,41 @@ import {
   Stack,
   Button,
 } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, Outlet } from "react-router";
 import { Link } from "react-router-dom";
 import { appStore, AppState } from "../../../core/store";
+import { RatingDialog } from "../../../shared";
+import { Accommodation } from "../../../shared/model";
 
-export const AccommodationList = () => {
+export const AccommodationList = ({ host = true }: { host?: boolean }) => {
   const location = useLocation();
   const loading = appStore((state: AppState) => state.accommodation.loading);
   const fetchMyAccommodations = appStore(
     (state: AppState) => state.accommodation.fetchMyAccommodations
   );
+  const fetchAccommodations = appStore(
+    (state: AppState) => state.accommodation.fetchAccommodations
+  );
   const accommodations = appStore(
     (state: AppState) => state.accommodation.data
   );
+  const currentUser = appStore((state: AppState) => state.auth.user);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const rateAccommodation = appStore(
+    (state: AppState) => state.accommodation.rateAccommodation
+  );
+  const [selectedAccommodation, setSelectedAccommodation] =
+    useState<Accommodation | null>(null);
 
   useEffect(() => {
-    fetchMyAccommodations();
-  }, [fetchMyAccommodations]);
+    host ? fetchMyAccommodations() : fetchAccommodations();
+  }, [fetchAccommodations, fetchMyAccommodations, host]);
+
+  const openRatingDialog = (accommodation: Accommodation) => {
+    setSelectedAccommodation(accommodation);
+    setDialogOpen(true);
+  };
   return (
     <div>
       <h2>Accommodations</h2>
@@ -91,6 +108,15 @@ export const AccommodationList = () => {
                           Availability
                         </Button>
                       </Link>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        sx={{ whiteSpace: "nowrap" }}
+                        type="button"
+                        onClick={() => openRatingDialog(d)}
+                      >
+                        Rate
+                      </Button>
                     </Stack>
                   </TableCell>
                 </TableRow>
@@ -99,17 +125,29 @@ export const AccommodationList = () => {
           </Table>
         </TableContainer>
       )}
-      {!loading && accommodations.length === 0 && <div>No accommodations to display</div>}
+      {!loading && accommodations.length === 0 && (
+        <div>No accommodations to display</div>
+      )}
       <Box sx={{ marginTop: "30px" }}>
-        {location.pathname === "/accommodation" && (
-          <Link to="/accommodation/create">
-            <Button type="button" size="large" variant="outlined">
-              Create New Accommodation
-            </Button>
-          </Link>
-        )}
+        {location.pathname === "/accommodation/my" &&
+          currentUser?.Role === 1 && (
+            <Link to="/accommodation/my/create">
+              <Button type="button" size="large" variant="outlined">
+                Create New Accommodation
+              </Button>
+            </Link>
+          )}
         <Outlet />
       </Box>
+      <RatingDialog
+        open={isDialogOpen}
+        setOpen={setDialogOpen}
+        onClose={() => setSelectedAccommodation(null)}
+        title="Rate accommodation"
+        onRate={(value: number) =>
+          rateAccommodation({ id: selectedAccommodation?.id!, value })
+        }
+      />
     </div>
   );
 };

@@ -55,6 +55,7 @@ export const authStore = (
         set(
           produce((draft: AppState) => {
             draft.auth.user = res.data.User;
+            draft.auth.user.Role = (res.data.User.Role + "") === "Guest" ? 0 : 1 
             draft.auth.loading = false;
             return draft
           })

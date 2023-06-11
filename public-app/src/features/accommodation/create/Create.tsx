@@ -30,7 +30,7 @@ export const Create = () => {
     e.preventDefault();
     try {
       await createAccommodation(data);
-      navigate("/accommodation");
+      navigate("/accommodation/my");
       toast.success("Accommodation created successfully")
       setData(getInitialData());
       fetchMyAccommodations()
@@ -97,7 +97,7 @@ export const Create = () => {
           />
         </div>
         <Box marginTop="20px" sx={{ display: "flex", justifyContent: "right", gap: "15px" }}>
-          <Link to="/accommodation">
+          <Link to="/accommodation/my">
             <Button size="large" color="error" type="button">
               Cancel
             </Button>

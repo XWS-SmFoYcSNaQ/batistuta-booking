@@ -89,9 +89,15 @@ func main() {
 		},
 		PeriodController: &controller.PeriodController{
 			PeriodService: &services.PeriodService{DB: db},
+			AuthService: &commonServices.AuthService{
+				AuthClient: authClient,
+			},
 		},
 		DiscountController: &controller.DiscountController{
 			DiscountService: &services.DiscountService{DB: db},
+			AuthService: &commonServices.AuthService{
+				AuthClient: authClient,
+			},
 		},
 	}
 	accommodation.RegisterAccommodationServiceServer(grpcServer, accommodationHandler)
