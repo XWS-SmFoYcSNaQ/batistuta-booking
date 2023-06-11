@@ -19,13 +19,20 @@ func NewRatingService(repository *RatingRepository, orchestrator *CreateRatingOr
 func (service *RatingService) GetAll() (*[]Rating, error) {
 	return service.repository.GetAll()
 }
-func (service *RatingService) CreateAccommodationRating(rating *Rating) error {
-	(*rating).TargetType = 0
+
+func (service *RatingService) CreateRating(rating *Rating) error {
 	(*rating).ID = uuid.New()
 	err := service.repository.Insert(rating)
 	if err != nil {
 		return err
 	}
-	service.orchestrator.Start(rating)
+	err = service.orchestrator.Start(rating)
+	if err != nil {
+		return err
+	}
 	return nil
+}
+
+func (service *RatingService) Delete(rating *Rating) error {
+	return service.repository.Delete(rating)
 }

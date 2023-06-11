@@ -8,7 +8,6 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"log"
 )
 
 type RatingHandler struct {
@@ -32,8 +31,8 @@ func (handler *RatingHandler) GetAllRatings(ctx context.Context, request *rating
 	response := &rating.RatingsList{
 		Data: []*rating.RatingDTO{},
 	}
-	for _, rating := range *ratings {
-		current := mapRating(&rating)
+	for _, r := range *ratings {
+		current := mapRating(&r)
 		response.Data = append(response.Data, current)
 	}
 	return response, nil
@@ -48,19 +47,43 @@ func (handler *RatingHandler) CreateAccommodationRating(ctx context.Context, req
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	log.Println(request.AccommodationId)
-	log.Println(request.Value)
 	targetId, err := uuid.Parse(request.AccommodationId)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	log.Println(targetId)
 	r := domain.Rating{
-		TargetID: targetId,
-		UserID:   userId,
-		Value:    request.Value,
+		TargetID:   targetId,
+		UserID:     userId,
+		Value:      request.Value,
+		TargetType: 0,
 	}
-	err = handler.service.CreateAccommodationRating(&r)
+	err = handler.service.CreateRating(&r)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return &rating.Empty{}, nil
+}
+
+func (handler *RatingHandler) CreateHostRating(ctx context.Context, request *rating.CreateHostRatingDTO) (*rating.Empty, error) {
+	res, err := handler.authService.ValidateToken(&ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, err.Error())
+	}
+	userId, err := uuid.Parse((*res).UserId)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	targetId, err := uuid.Parse(request.HostId)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	r := domain.Rating{
+		TargetID:   targetId,
+		UserID:     userId,
+		Value:      request.Value,
+		TargetType: 1,
+	}
+	err = handler.service.CreateRating(&r)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}

@@ -12,12 +12,14 @@ service RatingService {
   }
   rpc CreateAccommodationRating(CreateAccommodationRatingDTO) returns (Empty) {
     option (google.api.http) = {
-      post: "/rating/accommodation"
+      post: "/rating/accommodation",
+      body: "*"
     };
   }
   rpc CreateHostRating (CreateHostRatingDTO) returns (Empty){
     option (google.api.http) = {
-      post: "/rating/host"
+      post: "/rating/host",
+      body: "*"
     };
   }
 }

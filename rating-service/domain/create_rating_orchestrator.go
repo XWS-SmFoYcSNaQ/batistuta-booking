@@ -24,7 +24,7 @@ func NewCreateRatingOrchestrator(publisher *messaging.Publisher, subscriber *mes
 
 func (o *CreateRatingOrchestrator) Start(rating *Rating) error {
 	event := &saga.CreateRatingCommand{
-		Type: saga.Authenticate,
+		Type: saga.UpdateUser,
 		Rating: saga.RatingDetails{
 			ID:         rating.ID,
 			TargetID:   rating.TargetID,
@@ -46,22 +46,20 @@ func (o *CreateRatingOrchestrator) handle(reply *saga.CreateRatingReply) {
 
 func (o *CreateRatingOrchestrator) nextCommandType(reply *saga.CreateRatingReply) saga.CreateRatingCommandType {
 	switch (*reply).Type {
-	case saga.Authenticated:
-		{
-			if (*reply).Rating.TargetType == 1 {
-				return saga.CheckIfHostEligible
-			}
-			return saga.CheckIfAccommodationEligible
+	case saga.UserUpdated:
+		if (*reply).Rating.TargetType == 1 {
+			return saga.UpdateHost
 		}
-	case saga.AuthenticationFailed:
+		return saga.UpdateAccommodation
+	case saga.UserUpdateFailed:
 		return saga.RollbackRating
-	case saga.AccommodationEligible:
+	case saga.AccommodationUpdated:
 		return saga.ConcludeRatingCreation
-	case saga.AccommodationNotEligible:
+	case saga.AccommodationUpdateFailed:
 		return saga.RollbackRating
-	case saga.HostEligible:
+	case saga.HostUpdated:
 		return saga.ConcludeRatingCreation
-	case saga.HostNotEligible:
+	case saga.HostUpdateFailed:
 		return saga.RollbackRating
 	default:
 		return saga.UnknownCommand

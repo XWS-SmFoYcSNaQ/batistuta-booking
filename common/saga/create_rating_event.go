@@ -15,9 +15,9 @@ type RatingDetails struct {
 type CreateRatingCommandType int8
 
 const (
-	Authenticate CreateRatingCommandType = iota
-	CheckIfAccommodationEligible
-	CheckIfHostEligible
+	UpdateUser CreateRatingCommandType = iota
+	UpdateAccommodation
+	UpdateHost
 	RollbackRating
 	ConcludeRatingCreation
 	UnknownCommand
@@ -33,13 +33,13 @@ type CreateRatingCommand struct {
 type CreateRatingReplyType int8
 
 const (
-	Authenticated CreateRatingReplyType = iota
-	AuthenticationFailed
+	UserUpdated CreateRatingReplyType = iota
+	UserUpdateFailed
+	AccommodationUpdated
+	AccommodationUpdateFailed
+	HostUpdated
+	HostUpdateFailed
 	RatingRolledBack
-	AccommodationEligible
-	AccommodationNotEligible
-	HostEligible
-	HostNotEligible
 	RatingCreationConcluded
 	UnknownReply
 )

@@ -40,3 +40,11 @@ func (store *RatingPostgresRepository) DeleteAll() {
 	store.db.Session(&gorm.Session{AllowGlobalUpdate: true}).
 		Delete(&domain.Rating{})
 }
+
+func (store *RatingPostgresRepository) Delete(rating *domain.Rating) error {
+	result := store.db.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(rating)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}

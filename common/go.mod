@@ -3,6 +3,7 @@ module github.com/XWS-SmFoYcSNaQ/batistuta-booking/common
 go 1.19
 
 require (
+	github.com/google/uuid v1.1.2
 	github.com/nats-io/nats.go v1.26.0
 	github.com/tamararankovic/microservices_demo/common v0.0.0-20230404125836-93fe024d2e63
 	google.golang.org/grpc v1.45.0
