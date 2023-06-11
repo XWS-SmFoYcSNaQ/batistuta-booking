@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserService_GetAllUsers_FullMethodName = "/user.UserService/GetAllUsers"
+	UserService_GetAllUsers_FullMethodName    = "/user.UserService/GetAllUsers"
+	UserService_ChangeUserInfo_FullMethodName = "/user.UserService/ChangeUserInfo"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
 	GetAllUsers(ctx context.Context, in *Empty_Request, opts ...grpc.CallOption) (*GetAllUsers_Response, error)
+	ChangeUserInfo(ctx context.Context, in *ChangeUserInfo_Request, opts ...grpc.CallOption) (*ChangeUserInfo_Response, error)
 }
 
 type userServiceClient struct {
@@ -46,11 +48,21 @@ func (c *userServiceClient) GetAllUsers(ctx context.Context, in *Empty_Request, 
 	return out, nil
 }
 
+func (c *userServiceClient) ChangeUserInfo(ctx context.Context, in *ChangeUserInfo_Request, opts ...grpc.CallOption) (*ChangeUserInfo_Response, error) {
+	out := new(ChangeUserInfo_Response)
+	err := c.cc.Invoke(ctx, UserService_ChangeUserInfo_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
 	GetAllUsers(context.Context, *Empty_Request) (*GetAllUsers_Response, error)
+	ChangeUserInfo(context.Context, *ChangeUserInfo_Request) (*ChangeUserInfo_Response, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -60,6 +72,9 @@ type UnimplementedUserServiceServer struct {
 
 func (UnimplementedUserServiceServer) GetAllUsers(context.Context, *Empty_Request) (*GetAllUsers_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllUsers not implemented")
+}
+func (UnimplementedUserServiceServer) ChangeUserInfo(context.Context, *ChangeUserInfo_Request) (*ChangeUserInfo_Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeUserInfo not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -92,6 +107,24 @@ func _UserService_GetAllUsers_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_ChangeUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeUserInfo_Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ChangeUserInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ChangeUserInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ChangeUserInfo(ctx, req.(*ChangeUserInfo_Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +135,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllUsers",
 			Handler:    _UserService_GetAllUsers_Handler,
+		},
+		{
+			MethodName: "ChangeUserInfo",
+			Handler:    _UserService_ChangeUserInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

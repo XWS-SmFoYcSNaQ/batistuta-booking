@@ -1,4 +1,5 @@
-﻿using Grpc.Core;
+﻿using auth_service.Helpers;
+using Grpc.Core;
 using Grpc.Core.Interceptors;
 
 namespace auth_service.Interceptors
@@ -6,10 +7,12 @@ namespace auth_service.Interceptors
     public class ExceptionInterceptor : Interceptor
     {
         private readonly ILogger<ExceptionInterceptor> _logger;
+        private readonly Guid _correlationId;
 
         public ExceptionInterceptor(ILogger<ExceptionInterceptor> logger)
         {
             _logger = logger;
+            _correlationId = Guid.NewGuid();
         }
 
         public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(
@@ -24,8 +27,7 @@ namespace auth_service.Interceptors
             }
             catch (RpcException ex)
             {
-                _logger.LogError(ex.ToString());
-                throw new RpcException(new Status(ex.StatusCode, ex.Message), ex.Trailers);
+                throw ex.Handle(context, _logger, _correlationId);
             }
         }
     }
