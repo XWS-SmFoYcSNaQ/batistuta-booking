@@ -15,7 +15,7 @@ service UserService {
   }
   rpc ChangeUserInfo(ChangeUserInfo_Request) returns(ChangeUserInfo_Response) {
     option (google.api.http) = {
-      put: "/api/users/{Username}",
+      patch: "/api/users/{Username}",
       body: "*"
     };
   }
