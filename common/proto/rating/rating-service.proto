@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+option go_package = "proto/rating";
+
+import "google/api/annotations.proto";
+
+service RatingService {
+  rpc GetAllRatings(Empty) returns (RatingsList) {
+    option (google.api.http) = {
+      get: "/rating"
+    };
+  }
+  rpc CreateAccommodationRating(CreateAccommodationRatingDTO) returns (Empty) {
+    option (google.api.http) = {
+      post: "/rating/accommodation",
+      body: "*"
+    };
+  }
+  rpc CreateHostRating (CreateHostRatingDTO) returns (Empty){
+    option (google.api.http) = {
+      post: "/rating/host",
+      body: "*"
+    };
+  }
+}
+
+message Empty {}
+
+message CreateAccommodationRatingDTO {
+  string AccommodationId = 1;
+  uint32 Value = 2;
+}
+
+message CreateHostRatingDTO {
+  string HostId = 1;
+  uint32 Value = 2;
+}
+
+message RatingsList {
+  repeated RatingDTO Data = 1;
+}
+
+message RatingDTO {
+  string Id = 1;
+  string UserId = 2;
+  string TargetId = 3;
+  uint32 TargetType = 4;
+  uint32 Value = 5;
+}

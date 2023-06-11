@@ -1,8 +1,8 @@
 package utility
 
 import (
-	"accommodation_service/model"
-	"accommodation_service/proto/accommodation"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/model"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/accommodation"
 	"github.com/google/uuid"
 )
 

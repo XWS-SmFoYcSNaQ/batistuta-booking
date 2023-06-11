@@ -50,4 +50,13 @@ func SetupDatabase(db *sql.DB) {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS Rating (
+    	id uuid NOT NULL PRIMARY KEY,
+    	accommodation_id uuid NOT NULL,
+    	FOREIGN KEY (accommodation_id) REFERENCES Accommodation (id)
+	)`)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

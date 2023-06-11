@@ -1,9 +1,9 @@
 package infrastructure
 
 import (
-	"accommodation_service/config"
-	"accommodation_service/proto/auth"
 	"context"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/config"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/auth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"

@@ -1,10 +1,10 @@
 package services
 
 import (
-	"accommodation_service/model"
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/model"
 	"github.com/google/uuid"
 	"log"
 )

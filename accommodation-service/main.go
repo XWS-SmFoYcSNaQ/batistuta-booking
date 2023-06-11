@@ -1,13 +1,16 @@
 package main
 
 import (
-	"accommodation_service/config"
-	"accommodation_service/controller"
-	"accommodation_service/handlers"
-	"accommodation_service/infrastructure"
-	"accommodation_service/infrastructure/database"
-	"accommodation_service/proto/accommodation"
-	"accommodation_service/services"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/config"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/controller"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/handlers"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/infrastructure"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/infrastructure/database"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/services"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/messaging"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/messaging/nats"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/accommodation"
+	commonServices "github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/services"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
@@ -16,6 +19,37 @@ import (
 	"os/signal"
 	"syscall"
 )
+
+const (
+	QueueGroup = "accommodation_service"
+)
+
+func initSubscriber(config config.Config, subject, queueGroup string) messaging.Subscriber {
+	subscriber, err := nats.NewNATSSubscriber(
+		config.NatsHost, config.NatsPort,
+		config.NatsUser, config.NatsPass, subject, queueGroup)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return subscriber
+}
+
+func initPublisher(config config.Config, subject string) messaging.Publisher {
+	publisher, err := nats.NewNATSPublisher(
+		config.NatsHost, config.NatsPort,
+		config.NatsUser, config.NatsPass, subject)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return publisher
+}
+
+func initCreateRatingHandler(service *services.RatingService, publisher *messaging.Publisher, subscriber *messaging.Subscriber) {
+	_, err := handlers.NewCreateRatingCommandHandler(service, publisher, subscriber)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
 func main() {
 	cfg := config.LoadConfig()
@@ -40,12 +74,16 @@ func main() {
 
 	authClient := infrastructure.GetAuthClient(&cfg)
 
+	commandSubscriber := initSubscriber(cfg, cfg.CreateRatingCommandSubject, QueueGroup)
+	replyPublisher := initPublisher(cfg, cfg.CreateRatingReplySubject)
+	initCreateRatingHandler(&services.RatingService{DB: db}, &replyPublisher, &commandSubscriber)
+
 	accommodationHandler := handlers.AccommodationHandler{
 		AccommodationController: &controller.AccommodationController{
 			AccommodationService: &services.AccommodationService{DB: db},
 			PeriodService:        &services.PeriodService{DB: db},
 			DiscountService:      &services.DiscountService{DB: db},
-			AuthService: &services.AuthService{
+			AuthService: &commonServices.AuthService{
 				AuthClient: authClient,
 			},
 		},
