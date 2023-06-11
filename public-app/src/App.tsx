@@ -88,7 +88,7 @@ export default function App() {
       >
         <Toolbar>
           <Typography variant="h5" noWrap component="div">
-            Welcome {currentUser && currentUser?.FirstName} {currentUser && currentUser?.LastName} to Batistuta Booking
+            Welcome {currentUser && currentUser?.FirstName} to Batistuta Booking
           </Typography>
         </Toolbar>
       </AppBar>

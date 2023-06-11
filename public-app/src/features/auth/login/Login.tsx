@@ -1,6 +1,6 @@
 import { AccountCircle } from "@mui/icons-material";
 import KeyIcon from '@mui/icons-material/Key';
-import { Button, Card, CardActions, CardContent, Container, Grid, InputAdornment, TextField } from "@mui/material";
+import { Button, Card, CardActions, CardContent, CircularProgress, Container, Grid, InputAdornment, TextField } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { AppState, appStore } from "../../../core/store";
@@ -10,6 +10,7 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const loginFunc = appStore((state: AppState) => state.auth.login);
+  const loading = appStore((state: AppState) => state.auth.loading); 
   const navigate = useNavigate();
 
   async function login() {
@@ -20,6 +21,12 @@ const Login = () => {
       navigate("/");
     }
   }
+
+  if (loading) return (
+    <Container sx={{ height: '100vh', display: 'flex'}}>
+      <CircularProgress color="primary" sx={{ mx: 'auto', mt: '50px' }}/>
+    </Container>
+  )
 
   return (
     <Container sx={{ marginTop: 8}}>
@@ -34,6 +41,7 @@ const Login = () => {
                 variant="standard"
                 value={username}
                 onChange={e => { setUsername(e.target.value); }}
+                onKeyDown={e => { if(e.key === "Enter") login(); }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -51,6 +59,7 @@ const Login = () => {
                 variant="standard" 
                 value={password}
                 onChange={e => { setPassword(e.target.value); }}
+                onKeyDown={e => { if(e.key === "Enter") login(); }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">

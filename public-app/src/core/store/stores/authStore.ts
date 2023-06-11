@@ -67,11 +67,11 @@ export const authStore = (
           return draft;
         })
       )
-      if (e.response && e.response.data && e.response.data.ErrorMessage) {
-        toast.error(e.response.data.ErrorMessage);
-        throw new Error(e.response.ErrorMessage);
+      if (e.response && e.response.data && e.response.data.message) {
+        console.log(e.response.data.Message);
+        toast.error(e.response.data.message, { position: "top-center"});
       }
-      throw new Error("Login error");
+      return false;
     }
   },
   register: async(registerRequest: RegisterRequest) => {
