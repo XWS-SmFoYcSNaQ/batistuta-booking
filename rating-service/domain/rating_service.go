@@ -1,9 +1,5 @@
 package domain
 
-import (
-	"github.com/google/uuid"
-)
-
 type RatingService struct {
 	repository   RatingRepository
 	orchestrator *CreateRatingOrchestrator
@@ -20,13 +16,22 @@ func (service *RatingService) GetAll() (*[]Rating, error) {
 	return service.repository.GetAll()
 }
 
+func (service *RatingService) Insert(rating *Rating) error {
+	return service.repository.Insert(rating)
+}
+
+func (service *RatingService) Update(rating *Rating) error {
+	return service.repository.Update(rating)
+}
+
 func (service *RatingService) CreateRating(rating *Rating) error {
-	(*rating).ID = uuid.New()
-	err := service.repository.Insert(rating)
+	var oldRating *Rating = nil
+	oldRating, err := service.repository.GetByUserAndTarget(&rating.UserID, &rating.TargetID, rating.TargetType)
 	if err != nil {
 		return err
 	}
-	err = service.orchestrator.Start(rating)
+
+	err = service.orchestrator.Start(rating, oldRating)
 	if err != nil {
 		return err
 	}

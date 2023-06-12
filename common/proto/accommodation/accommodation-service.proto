@@ -157,6 +157,13 @@ message AccommodationDTO {
   int32 minGuests = 4;
   int32 maxGuests = 5;
   double basePrice = 6;
+  repeated AccommodationRatingDTO ratings = 7;
+}
+
+message AccommodationRatingDTO {
+  string id = 1;
+  string userId = 2;
+  uint32 value = 3;
 }
 
 message PeriodDTO {

@@ -19,6 +19,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { ToastContainer } from 'react-toastify';
 import { AppState, appStore } from './core/store';
+import { useEffect, useState } from 'react';
 
 const drawerWidth = 300;
 
@@ -26,7 +27,45 @@ interface NavItem {
   route: string;
   text: string;
   icon: JSX.Element;
+  roles?: number[];
 }
+
+const upperNavItems: NavItem[] = [
+  {
+    route: '/',
+    text: 'Home',
+    icon: <HomeIcon/>
+  },
+  {
+    route: '/accommodation/my',
+    text: 'My accommodations',
+    icon: <HouseIcon/>,
+    roles: [1]
+  },
+  {
+    route: '/accommodation/all',
+    text: 'Accommodations',
+    icon: <HouseIcon/>
+  },
+  {
+    route: '/profile',
+    text: 'Profile',
+    icon: <AccountBoxIcon/>
+  }
+];
+
+const lowerNavItems: NavItem[] = [
+  {
+    route: '/login',
+    text: 'Login',
+    icon: <LoginIcon/>,      
+  },
+  {
+    route: '/register',
+    text: 'Register',
+    icon: <PersonIcon/>
+  }
+];
 
 export default function App() {
   const isAuthenticated = appStore((state: AppState) => state.auth.user != null);
@@ -39,45 +78,20 @@ export default function App() {
     logoutUser();
     navigate("/login");
   }
-
-  const upperNavItems: NavItem[] = [
-    {
-      route: '/',
-      text: 'Home',
-      icon: <HomeIcon/>
-    },
-    {
-      route: '/accommodation',
-      text: 'My accommodations',
-      icon: <HouseIcon/>
-    },
-    {
-      route: '/profile',
-      text: 'Profile',
-      icon: <AccountBoxIcon/>
-    }
-  ];
-
-  const lowerNavItems: NavItem[] = [
-    {
-      route: '/login',
-      text: 'Login',
-      icon: <LoginIcon/>,      
-    },
-    {
-      route: '/register',
-      text: 'Register',
-      icon: <PersonIcon/>
-    }
-  ];
-
+  
   const filteredLowerNavItems = isAuthenticated
     ? lowerNavItems.filter(item => item.route !== '/login' && item.route !== '/register')
     : lowerNavItems;
-  
-  const filteredUpperNavItems = !isAuthenticated
+
+  const [upperNav, setUpperNav] = useState<NavItem[]>([] as NavItem[])
+
+  useEffect(() => {
+    let filteredUpperNavItems = !isAuthenticated
     ? upperNavItems.filter(item => item.route !== '/profile')
     : upperNavItems;
+    filteredUpperNavItems = filteredUpperNavItems.filter(item => !item.roles || item.roles?.includes(currentUser?.Role ?? -1))
+    setUpperNav(filteredUpperNavItems)
+  }, [currentUser, isAuthenticated])
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -108,7 +122,7 @@ export default function App() {
         <Divider />
         {/* Upper nav items */}
         <List>
-          {filteredUpperNavItems.map((navItem, index) => (
+          {upperNav.map((navItem, index) => (
             <NavLink to={navItem.route} key={navItem.route}>
               <ListItem disablePadding>
                 <ListItemButton>

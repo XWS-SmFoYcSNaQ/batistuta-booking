@@ -11,6 +11,7 @@ export interface AccommodationStoreType {
   fetchMyAccommodations: () => Promise<void>
   fetchDetails: (id: string) => Promise<void>
   createAccommodation: (data: Accommodation) => Promise<void>
+  rateAccommodation: ({ id, value }: { id: string, value: number }) => Promise<void>
   clearData: () => void
   setLoading: (val: boolean) => void
 }
@@ -82,10 +83,28 @@ export const accommodationStore = (
         }
       })
     } catch (e: any) {
-      if(e.response && e.response.data && e.response.data.message){
+      if (e.response && e.response.data && e.response.data.message) {
         throw new Error(e.response.data.message)
       }
       throw new Error("Error while creating accommodation.")
+    }
+  },
+  rateAccommodation: async ({ id, value }: { id: string, value: number }) => {
+    const data = {
+      AccommodationId: id,
+      Value: value
+    }
+    try {
+      await axios.post(`${apiUrl}/rating/accommodation`, data, {
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("jwt")}`
+        }
+      })
+    } catch (e: any) {
+      if (e.response && e.response.data && e.response.data.message) {
+        throw new Error(e.response.data.message)
+      }
+      throw new Error("Error while rating accommodation.")
     }
   },
   clearData: () => {

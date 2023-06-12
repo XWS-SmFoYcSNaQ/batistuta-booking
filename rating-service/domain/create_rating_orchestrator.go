@@ -22,9 +22,9 @@ func NewCreateRatingOrchestrator(publisher *messaging.Publisher, subscriber *mes
 	return o, nil
 }
 
-func (o *CreateRatingOrchestrator) Start(rating *Rating) error {
+func (o *CreateRatingOrchestrator) Start(rating *Rating, oldValue *Rating) error {
 	event := &saga.CreateRatingCommand{
-		Type: saga.UpdateUser,
+		Type: saga.StartRatingCreation,
 		Rating: saga.RatingDetails{
 			ID:         rating.ID,
 			TargetID:   rating.TargetID,
@@ -32,6 +32,15 @@ func (o *CreateRatingOrchestrator) Start(rating *Rating) error {
 			UserID:     rating.UserID,
 			Value:      rating.Value,
 		},
+	}
+	if oldValue != nil {
+		event.Rating.OldValue = &saga.RatingDetails{
+			ID:         oldValue.ID,
+			TargetID:   oldValue.TargetID,
+			TargetType: oldValue.TargetType,
+			UserID:     oldValue.UserID,
+			Value:      oldValue.Value,
+		}
 	}
 	return (*o.commandPublisher).Publish(event)
 }
@@ -46,6 +55,10 @@ func (o *CreateRatingOrchestrator) handle(reply *saga.CreateRatingReply) {
 
 func (o *CreateRatingOrchestrator) nextCommandType(reply *saga.CreateRatingReply) saga.CreateRatingCommandType {
 	switch (*reply).Type {
+	case saga.CreationStarted:
+		return saga.UpdateUser
+	case saga.CreationFailed:
+		return saga.RollbackRating
 	case saga.UserUpdated:
 		if (*reply).Rating.TargetType == 1 {
 			return saga.UpdateHost

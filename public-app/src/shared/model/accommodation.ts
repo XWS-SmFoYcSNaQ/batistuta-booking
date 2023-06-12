@@ -1,4 +1,5 @@
 import { Discount, Period } from ".";
+import { AccommodationRating } from "./rating";
 
 export interface Accommodation {
   id?: string;
@@ -9,4 +10,5 @@ export interface Accommodation {
   basePrice?: number;
   periods?: Period[];
   discounts?: Discount[];
+  ratings?: AccommodationRating[];
 }

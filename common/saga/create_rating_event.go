@@ -8,6 +8,7 @@ type RatingDetails struct {
 	TargetType uint32
 	UserID     uuid.UUID
 	Value      uint32
+	OldValue   *RatingDetails
 }
 
 //command
@@ -15,7 +16,8 @@ type RatingDetails struct {
 type CreateRatingCommandType int8
 
 const (
-	UpdateUser CreateRatingCommandType = iota
+	StartRatingCreation CreateRatingCommandType = iota
+	UpdateUser
 	UpdateAccommodation
 	UpdateHost
 	RollbackRating
@@ -33,7 +35,9 @@ type CreateRatingCommand struct {
 type CreateRatingReplyType int8
 
 const (
-	UserUpdated CreateRatingReplyType = iota
+	CreationStarted CreateRatingReplyType = iota
+	CreationFailed
+	UserUpdated
 	UserUpdateFailed
 	AccommodationUpdated
 	AccommodationUpdateFailed
