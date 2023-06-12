@@ -90,7 +90,22 @@ export const accommodationStore = (
     }
   },
   rateAccommodation: async ({ id, value }: { id: string, value: number }) => {
-    console.log(id, value)
+    const data = {
+      AccommodationId: id,
+      Value: value
+    }
+    try {
+      await axios.post(`${apiUrl}/rating/accommodation`, data, {
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("jwt")}`
+        }
+      })
+    } catch (e: any) {
+      if (e.response && e.response.data && e.response.data.message) {
+        throw new Error(e.response.data.message)
+      }
+      throw new Error("Error while rating accommodation.")
+    }
   },
   clearData: () => {
     set(

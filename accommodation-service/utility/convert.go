@@ -10,6 +10,10 @@ func AccommodationToDTO(d *model.Accommodation) (*accommodation.AccommodationDTO
 	if d == nil {
 		return nil, nil
 	}
+	ratings, err := RatingSliceToDTOSlice(d.Ratings)
+	if err != nil {
+		return nil, err
+	}
 	return &accommodation.AccommodationDTO{
 		Id:        d.ID.String(),
 		Name:      d.Name,
@@ -17,6 +21,7 @@ func AccommodationToDTO(d *model.Accommodation) (*accommodation.AccommodationDTO
 		MinGuests: int32(d.MinGuests),
 		MaxGuests: int32(d.MaxGuests),
 		BasePrice: d.BasePrice,
+		Ratings:   ratings,
 	}, nil
 }
 
@@ -105,6 +110,9 @@ func AccommodationDetailsToDTO(a *model.Accommodation) (*accommodation.AM_GetAcc
 		return nil, nil
 	}
 	periods, err := PeriodSliceToDTOSlice(a.Periods)
+	if err != nil {
+		return nil, err
+	}
 	discounts, err := DiscountSliceToDTOSlice(a.Discounts)
 	if err != nil {
 		return nil, err
@@ -119,4 +127,30 @@ func AccommodationDetailsToDTO(a *model.Accommodation) (*accommodation.AM_GetAcc
 		Periods:   periods,
 		Discounts: discounts,
 	}, nil
+}
+
+func RatingToDTO(r *model.Rating) (*accommodation.AccommodationRatingDTO, error) {
+	if r == nil {
+		return nil, nil
+	}
+	return &accommodation.AccommodationRatingDTO{
+		Id:     r.ID.String(),
+		UserId: r.UserID.String(),
+		Value:  r.Value,
+	}, nil
+}
+
+func RatingSliceToDTOSlice(data []*model.Rating) ([]*accommodation.AccommodationRatingDTO, error) {
+	if data == nil {
+		return nil, nil
+	}
+	var res []*accommodation.AccommodationRatingDTO
+	for _, r := range data {
+		a, err := RatingToDTO(r)
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, a)
+	}
+	return res, nil
 }

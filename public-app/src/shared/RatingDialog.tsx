@@ -5,6 +5,11 @@ import {
   DialogContentText,
   DialogActions,
   Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
 } from "@mui/material";
 import { ReactElement, useState } from "react";
 
@@ -23,12 +28,14 @@ export const RatingDialog = ({
   description?: ReactElement;
   onClose?: () => void;
 }) => {
-  const [rating, setRating] = useState(0)  
+  const [rating, setRating] = useState(1);
+  const handleChange = (event: SelectChangeEvent) => {
+    setRating(parseInt(event.target.value));
+  };
 
   const handleClose = () => {
     setOpen(false);
-    if(onClose)
-      onClose()
+    if (onClose) onClose();
   };
   const handleRate = async () => {
     try {
@@ -38,6 +45,7 @@ export const RatingDialog = ({
       console.log(err);
     }
   };
+  
   return (
     <Dialog
       open={open}
@@ -50,6 +58,22 @@ export const RatingDialog = ({
         <DialogContentText id="rating-dialog-description">
           {description}
         </DialogContentText>
+        <FormControl fullWidth sx={{ marginTop: "15px" }}>
+          <InputLabel id="demo-simple-select-label">Age</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={rating.toString()}
+            label="Age"
+            onChange={handleChange}
+          >
+            <MenuItem value={1}>1</MenuItem>
+            <MenuItem value={2}>2</MenuItem>
+            <MenuItem value={3}>3</MenuItem>
+            <MenuItem value={4}>4</MenuItem>
+            <MenuItem value={5}>5</MenuItem>
+          </Select>
+        </FormControl>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>

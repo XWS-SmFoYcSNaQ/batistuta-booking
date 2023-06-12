@@ -12,4 +12,5 @@ type Accommodation struct {
 	BasePrice float64     `json:"base_price"`
 	Periods   []*Period   `json:"periods"`
 	Discounts []*Discount `json:"discounts"`
+	Ratings   []*Rating   `json:"ratings"`
 }

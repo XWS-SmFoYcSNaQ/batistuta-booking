@@ -2,6 +2,7 @@ package database
 
 import (
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/rating_service/domain"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -19,8 +20,16 @@ func NewRatingPostgresRepository(db *gorm.DB) (domain.RatingRepository, error) {
 	}, nil
 }
 
-func (store *RatingPostgresRepository) Insert(product *domain.Rating) error {
-	result := store.db.Create(product)
+func (store *RatingPostgresRepository) Insert(rating *domain.Rating) error {
+	result := store.db.Create(rating)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (store *RatingPostgresRepository) Update(rating *domain.Rating) error {
+	result := store.db.Where(&domain.Rating{ID: rating.ID}).Updates(rating)
 	if result.Error != nil {
 		return result.Error
 	}
@@ -28,12 +37,12 @@ func (store *RatingPostgresRepository) Insert(product *domain.Rating) error {
 }
 
 func (store *RatingPostgresRepository) GetAll() (*[]domain.Rating, error) {
-	var products []domain.Rating
-	result := store.db.Find(&products)
+	var ratings []domain.Rating
+	result := store.db.Find(&ratings)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	return &products, nil
+	return &ratings, nil
 }
 
 func (store *RatingPostgresRepository) DeleteAll() {
@@ -47,4 +56,16 @@ func (store *RatingPostgresRepository) Delete(rating *domain.Rating) error {
 		return result.Error
 	}
 	return nil
+}
+
+func (store *RatingPostgresRepository) GetByUserAndTarget(userId *uuid.UUID, targetId *uuid.UUID, targetType uint32) (*domain.Rating, error) {
+	rating := domain.Rating{}
+	result := store.db.Where(&domain.Rating{UserID: *userId, TargetID: *targetId, TargetType: targetType}).Find(&rating)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if rating.ID == uuid.Nil {
+		return nil, nil
+	}
+	return &rating, nil
 }

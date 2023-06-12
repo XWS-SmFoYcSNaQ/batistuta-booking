@@ -32,8 +32,18 @@ func (handler *CreateRatingCommandHandler) handle(command *saga.CreateRatingComm
 	switch command.Type {
 	case saga.UpdateAccommodation:
 		//TODO: Check if user can rate the given accommodation
-		r := model.Rating{ID: command.Rating.ID, AccommodationId: command.Rating.TargetID}
-		err := handler.ratingService.Create(&r)
+		var err error
+		r := model.Rating{
+			ID:              command.Rating.ID,
+			AccommodationId: command.Rating.TargetID,
+			UserID:          command.Rating.UserID,
+			Value:           command.Rating.Value,
+		}
+		if command.Rating.OldValue == nil {
+			err = handler.ratingService.Create(&r)
+		} else {
+			err = handler.ratingService.Update(&r)
+		}
 		if err != nil {
 			log.Println(err)
 			reply.Type = saga.AccommodationUpdateFailed
@@ -41,7 +51,19 @@ func (handler *CreateRatingCommandHandler) handle(command *saga.CreateRatingComm
 			reply.Type = saga.AccommodationUpdated
 		}
 	case saga.RollbackRating:
-		err := handler.ratingService.Delete(&model.Rating{ID: command.Rating.ID})
+		oldValue := command.Rating.OldValue
+		var err error
+		if oldValue == nil {
+			err = handler.ratingService.Delete(&model.Rating{ID: command.Rating.ID})
+		} else {
+			r := model.Rating{
+				ID:              oldValue.ID,
+				AccommodationId: oldValue.TargetID,
+				UserID:          oldValue.UserID,
+				Value:           oldValue.Value,
+			}
+			err = handler.ratingService.Update(&r)
+		}
 		if err != nil {
 			log.Println(err)
 		}
