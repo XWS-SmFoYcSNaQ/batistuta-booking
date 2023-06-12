@@ -11,7 +11,7 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 
 export const RatingDialog = ({
   open,
@@ -20,6 +20,7 @@ export const RatingDialog = ({
   description,
   onClose,
   onRate,
+  initialRating,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -27,11 +28,16 @@ export const RatingDialog = ({
   onRate: (value: number) => Promise<void>;
   description?: ReactElement;
   onClose?: () => void;
+  initialRating?: number;
 }) => {
-  const [rating, setRating] = useState(1);
+  const [rating, setRating] = useState(initialRating ?? 1);
+
   const handleChange = (event: SelectChangeEvent) => {
     setRating(parseInt(event.target.value));
   };
+  useEffect(() => {
+    setRating(initialRating ?? 1);
+  }, [initialRating]);
 
   const handleClose = () => {
     setOpen(false);
@@ -45,7 +51,7 @@ export const RatingDialog = ({
       console.log(err);
     }
   };
-  
+
   return (
     <Dialog
       open={open}

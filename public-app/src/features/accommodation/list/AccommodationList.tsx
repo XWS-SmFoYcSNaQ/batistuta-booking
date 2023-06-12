@@ -16,7 +16,7 @@ import { useLocation, Outlet } from "react-router";
 import { Link } from "react-router-dom";
 import { appStore, AppState } from "../../../core/store";
 import { RatingDialog } from "../../../shared";
-import { Accommodation } from "../../../shared/model";
+import { Accommodation, User } from "../../../shared/model";
 
 const getAverageRating = (a: Accommodation) => {
   const sum = a.ratings
@@ -25,6 +25,13 @@ const getAverageRating = (a: Accommodation) => {
   return (
     (sum ?? 0) / (a.ratings && a.ratings.length > 0 ? a.ratings.length : 1)
   );
+};
+
+const getCurrentUserAccommodationRating = (
+  a: Accommodation | null,
+  currentUser?: User
+) => {
+  return a?.ratings?.find((r) => r.userId === currentUser?.Id)?.value;
 };
 
 export const AccommodationList = ({ host = true }: { host?: boolean }) => {
@@ -55,7 +62,6 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
     setSelectedAccommodation(accommodation);
     setDialogOpen(true);
   };
-
   const handleRating = async (value: number) => {
     //fetching latest data after rating action needs to be replaced by notifications since rating is asynchronous
     try {
@@ -65,6 +71,7 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
       throw e;
     }
   };
+
   return (
     <div>
       <h2>Accommodations</h2>
@@ -90,6 +97,7 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
                 <TableCell align="right">Min Guests</TableCell>
                 <TableCell align="right">Max Guests</TableCell>
                 <TableCell align="right">Average Rating</TableCell>
+                <TableCell align="right">My Rating</TableCell>
                 <TableCell align="center">Action</TableCell>
               </TableRow>
             </TableHead>
@@ -107,6 +115,9 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
                   <TableCell align="right">{d.minGuests}</TableCell>
                   <TableCell align="right">{d.maxGuests}</TableCell>
                   <TableCell align="right">{getAverageRating(d)}</TableCell>
+                  <TableCell align="right">
+                    {getCurrentUserAccommodationRating(d, currentUser)}
+                  </TableCell>
                   <TableCell align="right">
                     <Stack direction="row" justifyContent="right" gap={1}>
                       <Link to={`/accommodation/discounts/${d.id}`}>
@@ -167,7 +178,10 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
         open={isDialogOpen}
         setOpen={setDialogOpen}
         onClose={() => setSelectedAccommodation(null)}
-        // rating={selectedAccommodation?.ratings?.find(r => r.userId === currentUser.Id)}
+        initialRating={getCurrentUserAccommodationRating(
+          selectedAccommodation,
+          currentUser
+        )}
         title="Rate accommodation"
         onRate={(value: number) => handleRating(value)}
       />
