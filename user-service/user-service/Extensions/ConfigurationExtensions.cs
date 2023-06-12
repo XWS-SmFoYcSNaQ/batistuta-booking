@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Grpc.Net.Client;
+using Microsoft.EntityFrameworkCore;
 using user_service.Configuration;
 using user_service.data.Db;
+using user_service.Helpers;
 
 namespace user_service.Extensions
 {
@@ -29,5 +31,28 @@ namespace user_service.Extensions
                 optBuilder.UseMySQL(connString);
             });
         }
+
+        public static void AddServicesConfig(this WebApplicationBuilder builder)
+        {
+            var servicesConfig = new ServicesConfig();
+            builder.Configuration.Bind("Services", servicesConfig);
+            builder.Services.AddSingleton(servicesConfig);
+        }
+
+        public static void AddGrpcChannelOptions(this WebApplicationBuilder builder)
+        {
+            var grpcChannelOptions = new GrpcChannelOptions
+            {
+                Credentials = Grpc.Core.ChannelCredentials.Insecure
+            };
+
+            builder.Services.AddSingleton(grpcChannelOptions);
+        }
+
+        public static void AddHelpers(this WebApplicationBuilder builder)
+        {
+            builder.Services.AddSingleton<GrpcChannelBuilder>();
+        }
+
     }
 }

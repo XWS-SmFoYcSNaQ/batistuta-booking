@@ -43,7 +43,7 @@ export const appStore: UseBoundStore<StoreApi<AppState>> = create(
   devtools(immer(persist(storeGenerator, {
     name: "app-store",
     merge: storeMerge,
-    partialize: (state: AppState) => ({})
+    partialize: (state: AppState) => ({auth:state.auth})
   })))
 )
 

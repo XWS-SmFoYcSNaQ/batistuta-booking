@@ -37,116 +37,82 @@ namespace auth_service.Services
 
         public override async Task<Register_Response> Register(Register_Request request, ServerCallContext context)
         {
-            try
+            using var channel = _grpcChannelBuilder.Build(_servicesConfig.USER_SERVICE_ADDRESS);
+            var client = new UserService.UserServiceClient(channel);
+            var registerUserRequest = _mapper.Map<RegisterUser_Request>(request);
+            var response = await client.RegisterUserAsync(registerUserRequest);
+
+            if (response == null || !response.Success)
             {
-                using var channel = _grpcChannelBuilder.Build(_servicesConfig.USER_SERVICE_ADDRESS);
-                var client = new UserService.UserServiceClient(channel);
-                var registerUserRequest = _mapper.Map<RegisterUser_Request>(request);
-                var response = await client.RegisterUserAsync(registerUserRequest);
-
-                if (response == null || !response.Success)
+                _logger.LogInformation($"Failed to register user: {request.Username}.");
+                var registerResponse = new Register_Response()
                 {
-                    _logger.LogInformation($"Failed to register user: {request.Username}.");
-                    var registerResponse = new Register_Response()
-                    {
-                        Message = response?.Message
-                    };
-
-                    registerResponse.Errors.AddRange(response?.Errors.Select(_mapper.Map<auth_service.Error>));
-                    context.Status = new Status(StatusCode.Unknown, response?.Message ?? "Unknown error occured.");
-                    return registerResponse;
-                }
-                _logger.LogInformation($"User: {request.Username} successfully registred.");
-                var authenticationResponse = GenerateAuthenticationResponseForUser(response.User);
-                return new Register_Response
-                {
-                    Success = authenticationResponse.Success,
-                    Message = "Registration successfull.",
-                    Token = authenticationResponse.Token,
-                    User = _mapper.Map<auth_service.User>(response.User)
+                    Message = response?.Message
                 };
-            }
-            catch (Exception ex)
-            {
-                if (ex is RpcException rpcException)
-                {
-                    throw new RpcException(rpcException.Status, rpcException.Trailers);
-                }
-                throw new RpcException(new Status(StatusCode.Internal, ex.InnerException?.Message ?? ex.Message));
-            }
 
+                registerResponse.Errors.AddRange(response?.Errors.Select(_mapper.Map<Error>));
+                context.Status = new Status(StatusCode.Unknown, response?.Message ?? "Unknown error occured.");
+                return registerResponse;
+            }
+            _logger.LogInformation($"User: {request.Username} successfully registred.");
+            var authenticationResponse = GenerateAuthenticationResponseForUser(response.User);
+            return new Register_Response
+            {
+                Success = authenticationResponse.Success,
+                Message = "Registration successfull.",
+                Token = authenticationResponse.Token,
+                User = _mapper.Map<User>(response.User)
+            };
         }
 
         public override async Task<Authentication_Response> Login(Authentication_Request request, ServerCallContext context)
         {
-            try
-            {
-                using var channel = _grpcChannelBuilder.Build(_servicesConfig.USER_SERVICE_ADDRESS);
-                var client = new UserService.UserServiceClient(channel);
-                var verifyUserResponse = await client.VerifyUserPasswordAsync(_mapper.Map<VerifyUser_Request>(request));
+            using var channel = _grpcChannelBuilder.Build(_servicesConfig.USER_SERVICE_ADDRESS);
+            var client = new UserService.UserServiceClient(channel);
+            var verifyUserResponse = await client.VerifyUserPasswordAsync(_mapper.Map<VerifyUser_Request>(request));
 
-                if (!verifyUserResponse.Verified || verifyUserResponse.User == null)
-                {
-                    _logger.LogError($"Failed to login, user id: {verifyUserResponse.User}");
-                    context.Status = new Status(StatusCode.InvalidArgument, verifyUserResponse.ErrorMessage ?? "Error");
-                    return new Authentication_Response
-                    {
-                        ErrorMessage = verifyUserResponse.ErrorMessage ?? "Error"
-                    };
-                }
-
-                return GenerateAuthenticationResponseForUser(verifyUserResponse.User);
-            }
-            catch (Exception ex)
+            if (!verifyUserResponse.Verified || verifyUserResponse.User == null)
             {
-                if (ex is RpcException rpcException)
+                _logger.LogError($"Failed to login, user id: {verifyUserResponse.User}");
+                context.Status = new Status(StatusCode.InvalidArgument, verifyUserResponse.ErrorMessage ?? "Error");
+                return new Authentication_Response
                 {
-                    throw new RpcException(rpcException.Status, rpcException.Trailers);
-                }
-                throw new RpcException(new Status(StatusCode.Internal, ex.InnerException?.Message ?? ex.Message), Metadata.Empty);
+                    ErrorMessage = verifyUserResponse.ErrorMessage ?? "Error"
+                };
             }
+
+            return GenerateAuthenticationResponseForUser(verifyUserResponse.User);
         }
 
         public override Task<Verify_Response> Verify(Empty_Request request, ServerCallContext context)
         {
-            try
+            var authorizationHeader = context.RequestHeaders.Get("Authorization")?.Value;
+            if (authorizationHeader == null)
             {
-                var authorizationHeader = context.RequestHeaders.Get("Authorization")?.Value;
-                if (authorizationHeader == null)
-                {
-                    context.Status = new Status(StatusCode.Unauthenticated, "Missing authorization header");
-                    return Task.FromResult(new Verify_Response
-                    {
-                        ErrorMessage = "Missing authorization header"
-                    });
-                }
-                var jwt = authorizationHeader.Substring(7);
-
-                var claimsPrinciple = VerifyJwt(jwt);
-
-                if (claimsPrinciple == null)
-                {
-                    context.Status = new Status(StatusCode.Unauthenticated, "Invalid token");
-                    return Task.FromResult(new Verify_Response
-                    {
-                        ErrorMessage = "Invalid token"
-                    });
-                }
+                context.Status = new Status(StatusCode.Unauthenticated, "Missing authorization header");
                 return Task.FromResult(new Verify_Response
                 {
-                    Verified = true,
-                    UserId = claimsPrinciple.Claims.Single(x => x.Type == "user_id").Value,
-                    UserRole = Enum.Parse<UserRole>(claimsPrinciple.Claims.Single(x => x.Type == "user_role").Value)
+                    ErrorMessage = "Missing authorization header"
                 });
             }
-            catch (Exception ex)
+            var jwt = authorizationHeader.Length > 7 ? authorizationHeader.Substring(7) : authorizationHeader;
+
+            var claimsPrinciple = VerifyJwt(jwt);
+
+            if (claimsPrinciple == null)
             {
-                if (ex is RpcException rpcException)
+                context.Status = new Status(StatusCode.Unauthenticated, "Invalid token");
+                return Task.FromResult(new Verify_Response
                 {
-                    throw new RpcException(rpcException.Status, rpcException.Trailers);
-                }
-                throw new RpcException(new Status(StatusCode.Internal, ex.InnerException?.Message ?? ex.Message), Metadata.Empty);
+                    ErrorMessage = "Invalid token"
+                });
             }
+            return Task.FromResult(new Verify_Response
+            {
+                Verified = true,
+                UserId = claimsPrinciple.Claims.Single(x => x.Type == "user_id").Value,
+                UserRole = Enum.Parse<UserRole>(claimsPrinciple.Claims.Single(x => x.Type == "user_role").Value)
+            });
         }
 
         private Authentication_Response GenerateAuthenticationResponseForUser(UserServiceClient.User newUser)
@@ -173,7 +139,7 @@ namespace auth_service.Services
             {
                 Success = true,
                 Token = tokenHandler.WriteToken(token),
-                User = _mapper.Map<auth_service.User>(newUser)
+                User = _mapper.Map<User>(newUser)
             };
         }
 
