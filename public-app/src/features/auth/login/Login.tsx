@@ -9,7 +9,6 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const loginFunc = appStore((state: AppState) => state.auth.login);
-  const loading = appStore((state: AppState) => state.auth.loading);
   const navigate = useNavigate();
 
   async function login() {
@@ -19,12 +18,6 @@ const Login = () => {
       navigate("/");
     }
   }
-
-  if (loading) return (
-    <Container sx={{ height: '100vh', display: 'flex'}}>
-      <CircularProgress color="primary" sx={{ mx: 'auto', mt: '50px' }}/>
-    </Container>
-  )
 
   return (
     <Container sx={{ marginTop: 8}}>
