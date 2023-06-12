@@ -5,17 +5,74 @@ option go_package = "proto/booking";
 import "google/api/annotations.proto";
 
 service BookingService {
-  rpc GetAll(BK_Request) returns (BK_Response) {
+  rpc GetAll(AM_GetAllBookingRequests_Request) returns (AM_GetAllBookingRequests_Response) {
     option (google.api.http) = {
       get: "/booking"
     };
   }
+
+  rpc MakeBookingRequest(AM_BookingRequest_Request) returns (AM_CreateBookingRequest_Response) {
+    option (google.api.http) = {
+      post: "/booking/request"
+      body: "*"
+    };
+  }
+
+  rpc DeleteBookingRequest(AM_DeleteBookingRequest_Request) returns (AM_DeleteBookingRequest_Response) {
+    option (google.api.http) = {
+      delete: "/booking/request/{id}"
+    };
+  }
+
+  rpc GetAllByUserId(AM_GetAllBookingRequestsByUserId_Request) returns (AM_GetAllBookingRequestsByUserId_Response) {
+    option (google.api.http) = {
+      get: "/booking/user/{id}"
+    };
+  }
 }
 
-message BK_Request {
-  string name = 1;
+message AM_GetAllBookingRequests_Request {}
+
+message AM_GetAllBookingRequestsByUserId_Response {
+  string id = 1;
+  string accommodationId = 2;
+  string startDate = 3;
+  string endDate = 4;
+  string userId = 5;
+  int32 numberOfGuests = 6;
 }
 
-message BK_Response {
-  string message = 2;
+message AM_GetAllBookingRequests_Response {
+  repeated BookingRequestsDTO data = 1;
 }
+
+message AM_GetAllBookingRequestsByUserId_Request {
+  string id = 1;
+}
+
+message AM_BookingRequest_Request {
+  string accommodationId = 1;
+  string startDate = 2;
+  string endDate = 3;
+  string userId = 4;
+  int32 numberOfGuests = 5;
+}
+
+message AM_CreateBookingRequest_Response {
+  string id = 1;
+}
+
+message BookingRequestsDTO {
+  string id = 1;
+  string accommodationId = 2;
+  string startDate = 3;
+  string endDate = 4;
+  string userId = 5;
+  int32 numberOfGuests = 6;
+}
+
+message AM_DeleteBookingRequest_Request {
+  string id = 1;
+}
+
+message AM_DeleteBookingRequest_Response { }

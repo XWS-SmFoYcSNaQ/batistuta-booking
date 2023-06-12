@@ -7,7 +7,11 @@ import (
 )
 
 type Config struct {
-	Address string
+	Address            string
+	AuthServiceAddress string
+	DBAddress          string
+	DBUsername         string
+	DBPassword         string
 }
 
 func LoadConfig() Config {
@@ -20,7 +24,11 @@ func LoadConfig() Config {
 
 func getConfig() Config {
 	return Config{
-		Address: os.Getenv("BOOKING_SERVICE_ADDRESS"),
+		Address:            os.Getenv("BOOKING_SERVICE_ADDRESS"),
+		AuthServiceAddress: os.Getenv("AUTH_SERVICE_ADDRESS"),
+		DBAddress:          os.Getenv("BOOKING_DATABASE_ADDRESS"),
+		DBUsername:         os.Getenv("BOOKING_DATABASE_USERNAME"),
+		DBPassword:         os.Getenv("BOOKING_DATABASE_PASSWORD"),
 	}
 }
 
