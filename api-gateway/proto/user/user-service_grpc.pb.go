@@ -21,14 +21,16 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	UserService_GetAllUsers_FullMethodName    = "/user.UserService/GetAllUsers"
 	UserService_ChangeUserInfo_FullMethodName = "/user.UserService/ChangeUserInfo"
+	UserService_ChangePassword_FullMethodName = "/user.UserService/ChangePassword"
 )
 
 // UserServiceClient is the client API for UserService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
-	GetAllUsers(ctx context.Context, in *Empty_Request, opts ...grpc.CallOption) (*GetAllUsers_Response, error)
+	GetAllUsers(ctx context.Context, in *Empty_Message, opts ...grpc.CallOption) (*GetAllUsers_Response, error)
 	ChangeUserInfo(ctx context.Context, in *ChangeUserInfo_Request, opts ...grpc.CallOption) (*ChangeUserInfo_Response, error)
+	ChangePassword(ctx context.Context, in *ChangePassword_Request, opts ...grpc.CallOption) (*Empty_Message, error)
 }
 
 type userServiceClient struct {
@@ -39,7 +41,7 @@ func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
 	return &userServiceClient{cc}
 }
 
-func (c *userServiceClient) GetAllUsers(ctx context.Context, in *Empty_Request, opts ...grpc.CallOption) (*GetAllUsers_Response, error) {
+func (c *userServiceClient) GetAllUsers(ctx context.Context, in *Empty_Message, opts ...grpc.CallOption) (*GetAllUsers_Response, error) {
 	out := new(GetAllUsers_Response)
 	err := c.cc.Invoke(ctx, UserService_GetAllUsers_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -57,12 +59,22 @@ func (c *userServiceClient) ChangeUserInfo(ctx context.Context, in *ChangeUserIn
 	return out, nil
 }
 
+func (c *userServiceClient) ChangePassword(ctx context.Context, in *ChangePassword_Request, opts ...grpc.CallOption) (*Empty_Message, error) {
+	out := new(Empty_Message)
+	err := c.cc.Invoke(ctx, UserService_ChangePassword_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
-	GetAllUsers(context.Context, *Empty_Request) (*GetAllUsers_Response, error)
+	GetAllUsers(context.Context, *Empty_Message) (*GetAllUsers_Response, error)
 	ChangeUserInfo(context.Context, *ChangeUserInfo_Request) (*ChangeUserInfo_Response, error)
+	ChangePassword(context.Context, *ChangePassword_Request) (*Empty_Message, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -70,11 +82,14 @@ type UserServiceServer interface {
 type UnimplementedUserServiceServer struct {
 }
 
-func (UnimplementedUserServiceServer) GetAllUsers(context.Context, *Empty_Request) (*GetAllUsers_Response, error) {
+func (UnimplementedUserServiceServer) GetAllUsers(context.Context, *Empty_Message) (*GetAllUsers_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllUsers not implemented")
 }
 func (UnimplementedUserServiceServer) ChangeUserInfo(context.Context, *ChangeUserInfo_Request) (*ChangeUserInfo_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeUserInfo not implemented")
+}
+func (UnimplementedUserServiceServer) ChangePassword(context.Context, *ChangePassword_Request) (*Empty_Message, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -90,7 +105,7 @@ func RegisterUserServiceServer(s grpc.ServiceRegistrar, srv UserServiceServer) {
 }
 
 func _UserService_GetAllUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty_Request)
+	in := new(Empty_Message)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -102,7 +117,7 @@ func _UserService_GetAllUsers_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: UserService_GetAllUsers_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetAllUsers(ctx, req.(*Empty_Request))
+		return srv.(UserServiceServer).GetAllUsers(ctx, req.(*Empty_Message))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -125,6 +140,24 @@ func _UserService_ChangeUserInfo_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_ChangePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangePassword_Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ChangePassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ChangePassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ChangePassword(ctx, req.(*ChangePassword_Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -139,6 +172,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChangeUserInfo",
 			Handler:    _UserService_ChangeUserInfo_Handler,
+		},
+		{
+			MethodName: "ChangePassword",
+			Handler:    _UserService_ChangePassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

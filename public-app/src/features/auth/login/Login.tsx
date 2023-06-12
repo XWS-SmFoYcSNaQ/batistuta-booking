@@ -4,20 +4,18 @@ import { Button, Card, CardActions, CardContent, CircularProgress, Container, Gr
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { AppState, appStore } from "../../../core/store";
-import { toast } from "react-toastify";
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const loginFunc = appStore((state: AppState) => state.auth.login);
-  const loading = appStore((state: AppState) => state.auth.loading); 
+  const loading = appStore((state: AppState) => state.auth.loading);
   const navigate = useNavigate();
 
   async function login() {
     if (!username || !password) return;
     const success = await loginFunc(username, password);
     if (success) {
-      toast.success(`Logged in successfully`);
       navigate("/");
     }
   }

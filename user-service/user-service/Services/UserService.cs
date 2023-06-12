@@ -16,7 +16,8 @@ namespace user_service.Services
         private readonly UserServiceDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly ILogger<UserService> _logger;
-        private readonly IValidator<RegisterUser_Request> _validator;
+        private readonly IValidator<RegisterUser_Request> _registerRequestValidator;
+        private readonly IValidator<ChangePassword_Request> _changePasswordRequestValidator;
         private readonly IPasswordHasher _passwordHasher;
         private readonly GrpcChannelBuilder _grpcChannelBuilder;
         private readonly ServicesConfig _servicesConfig;
@@ -25,7 +26,8 @@ namespace user_service.Services
         public UserService(UserServiceDbContext dbContext,
             IMapper mapper,
             ILogger<UserService> logger,
-            IValidator<RegisterUser_Request> validator,
+            IValidator<RegisterUser_Request> registerRequestValidator,
+            IValidator<ChangePassword_Request> changePasswordRequestValidator,
             IPasswordHasher passwordHasher,
             GrpcChannelBuilder grpcChannelBuilder,
             ServicesConfig servicesConfig)
@@ -33,7 +35,8 @@ namespace user_service.Services
             _dbContext = dbContext;
             _mapper = mapper;
             _logger = logger;
-            _validator = validator;
+            _registerRequestValidator = registerRequestValidator;
+            _changePasswordRequestValidator = changePasswordRequestValidator;
             _passwordHasher = passwordHasher;
             _grpcChannelBuilder = grpcChannelBuilder;
             _servicesConfig = servicesConfig;
@@ -41,7 +44,7 @@ namespace user_service.Services
 
         public override async Task<RegisterUser_Response> RegisterUser(RegisterUser_Request request, ServerCallContext context)
         {
-            var validationResult = await _validator.ValidateAsync(request);
+            var validationResult = await _registerRequestValidator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
             {
@@ -93,7 +96,7 @@ namespace user_service.Services
             }
         }
 
-        public override async Task<GetAllUsers_Response> GetAllUsers(Empty_Request request, ServerCallContext context)
+        public override async Task<GetAllUsers_Response> GetAllUsers(Empty_Message request, ServerCallContext context)
         {
             try
             {
@@ -151,20 +154,13 @@ namespace user_service.Services
         {
             using var channel = _grpcChannelBuilder.Build(_servicesConfig.AUTH_SERVICE_ADDRESS);
             var authServiceClient = new AuthService.AuthServiceClient(channel);
-            var callOptions = new CallOptions(new Metadata());
-            if (context.RequestHeaders.Get("Authorization") != null)
-                callOptions.Headers?.Add("Authorization", context.RequestHeaders.Get("Authorization")?.Value);
 
-            var verifyResponse = await authServiceClient.VerifyAsync(new AuthServiceClient.Empty_Request(), callOptions);
+            var verifyResponse = await authServiceClient.VerifyAsync(new Empty_Request(), new CallOptions().WithHeaders(context.RequestHeaders));
 
             if (!verifyResponse.Verified)
             {
                 _logger.LogError(verifyResponse.ErrorMessage);
-                var metadata = new Metadata
-                {
-                    { "UserId", verifyResponse.UserId }
-                };
-                throw new RpcException(new Status(StatusCode.Unauthenticated, "Unauthenticated"), metadata);
+                throw new RpcException(new Status(StatusCode.Unauthenticated, "Unauthenticated"));
             }
 
             var userToUpdate = await _dbContext.Users.FirstOrDefaultAsync(x => x.Username.Equals(request.Username));
@@ -195,6 +191,54 @@ namespace user_service.Services
                 Success = true,
                 User = _mapper.Map<UserLessInfo>(userToUpdate)
             };
+        }
+
+        public override async Task<Empty_Message> ChangePassword(ChangePassword_Request request, ServerCallContext context)
+        {
+            var validatonResult = await _changePasswordRequestValidator.ValidateAsync(request);
+
+            if (!validatonResult.IsValid)
+            {
+                var metadata = new Metadata();
+                validatonResult.Errors.ForEach(x =>
+                {
+                    metadata.Add(x.PropertyName, x.ErrorMessage);
+                });
+
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Error new password is invalid."), metadata);
+            }
+
+            using var channel = _grpcChannelBuilder.Build(_servicesConfig.AUTH_SERVICE_ADDRESS);
+            var authServiceClient = new AuthService.AuthServiceClient(channel);
+
+            var verifyResponse = await authServiceClient.VerifyAsync(new Empty_Request(), new CallOptions().WithHeaders(context.RequestHeaders));
+
+            if (!verifyResponse.Verified)
+            {
+                _logger.LogError(verifyResponse.ErrorMessage);
+                throw new RpcException(new Status(StatusCode.Unauthenticated, "Unauthenticated"));
+            }
+
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == Guid.Parse(verifyResponse.UserId));
+
+            if (user == null)
+            {
+                _logger.LogError($"Failed changing password, user with id: {verifyResponse.UserId} not found.");
+                throw new RpcException(new Status(StatusCode.NotFound, "User doesn't exist"));
+            }
+
+
+            var (verified, needsUpgrade) = _passwordHasher.Check(user.Password, request.CurrentPassword);
+            if (!verified)
+            {
+                _logger.LogError($"Error, wrong password.");
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Wrong password"));
+            }
+
+            user.Password = _passwordHasher.Hash(request.NewPassword);
+            await _dbContext.SaveChangesAsync();
+
+            return new Empty_Message();
         }
     }
 }

@@ -29,6 +29,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddScoped<IValidator<RegisterUser_Request>, RegisterUserRequestValidator>();
+builder.Services.AddScoped<IValidator<ChangePassword_Request>, ChangePasswordRequestValidator>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
 var app = builder.Build();

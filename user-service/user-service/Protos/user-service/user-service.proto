@@ -7,9 +7,10 @@ package user;
 // The user service definition.
 service UserService {
   rpc RegisterUser (RegisterUser_Request) returns (RegisterUser_Response);
-  rpc GetAllUsers (Empty_Request) returns (GetAllUsers_Response);
+  rpc GetAllUsers (Empty_Message) returns (GetAllUsers_Response);
   rpc VerifyUserPassword (VerifyUser_Request) returns (VerifyUser_Response);
   rpc ChangeUserInfo(ChangeUserInfo_Request) returns(ChangeUserInfo_Response);
+  rpc ChangePassword(ChangePassword_Request) returns(Empty_Message);
 }
 
 enum UserRole {
@@ -17,7 +18,7 @@ enum UserRole {
     Guest = 1;
 };
 
-message Empty_Request {
+message Empty_Message {
 
 }
 
@@ -88,4 +89,9 @@ message ChangeUserInfo_Response {
   bool Success = 1;
   string ErrorMessage = 2;
   optional UserLessInfo User = 3;
+}
+
+message ChangePassword_Request {
+  string CurrentPassword = 1;
+  string NewPassword = 2;
 }

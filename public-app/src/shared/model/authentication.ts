@@ -46,3 +46,8 @@ export interface UpdateUserInfoResponse {
   ErrorMessage?: string;
   User?: User;
 }
+
+export interface ChangePasswordRequest {
+  CurrentPassword?: string;
+  NewPassword?: string;
+}
