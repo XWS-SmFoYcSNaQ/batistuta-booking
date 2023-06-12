@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"accommodation_service/controller"
-	"accommodation_service/proto/accommodation"
 	"context"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/controller"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/accommodation"
 )
 
 type AccommodationHandler struct {
