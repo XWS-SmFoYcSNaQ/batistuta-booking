@@ -29,6 +29,24 @@ service BookingService {
       get: "/booking/user/{id}"
     };
   }
+
+  rpc ConfirmReservationRequest(ReservationConfirm_Request) returns (EmptyMessage) {
+    option (google.api.http) = {
+      get: "/booking/reservation/confirm/{id}"
+    };
+  }
+
+  rpc GetAllReservationsForGuest(AllReservationsForGuest_Request) returns (AllReservationsForGuest_Response) {
+    option (google.api.http) = {
+      get: "/booking/reservation/user/{id}"
+    };
+  }
+
+  rpc DeleteReservation(DeleteReservation_Request) returns (EmptyMessage) {
+    option (google.api.http) = {
+      delete: "/booking/reservation/{id}"
+    };
+  }
 }
 
 message AM_GetAllBookingRequests_Request {}
@@ -71,3 +89,22 @@ message AM_DeleteBookingRequest_Request {
 }
 
 message AM_DeleteBookingRequest_Response { }
+
+message ReservationConfirm_Request {
+  string id = 1;
+}
+
+message EmptyMessage {}
+
+message AllReservationsForGuest_Request {
+  string id = 1;
+}
+
+message AllReservationsForGuest_Response {
+  repeated BookingRequestsDTO data = 1;
+}
+
+message DeleteReservation_Request {
+  string id = 1;
+}
+

@@ -30,6 +30,13 @@ export interface RegisterResponse {
   User?: User;
 }
 
+export interface VerifyResponse {
+  Verified?: boolean;
+  ErrorMessage?: string;
+  UserId?: string;
+  UserRole?: string;
+}
+
 interface Error {
   PropertyName?: string;
   ErrorMessage?: string;

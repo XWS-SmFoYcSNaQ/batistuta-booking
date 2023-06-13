@@ -1,5 +1,8 @@
 import App from "./App";
 import { AccommodationRoot, accommodationRoutes } from "./features/accommodation";
+import { RoomsRoot, roomRoutes } from "./features/room-reservation";
+import { AllAccommodations } from "./features/accommodation/AllAcommodations";
+import { MyReservations, reservationsRoutes } from "./features/my-reservations"
 import Login from "./features/auth/login/Login";
 import Register from "./features/auth/register/Register";
 import UserProfile from "./features/profile/UserProfile";
@@ -28,7 +31,21 @@ export const router = createBrowserRouter([
       {
         path: "profile",
         element: <UserProfile/>
-      }
+      },
+      {
+        path: "rooms",
+        element: <RoomsRoot />,
+        children: roomRoutes
+      },
+      {
+        path: "reservations",
+        element: <MyReservations/>,
+        children: reservationsRoutes
+      },
+      {
+        path: "all-accommodations",
+        element: <AllAccommodations/>
+      },
     ]
   },
 ]);

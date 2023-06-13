@@ -7,9 +7,16 @@ service BookingService {
   rpc MakeBookingRequest(AM_BookingRequest_Request) returns (AM_CreateBookingRequest_Response) {}
   rpc DeleteBookingRequest(AM_DeleteBookingRequest_Request) returns (AM_DeleteBookingRequest_Response) {}
   rpc GetAllByUserId(AM_GetAllBookingRequestsByUserId_Request) returns (AM_GetAllBookingRequests_Response) {}
+  rpc ConfirmReservationRequest(ReservationConfirm_Request) returns (EmptyMessage) {}
+  rpc GetAllReservationsForGuest(AllReservationsForGuest_Request) returns (AllReservationsForGuest_Response) {}
+  rpc DeleteReservation(DeleteReservation_Request) returns (EmptyMessage) {}
 }
 
 message AM_GetAllBookingRequests_Request {}
+
+message AM_GetAllBookingRequestsByUserId_Response {
+  repeated BookingRequestsDTO data = 1;
+}
 
 message AM_GetAllBookingRequests_Response {
   repeated BookingRequestsDTO data = 1;
@@ -45,3 +52,21 @@ message AM_DeleteBookingRequest_Request {
 }
 
 message AM_DeleteBookingRequest_Response { }
+
+message ReservationConfirm_Request {
+  string id = 1;
+}
+
+message EmptyMessage {}
+
+message AllReservationsForGuest_Request {
+  string id = 1;
+}
+
+message AllReservationsForGuest_Response {
+  repeated BookingRequestsDTO data = 1;
+}
+
+message DeleteReservation_Request {
+  string id = 1;
+}
