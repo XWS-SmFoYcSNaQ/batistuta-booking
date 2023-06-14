@@ -10,6 +10,11 @@ service RatingService {
       get: "/rating"
     };
   }
+  rpc Delete(IdMessage) returns (Empty) {
+    option (google.api.http) = {
+      delete: "/rating/{Id}"
+    };
+  }
   rpc CreateAccommodationRating(CreateAccommodationRatingDTO) returns (Empty) {
     option (google.api.http) = {
       post: "/rating/accommodation",

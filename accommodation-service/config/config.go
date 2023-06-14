@@ -18,6 +18,8 @@ type Config struct {
 	NatsPass                   string
 	CreateRatingCommandSubject string
 	CreateRatingReplySubject   string
+	DeleteRatingCommandSubject string
+	DeleteRatingReplySubject   string
 }
 
 func LoadConfig() Config {
@@ -41,6 +43,8 @@ func getConfig() Config {
 		NatsPass:                   os.Getenv("NATS_PASS"),
 		CreateRatingCommandSubject: os.Getenv("CREATE_RATING_COMMAND_SUBJECT"),
 		CreateRatingReplySubject:   os.Getenv("CREATE_RATING_REPLY_SUBJECT"),
+		DeleteRatingCommandSubject: os.Getenv("DELETE_RATING_COMMAND_SUBJECT"),
+		DeleteRatingReplySubject:   os.Getenv("DELETE_RATING_REPLY_SUBJECT"),
 	}
 }
 

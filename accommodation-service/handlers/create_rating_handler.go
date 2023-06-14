@@ -4,7 +4,7 @@ import (
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/model"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/services"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/messaging"
-	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/saga"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/saga/create_rating"
 	"log"
 )
 
@@ -27,10 +27,10 @@ func NewCreateRatingCommandHandler(ratingService *services.RatingService, publis
 	return o, nil
 }
 
-func (handler *CreateRatingCommandHandler) handle(command *saga.CreateRatingCommand) {
-	reply := saga.CreateRatingReply{Rating: command.Rating}
+func (handler *CreateRatingCommandHandler) handle(command *create_rating.CreateRatingCommand) {
+	reply := create_rating.CreateRatingReply{Rating: command.Rating}
 	switch command.Type {
-	case saga.UpdateAccommodation:
+	case create_rating.UpdateAccommodation:
 		//TODO: Check if user can rate the given accommodation
 		var err error
 		r := model.Rating{
@@ -46,11 +46,11 @@ func (handler *CreateRatingCommandHandler) handle(command *saga.CreateRatingComm
 		}
 		if err != nil {
 			log.Println(err)
-			reply.Type = saga.AccommodationUpdateFailed
+			reply.Type = create_rating.AccommodationUpdateFailed
 		} else {
-			reply.Type = saga.AccommodationUpdated
+			reply.Type = create_rating.AccommodationUpdated
 		}
-	case saga.RollbackRating:
+	case create_rating.RollbackRating:
 		oldValue := command.Rating.OldValue
 		var err error
 		if oldValue == nil {
@@ -67,12 +67,12 @@ func (handler *CreateRatingCommandHandler) handle(command *saga.CreateRatingComm
 		if err != nil {
 			log.Println(err)
 		}
-		reply.Type = saga.UnknownReply
+		reply.Type = create_rating.UnknownReply
 	default:
-		reply.Type = saga.UnknownReply
+		reply.Type = create_rating.UnknownReply
 	}
 
-	if reply.Type != saga.UnknownReply {
+	if reply.Type != create_rating.UnknownReply {
 		(*handler.replyPublisher).Publish(reply)
 	}
 }

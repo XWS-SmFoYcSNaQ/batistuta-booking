@@ -21,7 +21,8 @@ import (
 )
 
 const (
-	QueueGroup = "accommodation_service"
+	CreateQueueGroup = "accommodation_service_create"
+	DeleteQueueGroup = "accommodation_service_delete"
 )
 
 func initSubscriber(config config.Config, subject, queueGroup string) messaging.Subscriber {
@@ -51,6 +52,13 @@ func initCreateRatingHandler(service *services.RatingService, publisher *messagi
 	}
 }
 
+func initDeleteRatingHandler(service *services.RatingService, publisher *messaging.Publisher, subscriber *messaging.Subscriber) {
+	_, err := handlers.NewDeleteRatingCommandHandler(service, publisher, subscriber)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func main() {
 	cfg := config.LoadConfig()
 
@@ -74,9 +82,12 @@ func main() {
 
 	authClient := infrastructure.GetAuthClient(&cfg)
 
-	commandSubscriber := initSubscriber(cfg, cfg.CreateRatingCommandSubject, QueueGroup)
-	replyPublisher := initPublisher(cfg, cfg.CreateRatingReplySubject)
-	initCreateRatingHandler(&services.RatingService{DB: db}, &replyPublisher, &commandSubscriber)
+	createCommandSubscriber := initSubscriber(cfg, cfg.CreateRatingCommandSubject, CreateQueueGroup)
+	createReplyPublisher := initPublisher(cfg, cfg.CreateRatingReplySubject)
+	deleteCommandSubscriber := initSubscriber(cfg, cfg.DeleteRatingCommandSubject, DeleteQueueGroup)
+	deleteReplyPublisher := initPublisher(cfg, cfg.DeleteRatingReplySubject)
+	initCreateRatingHandler(&services.RatingService{DB: db}, &createReplyPublisher, &createCommandSubscriber)
+	initDeleteRatingHandler(&services.RatingService{DB: db}, &deleteReplyPublisher, &deleteCommandSubscriber)
 
 	accommodationHandler := handlers.AccommodationHandler{
 		AccommodationController: &controller.AccommodationController{

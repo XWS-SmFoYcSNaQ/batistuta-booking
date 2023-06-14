@@ -30,7 +30,8 @@ func NewServer(config *Config) *Server {
 }
 
 const (
-	QueueGroup = "rating_service"
+	CreateQueueGroup = "rating_service_create"
+	DeleteQueueGroup = "rating_service_delete"
 )
 
 func (server *Server) Start() {
@@ -38,15 +39,23 @@ func (server *Server) Start() {
 	ratingRepo := server.initRatingRepository(postgresClient)
 	authService := services.NewAuthService(server.GetAuthClient())
 
-	commandPublisher := server.initPublisher(server.config.CreateRatingCommandSubject)
-	replySubscriber := server.initSubscriber(server.config.CreateRatingReplySubject, QueueGroup)
-	createRatingOrchestrator := server.initCreateRatingOrchestrator(&commandPublisher, &replySubscriber)
+	createCommandPublisher := server.initPublisher(server.config.CreateRatingCommandSubject)
+	createReplySubscriber := server.initSubscriber(server.config.CreateRatingReplySubject, CreateQueueGroup)
+	createRatingOrchestrator := server.initCreateRatingOrchestrator(&createCommandPublisher, &createReplySubscriber)
 
-	productService := server.initRatingService(ratingRepo, createRatingOrchestrator)
+	createCommandSubscriber := server.initSubscriber(server.config.CreateRatingCommandSubject, CreateQueueGroup)
+	createReplyPublisher := server.initPublisher(server.config.CreateRatingReplySubject)
 
-	commandSubscriber := server.initSubscriber(server.config.CreateRatingCommandSubject, QueueGroup)
-	replyPublisher := server.initPublisher(server.config.CreateRatingReplySubject)
-	server.initCreateRatingHandler(productService, &replyPublisher, &commandSubscriber)
+	deleteCommandPublisher := server.initPublisher(server.config.DeleteRatingCommandSubject)
+	deleteReplySubscriber := server.initSubscriber(server.config.DeleteRatingReplySubject, DeleteQueueGroup)
+	deleteRatingOrchestrator := server.initDeleteRatingOrchestrator(&deleteCommandPublisher, &deleteReplySubscriber)
+
+	deleteCommandSubscriber := server.initSubscriber(server.config.DeleteRatingCommandSubject, DeleteQueueGroup)
+	deleteReplyPublisher := server.initPublisher(server.config.DeleteRatingReplySubject)
+
+	productService := server.initRatingService(ratingRepo, createRatingOrchestrator, deleteRatingOrchestrator)
+	server.initCreateRatingHandler(productService, &createReplyPublisher, &createCommandSubscriber)
+	server.initDeleteRatingHandler(productService, &deleteReplyPublisher, &deleteCommandSubscriber)
 
 	productHandler := server.initRatingHandler(productService, authService)
 	server.startGrpcServer(productHandler)
@@ -78,8 +87,11 @@ func (server *Server) initRatingRepository(client *gorm.DB) *domain.RatingReposi
 	return &store
 }
 
-func (server *Server) initRatingService(repository *domain.RatingRepository, orchestrator *domain.CreateRatingOrchestrator) *domain.RatingService {
-	return domain.NewRatingService(repository, orchestrator)
+func (server *Server) initRatingService(
+	repository *domain.RatingRepository,
+	createOrchestrator *domain.CreateRatingOrchestrator,
+	deleteOrchestrator *domain.DeleteRatingOrchestrator) *domain.RatingService {
+	return domain.NewRatingService(repository, createOrchestrator, deleteOrchestrator)
 }
 
 func (server *Server) initPublisher(subject string) messaging.Publisher {
@@ -109,8 +121,23 @@ func (server *Server) initCreateRatingHandler(service *domain.RatingService, pub
 	}
 }
 
+func (server *Server) initDeleteRatingHandler(service *domain.RatingService, publisher *messaging.Publisher, subscriber *messaging.Subscriber) {
+	_, err := application.NewDeleteRatingCommandHandler(service, publisher, subscriber)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func (server *Server) initCreateRatingOrchestrator(publisher *messaging.Publisher, subscriber *messaging.Subscriber) *domain.CreateRatingOrchestrator {
 	orchestrator, err := domain.NewCreateRatingOrchestrator(publisher, subscriber)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return orchestrator
+}
+
+func (server *Server) initDeleteRatingOrchestrator(publisher *messaging.Publisher, subscriber *messaging.Subscriber) *domain.DeleteRatingOrchestrator {
+	orchestrator, err := domain.NewDeleteRatingOrchestrator(publisher, subscriber)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -1,4 +1,4 @@
-package saga
+package create_rating
 
 import "github.com/google/uuid"
 

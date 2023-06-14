@@ -16,6 +16,8 @@ type Config struct {
 	AuthServiceAddress         string
 	CreateRatingCommandSubject string
 	CreateRatingReplySubject   string
+	DeleteRatingCommandSubject string
+	DeleteRatingReplySubject   string
 }
 
 func NewConfig() *Config {
@@ -33,5 +35,7 @@ func NewConfig() *Config {
 		AuthServiceAddress:         os.Getenv("AUTH_SERVICE_ADDRESS"),
 		CreateRatingCommandSubject: os.Getenv("CREATE_RATING_COMMAND_SUBJECT"),
 		CreateRatingReplySubject:   os.Getenv("CREATE_RATING_REPLY_SUBJECT"),
+		DeleteRatingCommandSubject: os.Getenv("DELETE_RATING_COMMAND_SUBJECT"),
+		DeleteRatingReplySubject:   os.Getenv("DELETE_RATING_REPLY_SUBJECT"),
 	}
 }

@@ -2,7 +2,7 @@ package application
 
 import (
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/messaging"
-	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/saga"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/saga/create_rating"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/rating_service/domain"
 	"github.com/google/uuid"
 	"log"
@@ -27,17 +27,17 @@ func NewCreateRatingCommandHandler(ratingService *domain.RatingService, publishe
 	return o, nil
 }
 
-func (handler *CreateRatingCommandHandler) handle(command *saga.CreateRatingCommand) {
-	reply := saga.CreateRatingReply{Rating: command.Rating}
+func (handler *CreateRatingCommandHandler) handle(command *create_rating.CreateRatingCommand) {
+	reply := create_rating.CreateRatingReply{Rating: command.Rating}
 	switch command.Type {
 	//temporary begin
-	case saga.UpdateUser:
-		reply.Type = saga.UserUpdated
-	case saga.UpdateHost:
-		reply.Type = saga.HostUpdated
+	case create_rating.UpdateUser:
+		reply.Type = create_rating.UserUpdated
+	case create_rating.UpdateHost:
+		reply.Type = create_rating.HostUpdated
 	//temporary end
 
-	case saga.StartRatingCreation:
+	case create_rating.StartRatingCreation:
 		oldValue := command.Rating.OldValue
 		var err error
 		r := domain.Rating{
@@ -58,11 +58,11 @@ func (handler *CreateRatingCommandHandler) handle(command *saga.CreateRatingComm
 		}
 		if err != nil {
 			log.Println(err)
-			reply.Type = saga.CreationFailed
+			reply.Type = create_rating.CreationFailed
 		} else {
-			reply.Type = saga.CreationStarted
+			reply.Type = create_rating.CreationStarted
 		}
-	case saga.RollbackRating:
+	case create_rating.RollbackRating:
 		oldValue := command.Rating.OldValue
 		if oldValue == nil {
 			(*handler.ratingService).Delete(&domain.Rating{ID: command.Rating.ID})
@@ -76,15 +76,15 @@ func (handler *CreateRatingCommandHandler) handle(command *saga.CreateRatingComm
 			})
 		}
 		log.Println("RATING ROLLED BACK")
-		reply.Type = saga.RatingRolledBack
-	case saga.ConcludeRatingCreation:
+		reply.Type = create_rating.RatingRolledBack
+	case create_rating.ConcludeRatingCreation:
 		log.Println("RATING CREATED SUCCESSFULLY")
-		reply.Type = saga.RatingCreationConcluded
+		reply.Type = create_rating.RatingCreationConcluded
 	default:
-		reply.Type = saga.UnknownReply
+		reply.Type = create_rating.UnknownReply
 	}
 
-	if reply.Type != saga.UnknownReply {
+	if reply.Type != create_rating.UnknownReply {
 		(*handler.replyPublisher).Publish(reply)
 	}
 }

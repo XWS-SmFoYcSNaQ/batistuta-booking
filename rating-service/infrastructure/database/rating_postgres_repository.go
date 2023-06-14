@@ -28,6 +28,18 @@ func (store *RatingPostgresRepository) Insert(rating *domain.Rating) error {
 	return nil
 }
 
+func (store *RatingPostgresRepository) GetById(id *uuid.UUID) (*domain.Rating, error) {
+	rating := domain.Rating{}
+	result := store.db.Where(&domain.Rating{ID: *id}).Find(&rating)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if rating.ID == uuid.Nil {
+		return nil, nil
+	}
+	return &rating, nil
+}
+
 func (store *RatingPostgresRepository) Update(rating *domain.Rating) error {
 	result := store.db.Where(&domain.Rating{ID: rating.ID}).Updates(rating)
 	if result.Error != nil {
