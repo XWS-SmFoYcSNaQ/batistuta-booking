@@ -119,3 +119,23 @@ func (handler *RatingHandler) GetHostRatings(ctx context.Context, request *ratin
 	}
 	return response, nil
 }
+
+func (handler *RatingHandler) Delete(ctx context.Context, request *rating.IdMessage) (*rating.Empty, error) {
+	res, err := handler.authService.ValidateToken(&ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, err.Error())
+	}
+	_, err = uuid.Parse((*res).UserId)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	ratingId, err := uuid.Parse(request.Id)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	err = handler.service.DeleteRating(&ratingId)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return &rating.Empty{}, nil
+}
