@@ -69,3 +69,25 @@ func (store *RatingPostgresRepository) GetByUserAndTarget(userId *uuid.UUID, tar
 	}
 	return &rating, nil
 }
+
+func (store *RatingPostgresRepository) GetTargetAverage(targetId *uuid.UUID, targetType uint32) (float64, error) {
+	var average float64
+	result := store.db.
+		Model(&domain.Rating{}).
+		Where(&domain.Rating{TargetID: *targetId, TargetType: targetType}).
+		Select("COALESCE(AVG(value), 0) as average").
+		Scan(&average)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return average, nil
+}
+
+func (store *RatingPostgresRepository) GetByTargetType(targetType uint32) (*[]domain.Rating, error) {
+	var ratings []domain.Rating
+	result := store.db.Where(&domain.Rating{TargetType: targetType}).Find(&ratings)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &ratings, nil
+}

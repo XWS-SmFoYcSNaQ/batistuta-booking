@@ -24,6 +24,9 @@ export const HostList = () => {
     (user) => user.Role === 1 || (user.Role as any) === "Host"
   );
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const rateHost = appStore(
+    (state: AppState) => state.user.rateHost
+  );
   const [selectedHost, setSelectedHost] = useState<User | null>(null);
   const openRatingDialog = (host: User) => {
     setSelectedHost(host);
@@ -36,7 +39,12 @@ export const HostList = () => {
 
   const handleRating = async (value: number) => {
     //fetching latest data after rating action needs to be replaced by notifications since rating is asynchronous
-    console.log(value, selectedHost?.Id);
+    try {
+      await rateHost({ id: selectedHost?.Id!, value });
+      fetchUsers()
+    } catch (e) {
+      throw e;
+    }
   };
 
   return (

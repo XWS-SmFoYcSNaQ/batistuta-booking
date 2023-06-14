@@ -7,6 +7,7 @@ export interface UserStoreType {
   data: User[]
   loading: boolean
   fetchUsers: () => Promise<void>
+  rateHost: ({ id, value }: { id: string, value: number }) => Promise<void>
   clearData: () => void
   setLoading: (val: boolean) => void
 }
@@ -32,6 +33,24 @@ export const userStore = (
       console.log(e)
     }
     get().user.setLoading(false)
+  },
+  rateHost: async ({ id, value }: { id: string, value: number }) => {
+    const data = {
+      HostId: id,
+      Value: value
+    }
+    try {
+      await axios.post(`${apiUrl}/rating/host`, data, {
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("jwt")}`
+        }
+      })
+    } catch (e: any) {
+      if (e.response && e.response.data && e.response.data.message) {
+        throw new Error(e.response.data.message)
+      }
+      throw new Error("Error while rating host.")
+    }
   },
   clearData: () => {
     set(
