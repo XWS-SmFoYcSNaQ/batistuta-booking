@@ -64,7 +64,7 @@ message RegisterUser_Response {
 }
 
 message GetAllUsers_Response {
-  repeated UserLessInfo Users = 1;
+  repeated User Users = 1;
 }
 
 message VerifyUser_Request {
