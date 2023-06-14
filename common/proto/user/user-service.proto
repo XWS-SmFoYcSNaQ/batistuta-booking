@@ -45,8 +45,18 @@ message UserLessInfo {
   string LivingPlace = 6;
 }
 
+message User {
+  string Id = 1;
+  UserRole Role = 2;
+  string Username = 3;
+  string FirstName = 4;
+  string LastName = 5;
+  string Email = 6;
+  string LivingPlace = 7;
+}
+
 message GetAllUsers_Response {
-  repeated UserLessInfo Users = 1;
+  repeated User Users = 1;
 }
 
 message ChangeUserInfo_Request {

@@ -103,7 +103,7 @@ namespace user_service.Services
                 var users = await _dbContext.Users.ToListAsync();
                 var response = new GetAllUsers_Response();
 
-                response.Users.AddRange(users.Select(x => _mapper.Map<UserLessInfo>(x)));
+                response.Users.AddRange(users.Select(x => _mapper.Map<User>(x)));
 
                 return response;
             }
