@@ -2,7 +2,7 @@ import { produce } from "immer";
 import { AuthenticationRequest, AuthenticationResponse, User } from "../../../shared/model";
 import { AppState, GetAppState, SetAppState, apiUrl } from "../store";
 import axios, { AxiosRequestConfig } from "axios";
-import { RegisterRequest, RegisterResponse, VerifyResponse } from "../../../shared/model/authentication";
+import { ChangePasswordRequest, RegisterRequest, RegisterResponse, UpdateUserInfoRequest, UpdateUserInfoResponse, VerifyResponse } from "../../../shared/model/authentication";
 import { toast } from "react-toastify";
 
 export interface AuthStoreType {
@@ -14,6 +14,8 @@ export interface AuthStoreType {
   setLoading: (val: boolean) => void
   logout: () => void
   verify: () => Promise<boolean>
+  updateUserInfo: (updateUserInfoRequest: UpdateUserInfoRequest) => Promise<boolean>
+  changePassword: (changePasswordRequest: ChangePasswordRequest) => Promise<boolean>
 }
 
 const config : AxiosRequestConfig = {
@@ -29,8 +31,22 @@ export const authStore = (
   user: undefined,
   loading: false,
   userId: undefined,
+  setLoading: (val: boolean) => {
+    set(
+      produce((draft: AppState) => {
+        draft.auth.loading = val;
+        return draft
+      })
+    )
+  },
   login: async(username: string, password: string) => {
-    get().auth.setLoading(true)
+    set(
+      produce((draft: AppState) => {
+        draft.auth.loading = true;
+        return draft;
+      })
+    )
+    let success = false;
     try {
       const authenticationRequest : AuthenticationRequest = {
         Username: username,
@@ -42,24 +58,37 @@ export const authStore = (
         set(
           produce((draft: AppState) => {
             draft.auth.user = res.data.User;
+            draft.auth.user.Role = (res.data.User.Role + "") === "Guest" ? 0 : 1 
             draft.auth.loading = false;
             return draft
           })
         );
-        return true;
+        success = true;
+        toast.success(`Logged in successfully`, { position: "top-center" });
       }
-      return false;
     } catch (e: any) {
-      get().auth.loading = false;
-      if (e.response && e.response.data && e.response.data.ErrorMessage) {
-        toast.error(e.response.data.ErrorMessage);
-        throw new Error(e.response.ErrorMessage);
+      if (e.response && e.response.data && e.response.data.message) {
+        console.log(e);
+        toast.error(e.response.data.message, { position: "top-center"});
       }
-      throw new Error("Login error");
+    } finally {
+      set(
+        produce((draft: AppState) => {
+          draft.auth.loading = false;
+          return draft;
+        })
+      )
+      return success;
     }
   },
   register: async(registerRequest: RegisterRequest) => {
-    get().auth.setLoading(true);
+    set(
+      produce((draft: AppState) => {
+        draft.auth.loading = true;
+        return draft;
+      })
+    )
+    let success = false;
     try {
       const res = await axios.post<RegisterResponse>(`${apiUrl}/api/auth/register`, registerRequest, config);
       if (res.data && res.data.Success) {
@@ -71,26 +100,103 @@ export const authStore = (
             return draft
           })
         );
-        return true;
+        success = true;
       }
-      toast.error(res.data.Message);
-      return false;
     } catch(e: any) {
-      get().auth.loading = false;
-      if (e.response && e.response.data && e.response.data.errorMessage) {
-        toast.error(e.response.data.Message);
-        throw new Error(e.response.data.Message);
+      if (e.response && e.response.data && e.response.data.message) {
+        console.log(e);
+        toast.error(e.response.data.message, { position: "top-center"});
       }
-      throw new Error("Registration error");
+    } finally {
+      set(
+        produce((draft: AppState) => {
+          draft.auth.loading = false;
+          return draft;
+        })
+      )
+      return success;
     }
   },
-  setLoading: (val: boolean) => {
+  updateUserInfo: async (updateUserInfoRequest: UpdateUserInfoRequest) => {
     set(
       produce((draft: AppState) => {
-        draft.auth.loading = val;
-        return draft
+        draft.auth.loading = true;
+        return draft;
       })
     )
+    let success = false;
+    try {
+      const res = await axios.patch<UpdateUserInfoResponse>(`${apiUrl}/api/users/${get().auth.user?.Username}`, updateUserInfoRequest, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${window.localStorage.getItem("jwt")}`
+        }
+      });
+      if (res.data && res.data.Success) {
+        set(
+          produce((draft: AppState) => {
+            draft.auth.user = res.data.User;
+            draft.auth.loading = false;
+            return draft;
+          })
+        );
+        toast.success("Your information has been updated successfully.", { position: "top-center" });
+        success = true;
+      }
+    } catch (e: any) {
+      if (e.response && e.response.data && e.response.data.message) {
+        console.log(e);
+        toast.error(e.response.data.message, { position: "top-center"});
+      }
+    } finally {
+      set(
+        produce((draft: AppState) => {
+          draft.auth.loading = false;
+          return draft;
+        })
+      )
+      return success;
+    }
+  },
+  changePassword: async (changePasswordRequest: ChangePasswordRequest) => {
+    set(
+      produce((draft: AppState) => {
+        draft.auth.loading = true;
+        return draft;
+      })
+    )
+    let success = false;
+    try {
+      const res = await axios.patch(`${apiUrl}/api/users/password`, changePasswordRequest, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${window.localStorage.getItem("jwt")}`
+        }
+      });
+      if (res.status === 200) {
+        set(
+          produce((draft: AppState) => {
+            draft.auth.loading = false;
+            return draft;
+          })
+        )
+        toast.success("Password updated successfully.", { position: "top-center" });
+        success = true;
+      }
+    } catch (e: any) {
+      if (e.response && e.response.data && e.response.data.message) {
+        console.log(e);
+        toast.error(e.response.data.message, { position: "top-center"});
+      }
+    } finally {
+      set(
+        produce((draft: AppState) => {
+          draft.auth.loading = false;
+          return draft;
+        })
+      )
+      return success;
+    }
   },
   logout: () => {
     set (

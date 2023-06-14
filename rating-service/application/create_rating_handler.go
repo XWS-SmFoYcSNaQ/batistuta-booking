@@ -4,6 +4,7 @@ import (
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/messaging"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/saga"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/rating_service/domain"
+	"github.com/google/uuid"
 	"log"
 )
 
@@ -36,8 +37,44 @@ func (handler *CreateRatingCommandHandler) handle(command *saga.CreateRatingComm
 		reply.Type = saga.HostUpdated
 	//temporary end
 
+	case saga.StartRatingCreation:
+		oldValue := command.Rating.OldValue
+		var err error
+		r := domain.Rating{
+			ID:         command.Rating.ID,
+			UserID:     command.Rating.UserID,
+			TargetID:   command.Rating.TargetID,
+			Value:      command.Rating.Value,
+			TargetType: command.Rating.TargetType,
+		}
+		if oldValue == nil {
+			r.ID = uuid.New()
+			reply.Rating.ID = r.ID
+			err = (*handler.ratingService).Insert(&r)
+		} else {
+			r.ID = (*oldValue).ID
+			reply.Rating.ID = r.ID
+			err = (*handler.ratingService).Update(&r)
+		}
+		if err != nil {
+			log.Println(err)
+			reply.Type = saga.CreationFailed
+		} else {
+			reply.Type = saga.CreationStarted
+		}
 	case saga.RollbackRating:
-		(*handler.ratingService).Delete(&domain.Rating{ID: command.Rating.ID})
+		oldValue := command.Rating.OldValue
+		if oldValue == nil {
+			(*handler.ratingService).Delete(&domain.Rating{ID: command.Rating.ID})
+		} else {
+			(*handler.ratingService).Update(&domain.Rating{
+				ID:         oldValue.ID,
+				TargetID:   oldValue.TargetID,
+				UserID:     oldValue.UserID,
+				TargetType: oldValue.TargetType,
+				Value:      oldValue.Value,
+			})
+		}
 		log.Println("RATING ROLLED BACK")
 		reply.Type = saga.RatingRolledBack
 	case saga.ConcludeRatingCreation:

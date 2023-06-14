@@ -1,25 +1,32 @@
 import { AccountCircle } from "@mui/icons-material";
 import KeyIcon from '@mui/icons-material/Key';
-import { Button, Card, CardActions, CardContent, Container, Grid, InputAdornment, TextField } from "@mui/material";
+import { Button, Card, CardActions, CardContent, CircularProgress, Container, Grid, InputAdornment, TextField } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { AppState, appStore } from "../../../core/store";
-import { toast } from "react-toastify";
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const loginFunc = appStore((state: AppState) => state.auth.login);
+  const [pending, setPending] = useState(false);
   const navigate = useNavigate();
 
   async function login() {
     if (!username || !password) return;
+    setPending(true);
     const success = await loginFunc(username, password);
+    setPending(false);
     if (success) {
-      toast.success(`Logged in successfully`);
       navigate("/");
     }
   }
+
+  if (pending) return (
+    <Container sx={{ height: '100vh', display: 'flex'}}>
+      <CircularProgress color="primary" sx={{ mx: 'auto', mt: '50px' }}/>
+    </Container>
+  )
 
   return (
     <Container sx={{ marginTop: 8}}>
@@ -34,6 +41,7 @@ const Login = () => {
                 variant="standard"
                 value={username}
                 onChange={e => { setUsername(e.target.value); }}
+                onKeyDown={e => { if(e.key === "Enter") login(); }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -51,6 +59,7 @@ const Login = () => {
                 variant="standard" 
                 value={password}
                 onChange={e => { setPassword(e.target.value); }}
+                onKeyDown={e => { if(e.key === "Enter") login(); }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">

@@ -41,3 +41,20 @@ interface Error {
   PropertyName?: string;
   ErrorMessage?: string;
 }
+
+export interface UpdateUserInfoRequest {
+  FirstName?: string;
+  LastName?: string;
+  LivingPlace?: string;
+}
+
+export interface UpdateUserInfoResponse {
+  Success?: boolean;
+  ErrorMessage?: string;
+  User?: User;
+}
+
+export interface ChangePasswordRequest {
+  CurrentPassword?: string;
+  NewPassword?: string;
+}

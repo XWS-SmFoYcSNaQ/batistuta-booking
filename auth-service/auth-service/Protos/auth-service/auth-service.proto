@@ -38,12 +38,13 @@ message Authentication_Request {
 }
 
 message User {
-  UserRole Role = 1;
-  string Username = 2;
-  string FirstName = 3;
-  string LastName = 4;
-  string Email = 5;
-  string LivingPlace = 6;
+  string Id = 1;
+  UserRole Role = 2;
+  string Username = 3;
+  string FirstName = 4;
+  string LastName = 5;
+  string Email = 6;
+  string LivingPlace = 7;
 }
 
 message Authentication_Response {

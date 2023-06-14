@@ -94,6 +94,7 @@ services:
     restart: always
     environment:
       USER_SERVICE_ADDRESS: ${USER_SERVICE_ADDRESS}
+      Services__AUTH_SERVICE_ADDRESS: auth_service${AUTH_SERVICE_ADDRESS}
       MySqlConfig__Server: ${USER_DATABASE_SERVER}
       MySqlConfig__Port: ${USER_DATABASE_PORT}
       MySqlConfig__Database: ${USER_DATABASE}

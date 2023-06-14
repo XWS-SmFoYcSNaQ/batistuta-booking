@@ -5,8 +5,6 @@ import { Discount } from "../../../shared/model";
 import { toast } from "react-toastify";
 import { Calendar, CalendarEvent } from "../../../shared";
 import { Container, Box, Button, TextField } from "@mui/material";
-import { Link } from "react-router-dom";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const getInitialData = (): Discount => {
   return {
@@ -28,6 +26,7 @@ export const Discounts = () => {
   const accommodation = appStore(
     (state: AppState) => state.accommodation.accommodation
   );
+  const currentUser = appStore((state: AppState) => state.auth.user);
 
   const [events, setEvents] = useState<CalendarEvent[]>([]);
 
@@ -80,14 +79,6 @@ export const Discounts = () => {
 
   return (
     <Container>
-      <Box sx={{ margin: "10px 0px" }}>
-        <Link to="/accommodation">
-          <Button type="submit">
-            <ArrowBackIcon sx={{ marginRight: "10px" }} />
-            <span>Go back</span>
-          </Button>
-        </Link>
-      </Box>
       <h1>Discounts</h1>
       <Calendar
         events={events}
@@ -98,28 +89,30 @@ export const Discounts = () => {
         <Box sx={{ marginBottom: "25px" }}>
           Base Price: {accommodation?.basePrice}&nbsp;EUR
         </Box>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <TextField
-              required
-              label="Discount"
-              type="number"
-              value={data.discount ?? ""}
-              onChange={(e) =>
-                setData({
-                  ...data,
-                  discount:
-                    e.target.value === ""
-                      ? undefined
-                      : parseFloat(e.target.value),
-                })
-              }
-            />
-          </div>
-          <Button type="submit" variant="outlined" sx={{ marginTop: "15px" }}>
-            Create Discount
-          </Button>
-        </form>
+        {currentUser?.Role === 1 && (
+          <form onSubmit={handleSubmit}>
+            <div>
+              <TextField
+                required
+                label="Discount"
+                type="number"
+                value={data.discount ?? ""}
+                onChange={(e) =>
+                  setData({
+                    ...data,
+                    discount:
+                      e.target.value === ""
+                        ? undefined
+                        : parseFloat(e.target.value),
+                  })
+                }
+              />
+            </div>
+            <Button type="submit" variant="outlined" sx={{ marginTop: "15px" }}>
+              Create Discount
+            </Button>
+          </form>
+        )}
       </Box>
     </Container>
   );
