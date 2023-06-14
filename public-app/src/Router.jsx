@@ -2,7 +2,8 @@ import App from "./App";
 import { AccommodationRoot, accommodationRoutes } from "./features/accommodation";
 import { RoomsRoot, roomRoutes } from "./features/room-reservation";
 import { AllAccommodations } from "./features/accommodation/AllAcommodations";
-import { MyReservations, reservationsRoutes } from "./features/my-reservations"
+import { MyReservations, reservationsRoutes } from "./features/reservations/my-reservations"
+import { ReservationConfirmation } from "./features/reservations/reservations-to-confirm/reservationConfirmation"
 import Login from "./features/auth/login/Login";
 import Register from "./features/auth/register/Register";
 import UserProfile from "./features/profile/UserProfile";
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
         path: "all-accommodations",
         element: <AllAccommodations/>
       },
+      {
+        path: "reservations-to-confirm",
+        element: <ReservationConfirmation/>
+      }
     ]
   },
 ]);

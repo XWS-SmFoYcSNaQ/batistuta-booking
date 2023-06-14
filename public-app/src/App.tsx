@@ -20,6 +20,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import BookOnlineIcon from '@mui/icons-material/BookOnline';
+import CheckIcon from '@mui/icons-material/Check';
 import { ToastContainer } from 'react-toastify';
 import { AppState, appStore } from './core/store';
 import 'rsuite/dist/rsuite.min.css';
@@ -69,6 +70,11 @@ export default function App() {
       route: '/reservations',
       text: 'My reservations',
       icon: <BookOnlineIcon />
+    },
+    {
+      route: 'reservations-to-confirm',
+      text: 'Reservations confirmation',
+      icon: <CheckIcon />
     },
     {
       route: '/profile',

@@ -7,19 +7,15 @@ import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
 import { Box, CircularProgress } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { Reservation } from '../../shared/model/reservation';
-import { VerifyResponse } from '../../shared/model/authentication';
+import { Reservation } from '../../../shared/model/reservation';
+import { VerifyResponse } from '../../../shared/model/authentication';
 import React from 'react';
-import { apiUrl, appStore, AppState } from '../../core/store';
+import { apiUrl, appStore, AppState } from '../../../core/store';
 import axios, { AxiosRequestConfig } from 'axios';
 
-export const PendingReservations = () => {
+export const AcceptedReservations = () => {
     const [loading, setLoading] = useState<number>(1) // to get
-    const [pendingReservations, setPendingReservations] = useState<Reservation[]>([]);
-    const verify = appStore((state: AppState) => state.auth.verify)
-    const userId = appStore(
-		(state: AppState) => state.auth.userId
-	);
+    const [acceptedReservations, setAcceptedReservations] = useState<Reservation[]>([]);
 
     const fetchReservations = async () => {
         const verifyConfig : AxiosRequestConfig = {
@@ -33,16 +29,16 @@ export const PendingReservations = () => {
         const requestOptions = {
           method: 'GET'
         };
-        const response = await fetch(`${apiUrl}` + '/booking/user/' + userID  , requestOptions);
+        const response = await fetch(`${apiUrl}` + '/booking/reservation/user/' + userID  , requestOptions);
         const data = await response.json();
-        setPendingReservations(data.data);
+        setAcceptedReservations(data.data);
         setLoading(0)
         console.log(data)
     }
 
     const handleCancel = async (reservationId : string) => {
         try {
-          const response = await axios.delete(`${apiUrl}/booking/request/${reservationId}`);
+          const response = await axios.delete(`${apiUrl}/booking/reservation/${reservationId}`);
           console.log('Reservation canceled successfully');
           fetchReservations();
         } catch (error) {
@@ -69,9 +65,9 @@ export const PendingReservations = () => {
             )}
             {!loading && (
                 <>
-                    <h2>Pending reservations</h2>
+                    <h2>Accepted reservations</h2>
                     <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                        {pendingReservations.map((reservation: any, index: number) => (
+                        {acceptedReservations.map((reservation: any, index: number) => (
                             <Card sx={{ minWidth: 250, maxWidth: 350, margin: '1rem' }}>
                                 <CardMedia
                                     sx={{ height: 140 }}
@@ -95,4 +91,4 @@ export const PendingReservations = () => {
             )}
         </>
     );
-};
+}
