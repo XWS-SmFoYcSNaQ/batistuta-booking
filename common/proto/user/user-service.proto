@@ -25,11 +25,16 @@ service UserService {
       body: "*"
     };
   }
+  rpc GetAllHostsWithRatings(Empty_Message) returns (GetAllHostsWithRatings_Response) {
+    option(google.api.http) = {
+      get: "/api/hosts"
+    };
+  }
 }
 
 enum UserRole {
-    Host = 0;
-    Guest = 1;
+  Host = 0;
+  Guest = 1;
 }
 
 message Empty_Message {
@@ -75,4 +80,27 @@ message ChangeUserInfo_Response {
 message ChangePassword_Request {
   string CurrentPassword = 1;
   string NewPassword = 2;
+}
+
+message RatingDTO {
+  string Id = 1;
+  string UserId = 2;
+  string TargetId = 3;
+  uint32 TargetType = 4;
+  uint32 Value = 5;
+}
+
+message HostWithRating {
+  string Id = 1;
+  UserRole Role = 2;
+  string Username = 3;
+  string FirstName = 4;
+  string LastName = 5;
+  string Email = 6;
+  string LivingPlace = 7;
+  repeated RatingDTO Ratings = 8;
+}
+
+message GetAllHostsWithRatings_Response {
+  repeated HostWithRating Hosts = 1;
 }
