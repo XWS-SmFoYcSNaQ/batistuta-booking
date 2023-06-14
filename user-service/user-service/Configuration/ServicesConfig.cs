@@ -2,6 +2,7 @@
 {
     public class ServicesConfig
     {
-        public string AUTH_SERVICE_ADDRESS { get; set; } = "http://localhost:12000";
+        public string AUTH_SERVICE_ADDRESS { get; set; } = string.Empty;
+        public string RATING_SERVICE_ADDRESS { get; set; } = string.Empty;
     }
 }

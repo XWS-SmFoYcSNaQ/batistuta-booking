@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserService_GetAllUsers_FullMethodName    = "/user.UserService/GetAllUsers"
-	UserService_ChangeUserInfo_FullMethodName = "/user.UserService/ChangeUserInfo"
-	UserService_ChangePassword_FullMethodName = "/user.UserService/ChangePassword"
+	UserService_GetAllUsers_FullMethodName            = "/user.UserService/GetAllUsers"
+	UserService_ChangeUserInfo_FullMethodName         = "/user.UserService/ChangeUserInfo"
+	UserService_ChangePassword_FullMethodName         = "/user.UserService/ChangePassword"
+	UserService_GetAllHostsWithRatings_FullMethodName = "/user.UserService/GetAllHostsWithRatings"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -31,6 +32,7 @@ type UserServiceClient interface {
 	GetAllUsers(ctx context.Context, in *Empty_Message, opts ...grpc.CallOption) (*GetAllUsers_Response, error)
 	ChangeUserInfo(ctx context.Context, in *ChangeUserInfo_Request, opts ...grpc.CallOption) (*ChangeUserInfo_Response, error)
 	ChangePassword(ctx context.Context, in *ChangePassword_Request, opts ...grpc.CallOption) (*Empty_Message, error)
+	GetAllHostsWithRatings(ctx context.Context, in *Empty_Message, opts ...grpc.CallOption) (*GetAllHostsWithRatings_Response, error)
 }
 
 type userServiceClient struct {
@@ -68,6 +70,15 @@ func (c *userServiceClient) ChangePassword(ctx context.Context, in *ChangePasswo
 	return out, nil
 }
 
+func (c *userServiceClient) GetAllHostsWithRatings(ctx context.Context, in *Empty_Message, opts ...grpc.CallOption) (*GetAllHostsWithRatings_Response, error) {
+	out := new(GetAllHostsWithRatings_Response)
+	err := c.cc.Invoke(ctx, UserService_GetAllHostsWithRatings_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -75,6 +86,7 @@ type UserServiceServer interface {
 	GetAllUsers(context.Context, *Empty_Message) (*GetAllUsers_Response, error)
 	ChangeUserInfo(context.Context, *ChangeUserInfo_Request) (*ChangeUserInfo_Response, error)
 	ChangePassword(context.Context, *ChangePassword_Request) (*Empty_Message, error)
+	GetAllHostsWithRatings(context.Context, *Empty_Message) (*GetAllHostsWithRatings_Response, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -90,6 +102,9 @@ func (UnimplementedUserServiceServer) ChangeUserInfo(context.Context, *ChangeUse
 }
 func (UnimplementedUserServiceServer) ChangePassword(context.Context, *ChangePassword_Request) (*Empty_Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
+}
+func (UnimplementedUserServiceServer) GetAllHostsWithRatings(context.Context, *Empty_Message) (*GetAllHostsWithRatings_Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllHostsWithRatings not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -158,6 +173,24 @@ func _UserService_ChangePassword_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetAllHostsWithRatings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty_Message)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetAllHostsWithRatings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetAllHostsWithRatings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetAllHostsWithRatings(ctx, req.(*Empty_Message))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +209,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChangePassword",
 			Handler:    _UserService_ChangePassword_Handler,
+		},
+		{
+			MethodName: "GetAllHostsWithRatings",
+			Handler:    _UserService_GetAllHostsWithRatings_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
