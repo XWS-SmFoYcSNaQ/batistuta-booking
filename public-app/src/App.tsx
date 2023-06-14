@@ -14,11 +14,16 @@ import { ListItemIcon, Button } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import HouseIcon from '@mui/icons-material/House';
+import BedIcon from '@mui/icons-material/Bed';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonIcon from '@mui/icons-material/Person';
+import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import BookOnlineIcon from '@mui/icons-material/BookOnline';
+import CheckIcon from '@mui/icons-material/Check';
 import { ToastContainer } from 'react-toastify';
 import { AppState, appStore } from './core/store';
+import 'rsuite/dist/rsuite.min.css';
 import { useEffect, useState } from 'react';
 
 const drawerWidth = 300;
@@ -46,6 +51,21 @@ const upperNavItems: NavItem[] = [
     route: '/accommodation/all',
     text: 'Accommodations',
     icon: <HouseIcon/>
+  },
+  {
+    route: '/rooms',
+    text: 'Rooms',
+    icon: <BedIcon />
+  },
+  {
+    route: '/reservations',
+    text: 'My reservations',
+    icon: <BookOnlineIcon />
+  },
+  {
+    route: 'reservations-to-confirm',
+    text: 'Reservations confirmation',
+    icon: <CheckIcon />
   },
   {
     route: '/profile',
@@ -78,7 +98,7 @@ export default function App() {
     logoutUser();
     navigate("/login");
   }
-  
+
   const filteredLowerNavItems = isAuthenticated
     ? lowerNavItems.filter(item => item.route !== '/login' && item.route !== '/register')
     : lowerNavItems;

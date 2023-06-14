@@ -76,3 +76,40 @@ func (c ReservationController) DeleteBookingRequest(ctx context.Context, request
 	}
 	return &booking.AM_DeleteBookingRequest_Response{}, nil
 }
+
+func (c ReservationController) ConfirmReservationRequest(ctx context.Context, request *booking.ReservationConfirm_Request) (*booking.EmptyMessage, error) {
+	err := c.BookingService.ConfirmReservation(request.Id)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return &booking.EmptyMessage{}, nil
+}
+
+func (c ReservationController) GetAllReservationsForGuest(ctx context.Context, request *booking.AllReservationsForGuest_Request) (*booking.AllReservationsForGuest_Response, error) {
+	bookingRequests, err := c.BookingService.GetAllReservationsForUser(request.Id)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	var res []*booking.BookingRequestsDTO
+	for _, d := range bookingRequests {
+		a := booking.BookingRequestsDTO{
+			Id:              d.ID.String(),
+			AccommodationId: d.AccommodationId,
+			StartDate:       d.StartDate,
+			EndDate:         d.EndDate,
+			NumberOfGuests:  int32(d.NumberOfGuests),
+			UserId:          d.UserId,
+		}
+		res = append(res, &a)
+	}
+
+	return &booking.AllReservationsForGuest_Response{Data: res}, nil
+}
+
+func (c ReservationController) DeleteReservation(ctx context.Context, request *booking.DeleteReservation_Request) (*booking.EmptyMessage, error) {
+	err := c.BookingService.DeleteReservation(request.Id)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return &booking.EmptyMessage{}, nil
+}
