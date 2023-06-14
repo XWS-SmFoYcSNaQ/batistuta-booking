@@ -26,7 +26,7 @@ func NewRatingHandler(service *domain.RatingService, authService *services.AuthS
 func (handler *RatingHandler) GetAllRatings(ctx context.Context, request *rating.Empty) (*rating.RatingsList, error) {
 	ratings, err := handler.service.GetAll()
 	if err != nil || *ratings == nil {
-		return nil, err
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 	response := &rating.RatingsList{
 		Data: []*rating.RatingDTO{},
@@ -88,4 +88,34 @@ func (handler *RatingHandler) CreateHostRating(ctx context.Context, request *rat
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 	return &rating.Empty{}, nil
+}
+
+func (handler *RatingHandler) GetHostAverage(ctx context.Context, request *rating.IdMessage) (*rating.HostAverageDTO, error) {
+	hostId, err := uuid.Parse(request.Id)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	average, err := handler.service.GetHostAverage(&hostId)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return &rating.HostAverageDTO{
+		HostId:  hostId.String(),
+		Average: average,
+	}, nil
+}
+
+func (handler *RatingHandler) GetHostRatings(ctx context.Context, request *rating.Empty) (*rating.RatingsList, error) {
+	ratings, err := handler.service.GetHostRatings()
+	if err != nil || *ratings == nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	response := &rating.RatingsList{
+		Data: []*rating.RatingDTO{},
+	}
+	for _, r := range *ratings {
+		current := mapRating(&r)
+		response.Data = append(response.Data, current)
+	}
+	return response, nil
 }

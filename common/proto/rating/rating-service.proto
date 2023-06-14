@@ -16,10 +16,20 @@ service RatingService {
       body: "*"
     };
   }
-  rpc CreateHostRating (CreateHostRatingDTO) returns (Empty){
+  rpc GetHostRatings (Empty) returns (RatingsList) {
+    option (google.api.http) = {
+      get: "/rating/host"
+    };
+  }
+  rpc CreateHostRating (CreateHostRatingDTO) returns (Empty) {
     option (google.api.http) = {
       post: "/rating/host",
       body: "*"
+    };
+  }
+  rpc GetHostAverage (IdMessage) returns (HostAverageDTO) {
+    option (google.api.http) = {
+      get: "/rating/host/average/{Id}"
     };
   }
 }
@@ -38,6 +48,15 @@ message CreateHostRatingDTO {
 
 message RatingsList {
   repeated RatingDTO Data = 1;
+}
+
+message IdMessage {
+  string Id = 1;
+}
+
+message HostAverageDTO {
+  string HostId = 1;
+  double Average = 2;
 }
 
 message RatingDTO {

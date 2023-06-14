@@ -59,8 +59,10 @@ export const RatingDialog = ({
       aria-labelledby="rating-dialog-title"
       aria-describedby="rating-dialog-description"
     >
-      <DialogTitle id="rating-dialog-title">{title}</DialogTitle>
-      <DialogContent>
+      <DialogTitle id="rating-dialog-title">
+        {title}
+      </DialogTitle>
+      <DialogContent sx={{ minWidth: "300px" }}>
         <DialogContentText id="rating-dialog-description">
           {description}
         </DialogContentText>

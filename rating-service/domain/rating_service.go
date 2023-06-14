@@ -1,5 +1,7 @@
 package domain
 
+import "github.com/google/uuid"
+
 type RatingService struct {
 	repository   RatingRepository
 	orchestrator *CreateRatingOrchestrator
@@ -40,4 +42,20 @@ func (service *RatingService) CreateRating(rating *Rating) error {
 
 func (service *RatingService) Delete(rating *Rating) error {
 	return service.repository.Delete(rating)
+}
+
+func (service *RatingService) GetAccommodationAverage(accommodationId *uuid.UUID) (float64, error) {
+	return service.repository.GetTargetAverage(accommodationId, 0)
+}
+
+func (service *RatingService) GetHostAverage(hostId *uuid.UUID) (float64, error) {
+	return service.repository.GetTargetAverage(hostId, 1)
+}
+
+func (service *RatingService) GetAccommodationRatings() (*[]Rating, error) {
+	return service.repository.GetByTargetType(0)
+}
+
+func (service *RatingService) GetHostRatings() (*[]Rating, error) {
+	return service.repository.GetByTargetType(1)
 }
