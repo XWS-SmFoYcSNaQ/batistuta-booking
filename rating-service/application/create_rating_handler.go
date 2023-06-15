@@ -41,11 +41,12 @@ func (handler *CreateRatingCommandHandler) handle(command *create_rating.CreateR
 		oldValue := command.Rating.OldValue
 		var err error
 		r := domain.Rating{
-			ID:         command.Rating.ID,
-			UserID:     command.Rating.UserID,
-			TargetID:   command.Rating.TargetID,
-			Value:      command.Rating.Value,
-			TargetType: command.Rating.TargetType,
+			ID:           command.Rating.ID,
+			UserID:       command.Rating.UserID,
+			TargetID:     command.Rating.TargetID,
+			Value:        command.Rating.Value,
+			TargetType:   command.Rating.TargetType,
+			LastModified: command.Rating.LastModified,
 		}
 		if oldValue == nil {
 			r.ID = uuid.New()
@@ -68,11 +69,12 @@ func (handler *CreateRatingCommandHandler) handle(command *create_rating.CreateR
 			(*handler.ratingService).Delete(&domain.Rating{ID: command.Rating.ID})
 		} else {
 			(*handler.ratingService).Update(&domain.Rating{
-				ID:         oldValue.ID,
-				TargetID:   oldValue.TargetID,
-				UserID:     oldValue.UserID,
-				TargetType: oldValue.TargetType,
-				Value:      oldValue.Value,
+				ID:           oldValue.ID,
+				TargetID:     oldValue.TargetID,
+				UserID:       oldValue.UserID,
+				TargetType:   oldValue.TargetType,
+				Value:        oldValue.Value,
+				LastModified: command.Rating.LastModified,
 			})
 		}
 		log.Println("RATING ROLLED BACK")

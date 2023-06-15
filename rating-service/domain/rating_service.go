@@ -45,7 +45,7 @@ func (service *RatingService) CreateRating(rating *Rating) error {
 	return nil
 }
 
-func (service *RatingService) DeleteRating(id *uuid.UUID) error {
+func (service *RatingService) DeleteRating(id *uuid.UUID, userId *uuid.UUID) error {
 	var oldRating *Rating = nil
 	oldRating, err := service.repository.GetById(id)
 	if err != nil {
@@ -53,6 +53,9 @@ func (service *RatingService) DeleteRating(id *uuid.UUID) error {
 	}
 	if oldRating == nil {
 		return errors.New("rating not found")
+	}
+	if oldRating.UserID.String() != userId.String() {
+		return errors.New("unauthorized")
 	}
 	err = service.deleteOrchestrator.Start(id, oldRating)
 	if err != nil {
@@ -78,4 +81,8 @@ func (service *RatingService) GetHostRatings() (*[]Rating, error) {
 
 func (service *RatingService) Delete(rating *Rating) error {
 	return service.repository.Delete(rating)
+}
+
+func (service *RatingService) GetTargetRatingsById(targetId *uuid.UUID) (*[]Rating, error) {
+	return service.repository.GetByTargetId(targetId)
 }

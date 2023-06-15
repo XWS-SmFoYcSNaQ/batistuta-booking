@@ -17,6 +17,7 @@ import { userRoutes } from "./features/user";
 import { UserRoot } from "./features/user/UserRoot";
 import { ErrorPage } from "./shared/ErrorPage";
 import { createBrowserRouter } from "react-router-dom";
+import { RatingList } from "./features/rating"
 
 export const router = createBrowserRouter([
   {
@@ -64,6 +65,10 @@ export const router = createBrowserRouter([
         path: "reservations-to-confirm",
         element: <ReservationConfirmation />,
       },
+      {
+        path: "ratings/:id",
+        element: <RatingList />
+      }
     ],
   },
 ]);

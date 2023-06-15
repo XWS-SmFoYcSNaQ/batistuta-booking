@@ -6,7 +6,7 @@ import axios from "axios";
 export interface UserStoreType {
   data: User[]
   loading: boolean
-  fetchUsers: () => Promise<void>
+  fetchHosts: () => Promise<void>
   rateHost: ({ id, value }: { id: string, value: number }) => Promise<void>
   clearData: () => void
   setLoading: (val: boolean) => void
@@ -18,14 +18,14 @@ export const userStore = (
 ): UserStoreType => ({
   data: [],
   loading: false,
-  fetchUsers: async () => {
+  fetchHosts: async () => {
     get().user.setLoading(true)
     get().user.clearData()
     try {
-      const res = await axios.get(`${apiUrl}/api/users`)
+      const res = await axios.get(`${apiUrl}/api/hosts`)
       set(
         produce((draft: AppState) => {
-          draft.user.data = res.data.Users
+          draft.user.data = res.data.Hosts
           return draft
         })
       )
