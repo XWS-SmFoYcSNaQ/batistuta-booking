@@ -10,6 +10,7 @@ service BookingService {
   rpc ConfirmReservationRequest(ReservationConfirm_Request) returns (EmptyMessage) {}
   rpc GetAllReservationsForGuest(AllReservationsForGuest_Request) returns (AllReservationsForGuest_Response) {}
   rpc DeleteReservation(DeleteReservation_Request) returns (EmptyMessage) {}
+  rpc GetReservationsForHost(EmptyMessage) returns (ReservationsForHost_Response) {}
 }
 
 message AM_GetAllBookingRequests_Request {}
@@ -69,4 +70,8 @@ message AllReservationsForGuest_Response {
 
 message DeleteReservation_Request {
   string id = 1;
+}
+
+message ReservationsForHost_Response {
+  repeated BookingRequestsDTO data = 1;
 }

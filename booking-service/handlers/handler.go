@@ -38,3 +38,7 @@ func (h BookingHandler) GetAllReservationsForGuest(ctx context.Context, request 
 func (h BookingHandler) DeleteReservation(ctx context.Context, request *booking.DeleteReservation_Request) (*booking.EmptyMessage, error) {
 	return h.ReservationController.DeleteReservation(ctx, request)
 }
+
+func (h BookingHandler) GetReservationsForHost(ctx context.Context, request *booking.EmptyMessage) (*booking.ReservationsForHost_Response, error) {
+	return h.ReservationController.GetReservationsForHost(ctx, request)
+}

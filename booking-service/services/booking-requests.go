@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/google/uuid"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -72,7 +74,7 @@ func (s BookingRequestsService) MakeBookingRequest(r *model.BookingRequest) (uui
 	}
 	defer stmt.Close()
 	id := uuid.New()
-	_, err = stmt.Exec(id, r.AccommodationId, r.StartDate, r.EndDate, r.NumberOfGuests, r.UserId)
+	_, err = stmt.Exec(id, r.AccommodationId, r.StartDate[:len(r.StartDate)-6], r.EndDate[:len(r.EndDate)-6], r.NumberOfGuests, r.UserId)
 	if err != nil {
 		return uuid.Nil, errors.New(errorMessage)
 	}
@@ -179,13 +181,13 @@ func (s BookingRequestsService) DeleteReservation(reservationId string) error {
 	var reservation model.Reservation
 	err := row.Scan(&reservation.ID, &reservation.AccommodationId, &reservation.StartDate, &reservation.EndDate, &reservation.NumberOfGuests, &reservation.UserId)
 	if err != nil {
-		return errors.New(errorMessage)
+		return errors.New("error while selecting all Reservations")
 	}
 
 	// Check if the reservation can be cancelled
-	startDate, err := time.Parse("2006-01-02 15:04:05-07", reservation.StartDate)
+	startDate, err := time.Parse("2006-01-02 15:04:05", reservation.StartDate)
 	if err != nil {
-		return errors.New(errorMessage)
+		return errors.New("error while checking date")
 	}
 
 	// Calculate the difference between the start date and today's date
@@ -204,4 +206,47 @@ func (s BookingRequestsService) DeleteReservation(reservationId string) error {
 
 	return nil
 
+}
+
+func (s BookingRequestsService) GetReservationsForAccommodationIDs(accommodationIDs []string) ([]*model.Reservation, error) {
+	// Convert accommodationIDs to []interface{}
+	placeholders := make([]string, len(accommodationIDs))
+	values := make([]interface{}, len(accommodationIDs))
+	for i, id := range accommodationIDs {
+		placeholders[i] = "$" + strconv.Itoa(i+1)
+		values[i] = id
+	}
+
+	// Construct the query string with placeholders for the accommodation IDs
+	query := "SELECT * FROM Reservation WHERE accommodation_id IN (" + strings.Join(placeholders, ",") + ")"
+
+	// Prepare the query statement
+	stmt, err := s.DB.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	// Execute the query with the accommodation IDs as arguments
+	rows, err := stmt.Query(values...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Fetch the reservations
+	var reservations []*model.Reservation
+	for rows.Next() {
+		var r model.Reservation
+		err := rows.Scan(&r.ID, &r.AccommodationId, &r.StartDate, &r.EndDate, &r.NumberOfGuests, &r.UserId)
+		if err != nil {
+			return nil, err
+		}
+		reservations = append(reservations, &r)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return reservations, nil
 }

@@ -38,6 +38,7 @@ func main() {
 	grpcServer := grpc.NewServer()
 	reflection.Register(grpcServer)
 
+	//accommodationClient := infrastructure.GetAccommodationClient(&cfg)
 	//authClient := infrastructure.GetAuthClient(&cfg)
 	// Bootstrap gRPC service server and respond to request.
 	bookingHandler := handlers.BookingHandler{

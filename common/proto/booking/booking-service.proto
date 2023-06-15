@@ -47,6 +47,12 @@ service BookingService {
       delete: "/booking/reservation/{id}"
     };
   }
+
+  rpc GetReservationsForHost(EmptyMessage) returns (ReservationsForHost_Response) {
+    option (google.api.http) = {
+      get: "/booking/reservation/host"
+      };
+  }
 }
 
 message AM_GetAllBookingRequests_Request {}
@@ -107,4 +113,9 @@ message AllReservationsForGuest_Response {
 message DeleteReservation_Request {
   string id = 1;
 }
+
+message ReservationsForHost_Response {
+  repeated BookingRequestsDTO data = 1;
+}
+
 
