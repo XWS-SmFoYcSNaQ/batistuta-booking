@@ -13,20 +13,35 @@ import {
 } from "@mui/material";
 import { AppState, appStore } from "../../../core/store";
 import { useEffect, useState } from "react";
-import { User } from "../../../shared/model";
+import { Rating, User } from "../../../shared/model";
 import { RatingDialog } from "../../../shared";
+import { Link } from "react-router-dom";
+
+const getAverageRating = (a: User) => {
+  const sum = a.Ratings?.map((r) => r.Value).reduce(
+    (sum, value) => (sum += value),
+    0
+  );
+  return (
+    (sum ?? 0) / (a.Ratings && a.Ratings.length > 0 ? a.Ratings.length : 1)
+  );
+};
+
+const getCurrentUserHostRating = (
+  host: User | null,
+  currentUser?: User
+): Rating | undefined => {
+  return host?.Ratings?.find((r) => r.UserId === currentUser?.Id);
+};
 
 export const HostList = () => {
   const loading = appStore((state: AppState) => state.user.loading);
-  const fetchUsers = appStore((state: AppState) => state.user.fetchUsers);
+  const fetchHosts = appStore((state: AppState) => state.user.fetchHosts);
   const currentUser = appStore((state: AppState) => state.auth.user);
-  const hosts = appStore((state: AppState) => state.user.data).filter(
-    (user) => user.Role === 1 || (user.Role as any) === "Host"
-  );
+  const hosts = appStore((state: AppState) => state.user.data);
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const rateHost = appStore(
-    (state: AppState) => state.user.rateHost
-  );
+  const rateHost = appStore((state: AppState) => state.user.rateHost);
+  const removeRating = appStore((state: AppState) => state.rating.removeRating);
   const [selectedHost, setSelectedHost] = useState<User | null>(null);
   const openRatingDialog = (host: User) => {
     setSelectedHost(host);
@@ -34,16 +49,25 @@ export const HostList = () => {
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    fetchHosts();
+  }, [fetchHosts]);
 
   const handleRating = async (value: number) => {
     //fetching latest data after rating action needs to be replaced by notifications since rating is asynchronous
     try {
       await rateHost({ id: selectedHost?.Id!, value });
-      fetchUsers()
+      fetchHosts();
     } catch (e) {
       throw e;
+    }
+  };
+
+  const handleRatingRemoval = async (host: User) => {
+    try {
+      await removeRating(getCurrentUserHostRating(host, currentUser)?.Id ?? "");
+      fetchHosts();
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -71,6 +95,8 @@ export const HostList = () => {
                 <TableCell align="right">Last Name</TableCell>
                 <TableCell align="right">Email</TableCell>
                 <TableCell align="right">Place of Living</TableCell>
+                <TableCell align="right">Average Rating</TableCell>
+                <TableCell align="right">My Rating</TableCell>
                 <TableCell align="center">Action</TableCell>
               </TableRow>
             </TableHead>
@@ -87,8 +113,22 @@ export const HostList = () => {
                   <TableCell align="right">{d.LastName}</TableCell>
                   <TableCell align="right">{d.Email}</TableCell>
                   <TableCell align="right">{d.LivingPlace}</TableCell>
+                  <TableCell align="right">{getAverageRating(d)}</TableCell>
+                  <TableCell align="right">
+                    {getCurrentUserHostRating(d, currentUser)?.Value}
+                  </TableCell>
                   <TableCell align="right">
                     <Stack direction="row" justifyContent="right" gap={1}>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        sx={{ whiteSpace: "nowrap" }}
+                        type="button"
+                        onClick={() => handleRatingRemoval(d)}
+                        size="small"
+                      >
+                        Remove Rating
+                      </Button>
                       <Button
                         variant="outlined"
                         color="primary"
@@ -99,6 +139,17 @@ export const HostList = () => {
                       >
                         Rate
                       </Button>
+                      <Link to={`/ratings/${d.Id}`}>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          sx={{ whiteSpace: "nowrap" }}
+                          type="button"
+                          size="small"
+                        >
+                          Ratings
+                        </Button>
+                      </Link>
                     </Stack>
                   </TableCell>
                 </TableRow>
@@ -112,10 +163,9 @@ export const HostList = () => {
         open={isDialogOpen}
         setOpen={setDialogOpen}
         onClose={() => setSelectedHost(null)}
-        // initialRating={getCurrentUserAccommodationRating(
-        //   selectedAccommodation,
-        //   currentUser
-        // )}
+        initialRating={
+          getCurrentUserHostRating(selectedHost, currentUser)?.Value
+        }
         title="Rate host"
         onRate={(value: number) => handleRating(value)}
       />

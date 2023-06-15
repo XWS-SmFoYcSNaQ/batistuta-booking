@@ -37,6 +37,11 @@ service RatingService {
       get: "/rating/host/average/{Id}"
     };
   }
+  rpc GetTargetRatingsById(IdMessage) returns (RatingDetailsList) {
+    option (google.api.http) = {
+      get: "/rating/target/{Id}"
+    };
+  }
 }
 
 message Empty {}
@@ -70,4 +75,21 @@ message RatingDTO {
   string TargetId = 3;
   uint32 TargetType = 4;
   uint32 Value = 5;
+  string LastModified = 6;
+}
+
+message RatingDetailsList{
+  repeated RatingDetailsDTO Data = 1;
+}
+
+message RatingDetailsDTO {
+  string Id = 1;
+  string TargetId = 2;
+  uint32 TargetType = 3;
+  uint32 Value = 4;
+  string LastModified = 5;
+  string UserId = 6;
+  string UserFirstName = 7;
+  string UserLastName = 8;
+  string UserEmail = 9;
 }

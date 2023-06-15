@@ -1,29 +1,28 @@
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import "./App.css";
-import { Outlet, useNavigate } from 'react-router';
-import { ListItemIcon, Button } from '@mui/material';
-import { NavLink } from 'react-router-dom';
-import HomeIcon from '@mui/icons-material/Home';
-import HouseIcon from '@mui/icons-material/House';
-import BedIcon from '@mui/icons-material/Bed';
-import LoginIcon from '@mui/icons-material/Login';
-import PersonIcon from '@mui/icons-material/Person';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import BookOnlineIcon from '@mui/icons-material/BookOnline';
-import CheckIcon from '@mui/icons-material/Check';
-import { ToastContainer } from 'react-toastify';
-import { AppState, appStore } from './core/store';
-import 'rsuite/dist/rsuite.min.css';
-import { useEffect, useState } from 'react';
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
+import Divider from "@mui/material/Divider";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import { Outlet, useNavigate } from "react-router";
+import { ListItemIcon, Button } from "@mui/material";
+import { NavLink } from "react-router-dom";
+import HomeIcon from "@mui/icons-material/Home";
+import HouseIcon from "@mui/icons-material/House";
+import BedIcon from "@mui/icons-material/Bed";
+import LoginIcon from "@mui/icons-material/Login";
+import PersonIcon from "@mui/icons-material/Person";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import BookOnlineIcon from "@mui/icons-material/BookOnline";
+import CheckIcon from "@mui/icons-material/Check";
+import { ToastContainer } from "react-toastify";
+import { AppState, appStore } from "./core/store";
+import "rsuite/dist/rsuite.min.css";
+import { useEffect, useState } from "react";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 
 const drawerWidth = 300;
@@ -53,29 +52,24 @@ const upperNavItems: NavItem[] = [
     icon: <HouseIcon />,
   },
   {
-    route: '/rooms',
-    text: 'Rooms',
-    icon: <BedIcon />
-  },
-  {
-    route: '/reservations',
-    text: 'My reservations',
-    icon: <BookOnlineIcon />
-  },
-  {
-    route: 'reservations-to-confirm',
-    text: 'Reservations confirmation',
-    icon: <CheckIcon />
-  },
-  {
-    route: '/profile',
-    text: 'Profile',
-    icon: <AccountBoxIcon/>
-  },
-  {
     route: "/user/hosts",
     text: "Hosts",
     icon: <AssignmentIndIcon />,
+  },
+  {
+    route: "/rooms",
+    text: "Rooms",
+    icon: <BedIcon />,
+  },
+  {
+    route: "/reservations",
+    text: "My reservations",
+    icon: <BookOnlineIcon />,
+  },
+  {
+    route: "reservations-to-confirm",
+    text: "Reservations confirmation",
+    icon: <CheckIcon />,
   },
   {
     route: "/profile",

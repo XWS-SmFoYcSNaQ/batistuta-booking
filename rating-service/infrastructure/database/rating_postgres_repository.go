@@ -103,3 +103,12 @@ func (store *RatingPostgresRepository) GetByTargetType(targetType uint32) (*[]do
 	}
 	return &ratings, nil
 }
+
+func (store *RatingPostgresRepository) GetByTargetId(targetId *uuid.UUID) (*[]domain.Rating, error) {
+	var ratings []domain.Rating
+	result := store.db.Where(&domain.Rating{TargetID: *targetId}).Find(&ratings)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &ratings, nil
+}

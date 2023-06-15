@@ -25,6 +25,7 @@ const (
 	RatingService_GetHostRatings_FullMethodName            = "/RatingService/GetHostRatings"
 	RatingService_CreateHostRating_FullMethodName          = "/RatingService/CreateHostRating"
 	RatingService_GetHostAverage_FullMethodName            = "/RatingService/GetHostAverage"
+	RatingService_GetTargetRatingsById_FullMethodName      = "/RatingService/GetTargetRatingsById"
 )
 
 // RatingServiceClient is the client API for RatingService service.
@@ -37,6 +38,7 @@ type RatingServiceClient interface {
 	GetHostRatings(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*RatingsList, error)
 	CreateHostRating(ctx context.Context, in *CreateHostRatingDTO, opts ...grpc.CallOption) (*Empty, error)
 	GetHostAverage(ctx context.Context, in *IdMessage, opts ...grpc.CallOption) (*HostAverageDTO, error)
+	GetTargetRatingsById(ctx context.Context, in *IdMessage, opts ...grpc.CallOption) (*RatingDetailsList, error)
 }
 
 type ratingServiceClient struct {
@@ -101,6 +103,15 @@ func (c *ratingServiceClient) GetHostAverage(ctx context.Context, in *IdMessage,
 	return out, nil
 }
 
+func (c *ratingServiceClient) GetTargetRatingsById(ctx context.Context, in *IdMessage, opts ...grpc.CallOption) (*RatingDetailsList, error) {
+	out := new(RatingDetailsList)
+	err := c.cc.Invoke(ctx, RatingService_GetTargetRatingsById_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RatingServiceServer is the server API for RatingService service.
 // All implementations must embed UnimplementedRatingServiceServer
 // for forward compatibility
@@ -111,6 +122,7 @@ type RatingServiceServer interface {
 	GetHostRatings(context.Context, *Empty) (*RatingsList, error)
 	CreateHostRating(context.Context, *CreateHostRatingDTO) (*Empty, error)
 	GetHostAverage(context.Context, *IdMessage) (*HostAverageDTO, error)
+	GetTargetRatingsById(context.Context, *IdMessage) (*RatingDetailsList, error)
 	mustEmbedUnimplementedRatingServiceServer()
 }
 
@@ -135,6 +147,9 @@ func (UnimplementedRatingServiceServer) CreateHostRating(context.Context, *Creat
 }
 func (UnimplementedRatingServiceServer) GetHostAverage(context.Context, *IdMessage) (*HostAverageDTO, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHostAverage not implemented")
+}
+func (UnimplementedRatingServiceServer) GetTargetRatingsById(context.Context, *IdMessage) (*RatingDetailsList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTargetRatingsById not implemented")
 }
 func (UnimplementedRatingServiceServer) mustEmbedUnimplementedRatingServiceServer() {}
 
@@ -257,6 +272,24 @@ func _RatingService_GetHostAverage_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RatingService_GetTargetRatingsById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IdMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RatingServiceServer).GetTargetRatingsById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RatingService_GetTargetRatingsById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RatingServiceServer).GetTargetRatingsById(ctx, req.(*IdMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RatingService_ServiceDesc is the grpc.ServiceDesc for RatingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -287,6 +320,10 @@ var RatingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetHostAverage",
 			Handler:    _RatingService_GetHostAverage_Handler,
+		},
+		{
+			MethodName: "GetTargetRatingsById",
+			Handler:    _RatingService_GetTargetRatingsById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

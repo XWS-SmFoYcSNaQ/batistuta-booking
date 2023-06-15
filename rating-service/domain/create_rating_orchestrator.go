@@ -26,20 +26,22 @@ func (o *CreateRatingOrchestrator) Start(rating *Rating, oldValue *Rating) error
 	event := &create_rating.CreateRatingCommand{
 		Type: create_rating.StartRatingCreation,
 		Rating: create_rating.RatingDetails{
-			ID:         rating.ID,
-			TargetID:   rating.TargetID,
-			TargetType: rating.TargetType,
-			UserID:     rating.UserID,
-			Value:      rating.Value,
+			ID:           rating.ID,
+			TargetID:     rating.TargetID,
+			TargetType:   rating.TargetType,
+			UserID:       rating.UserID,
+			Value:        rating.Value,
+			LastModified: rating.LastModified,
 		},
 	}
 	if oldValue != nil {
 		event.Rating.OldValue = &create_rating.RatingDetails{
-			ID:         oldValue.ID,
-			TargetID:   oldValue.TargetID,
-			TargetType: oldValue.TargetType,
-			UserID:     oldValue.UserID,
-			Value:      oldValue.Value,
+			ID:           oldValue.ID,
+			TargetID:     oldValue.TargetID,
+			TargetType:   oldValue.TargetType,
+			UserID:       oldValue.UserID,
+			Value:        oldValue.Value,
+			LastModified: oldValue.LastModified,
 		}
 	}
 	return (*o.commandPublisher).Publish(event)

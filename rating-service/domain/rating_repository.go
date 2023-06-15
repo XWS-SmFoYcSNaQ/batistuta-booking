@@ -12,4 +12,5 @@ type RatingRepository interface {
 	GetByUserAndTarget(userId *uuid.UUID, targetId *uuid.UUID, targetType uint32) (*Rating, error)
 	GetTargetAverage(targetId *uuid.UUID, targetType uint32) (float64, error)
 	GetByTargetType(targetType uint32) (*[]Rating, error)
+	GetByTargetId(targetId *uuid.UUID) (*[]Rating, error)
 }

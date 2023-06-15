@@ -30,11 +30,12 @@ func (o *DeleteRatingOrchestrator) Start(id *uuid.UUID, oldValue *Rating) error 
 		Rating: delete_rating.RatingDetails{
 			ID: *id,
 			OldValue: &create_rating.RatingDetails{
-				ID:         oldValue.ID,
-				TargetID:   oldValue.TargetID,
-				TargetType: oldValue.TargetType,
-				UserID:     oldValue.UserID,
-				Value:      oldValue.Value,
+				ID:           oldValue.ID,
+				TargetID:     oldValue.TargetID,
+				TargetType:   oldValue.TargetType,
+				UserID:       oldValue.UserID,
+				Value:        oldValue.Value,
+				LastModified: oldValue.LastModified,
 			},
 		},
 	}
