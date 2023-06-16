@@ -1,8 +1,16 @@
-﻿using Grpc.Net.Client;
+﻿using FluentValidation;
+using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
 using user_service.Configuration;
 using user_service.data.Db;
 using user_service.Helpers;
+using user_service.BackgroundServices;
+using user_service.Interfaces;
+using user_service.messaging;
+using user_service.messaging.Configuration;
+using user_service.messaging.Interfaces;
+using user_service.Services;
+using user_service.Validators;
 
 namespace user_service.Extensions
 {
@@ -19,6 +27,19 @@ namespace user_service.Extensions
             {
                 context.Database.Migrate();
             }
+        }
+
+        public static void AddServices(this WebApplicationBuilder builder)
+        {
+            builder.Services.AddScoped<IValidator<RegisterUser_Request>, RegisterUserRequestValidator>();
+            builder.Services.AddScoped<IValidator<ChangePassword_Request>, ChangePasswordRequestValidator>();
+            builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+            builder.Services.AddSingleton<INatsClient, NatsClient>();
+        }
+
+        public static void AddHostedServices(this WebApplicationBuilder builder)
+        {
+            builder.Services.AddHostedService<CreateRatingService>();
         }
 
         public static void AddDb(this WebApplicationBuilder builder)
@@ -39,6 +60,20 @@ namespace user_service.Extensions
             builder.Services.AddSingleton(servicesConfig);
         }
 
+        public static void AddNatsConfig(this WebApplicationBuilder builder)
+        {
+            var natsConfig = new NatsConfiguration();
+            builder.Configuration.Bind("NatsConfiguration", natsConfig);
+            builder.Services.AddSingleton(natsConfig);
+        }
+
+        public static void AddCreateRatingSubjectsConfig(this WebApplicationBuilder builder)
+        {
+            var createRatingSubjectsConfig = new CreateRatingSubjectsConfig();
+            builder.Configuration.Bind("CreateRatingSubjects", createRatingSubjectsConfig);
+            builder.Services.AddSingleton(createRatingSubjectsConfig);
+        }
+
         public static void AddGrpcChannelOptions(this WebApplicationBuilder builder)
         {
             var grpcChannelOptions = new GrpcChannelOptions
@@ -53,6 +88,5 @@ namespace user_service.Extensions
         {
             builder.Services.AddSingleton<GrpcChannelBuilder>();
         }
-
     }
 }

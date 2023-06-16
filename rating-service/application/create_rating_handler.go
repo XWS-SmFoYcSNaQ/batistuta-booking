@@ -30,13 +30,6 @@ func NewCreateRatingCommandHandler(ratingService *domain.RatingService, publishe
 func (handler *CreateRatingCommandHandler) handle(command *saga.CreateRatingCommand) {
 	reply := saga.CreateRatingReply{Rating: command.Rating}
 	switch command.Type {
-	//temporary begin
-	case saga.UpdateUser:
-		reply.Type = saga.UserUpdated
-	case saga.UpdateHost:
-		reply.Type = saga.HostUpdated
-	//temporary end
-
 	case saga.StartRatingCreation:
 		oldValue := command.Rating.OldValue
 		var err error

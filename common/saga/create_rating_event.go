@@ -17,7 +17,6 @@ type CreateRatingCommandType int8
 
 const (
 	StartRatingCreation CreateRatingCommandType = iota
-	UpdateUser
 	UpdateAccommodation
 	UpdateHost
 	RollbackRating
@@ -37,8 +36,6 @@ type CreateRatingReplyType int8
 const (
 	CreationStarted CreateRatingReplyType = iota
 	CreationFailed
-	UserUpdated
-	UserUpdateFailed
 	AccommodationUpdated
 	AccommodationUpdateFailed
 	HostUpdated

@@ -56,15 +56,11 @@ func (o *CreateRatingOrchestrator) handle(reply *saga.CreateRatingReply) {
 func (o *CreateRatingOrchestrator) nextCommandType(reply *saga.CreateRatingReply) saga.CreateRatingCommandType {
 	switch (*reply).Type {
 	case saga.CreationStarted:
-		return saga.UpdateUser
-	case saga.CreationFailed:
-		return saga.RollbackRating
-	case saga.UserUpdated:
 		if (*reply).Rating.TargetType == 1 {
 			return saga.UpdateHost
 		}
 		return saga.UpdateAccommodation
-	case saga.UserUpdateFailed:
+	case saga.CreationFailed:
 		return saga.RollbackRating
 	case saga.AccommodationUpdated:
 		return saga.ConcludeRatingCreation
