@@ -47,6 +47,36 @@ service BookingService {
       delete: "/booking/reservation/{id}"
     };
   }
+
+  rpc GetReservationsForHost(EmptyMessage) returns (ReservationsForHost_Response) {
+    option (google.api.http) = {
+      get: "/booking/reservation/host"
+      };
+  }
+
+  rpc GetReservationRequestsForHost(EmptyMessage) returns (ReservationsForHost_Response) {
+    option (google.api.http) = {
+      get: "/booking/reservation/requests/host"
+    };
+  }
+
+  rpc IsTheCancellationRateLessThanFive(EmptyMessage) returns (StandOutHost_Response) {
+    option (google.api.http) = {
+      get: "/booking/host/check/cancellation-rate"
+    };
+  }
+
+  rpc HasAtLeastFivePastReservations(EmptyMessage) returns (StandOutHost_Response) {
+    option (google.api.http) = {
+      get: "/booking/host/check/past-reservations"
+    };
+  }
+
+  rpc IsTheReservationDurationLongEnough(EmptyMessage) returns (StandOutHost_Response) {
+    option (google.api.http) = {
+      get: "/booking/host/check/reservations-duration"
+    };
+  }
 }
 
 message AM_GetAllBookingRequests_Request {}
@@ -82,6 +112,7 @@ message BookingRequestsDTO {
   string endDate = 4;
   string userId = 5;
   int32 numberOfGuests = 6;
+  int32 numberOfCanceledReservations = 7;
 }
 
 message AM_DeleteBookingRequest_Request {
@@ -106,5 +137,13 @@ message AllReservationsForGuest_Response {
 
 message DeleteReservation_Request {
   string id = 1;
+}
+
+message ReservationsForHost_Response {
+  repeated BookingRequestsDTO data = 1;
+}
+
+message StandOutHost_Response {
+  bool flag = 1;
 }
 

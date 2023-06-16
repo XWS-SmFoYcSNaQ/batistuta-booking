@@ -20,6 +20,7 @@
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
     "axios": "^1.4.0",
+    "date-fns": "^2.30.0",
     "env-cmd": "^10.1.0",
     "immer": "^10.0.1",
     "ramda": "^0.29.0",
@@ -29,6 +30,8 @@
     "react-router-dom": "^6.11.1",
     "react-scripts": "5.0.1",
     "react-toastify": "^9.1.2",
+    "rsuite": "^5.35.1",
+    "rsuite-daterangepicker": "^3.0.5",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4",
     "zustand": "^4.3.8"

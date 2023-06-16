@@ -1,11 +1,12 @@
 package application
 
 import (
+	"log"
+
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/messaging"
-	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/saga"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/saga/create_rating"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/rating_service/domain"
 	"github.com/google/uuid"
-	"log"
 )
 
 type CreateRatingCommandHandler struct {
@@ -27,18 +28,19 @@ func NewCreateRatingCommandHandler(ratingService *domain.RatingService, publishe
 	return o, nil
 }
 
-func (handler *CreateRatingCommandHandler) handle(command *saga.CreateRatingCommand) {
-	reply := saga.CreateRatingReply{Rating: command.Rating}
+func (handler *CreateRatingCommandHandler) handle(command *create_rating.CreateRatingCommand) {
+	reply := create_rating.CreateRatingReply{Rating: command.Rating}
 	switch command.Type {
-	case saga.StartRatingCreation:
+	case create_rating.StartRatingCreation:
 		oldValue := command.Rating.OldValue
 		var err error
 		r := domain.Rating{
-			ID:         command.Rating.ID,
-			UserID:     command.Rating.UserID,
-			TargetID:   command.Rating.TargetID,
-			Value:      command.Rating.Value,
-			TargetType: command.Rating.TargetType,
+			ID:           command.Rating.ID,
+			UserID:       command.Rating.UserID,
+			TargetID:     command.Rating.TargetID,
+			Value:        command.Rating.Value,
+			TargetType:   command.Rating.TargetType,
+			LastModified: command.Rating.LastModified,
 		}
 		if oldValue == nil {
 			r.ID = uuid.New()
@@ -51,33 +53,34 @@ func (handler *CreateRatingCommandHandler) handle(command *saga.CreateRatingComm
 		}
 		if err != nil {
 			log.Println(err)
-			reply.Type = saga.CreationFailed
+			reply.Type = create_rating.CreationFailed
 		} else {
-			reply.Type = saga.CreationStarted
+			reply.Type = create_rating.CreationStarted
 		}
-	case saga.RollbackRating:
+	case create_rating.RollbackRating:
 		oldValue := command.Rating.OldValue
 		if oldValue == nil {
 			(*handler.ratingService).Delete(&domain.Rating{ID: command.Rating.ID})
 		} else {
 			(*handler.ratingService).Update(&domain.Rating{
-				ID:         oldValue.ID,
-				TargetID:   oldValue.TargetID,
-				UserID:     oldValue.UserID,
-				TargetType: oldValue.TargetType,
-				Value:      oldValue.Value,
+				ID:           oldValue.ID,
+				TargetID:     oldValue.TargetID,
+				UserID:       oldValue.UserID,
+				TargetType:   oldValue.TargetType,
+				Value:        oldValue.Value,
+				LastModified: command.Rating.LastModified,
 			})
 		}
 		log.Println("RATING ROLLED BACK")
-		reply.Type = saga.RatingRolledBack
-	case saga.ConcludeRatingCreation:
+		reply.Type = create_rating.RatingRolledBack
+	case create_rating.ConcludeRatingCreation:
 		log.Println("RATING CREATED SUCCESSFULLY")
-		reply.Type = saga.RatingCreationConcluded
+		reply.Type = create_rating.RatingCreationConcluded
 	default:
-		reply.Type = saga.UnknownReply
+		reply.Type = create_rating.UnknownReply
 	}
 
-	if reply.Type != saga.UnknownReply {
+	if reply.Type != create_rating.UnknownReply {
 		(*handler.replyPublisher).Publish(reply)
 	}
 }

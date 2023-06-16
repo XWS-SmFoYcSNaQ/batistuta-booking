@@ -7,6 +7,7 @@ import { PeriodStoreType, periodStore } from "./stores/periodStore";
 import { DiscountStoreType, discountStore } from "./stores/discountStore";
 import { AuthStoreType, authStore } from "./stores/authStore";
 import { UserStoreType, userStore } from "./stores/userStore";
+import { RatingStoreType, ratingStore } from "./stores/ratingStore";
 
 export interface AppState {
   accommodation: AccommodationStoreType
@@ -14,6 +15,7 @@ export interface AppState {
   discount: DiscountStoreType
   auth: AuthStoreType
   user: UserStoreType
+  rating: RatingStoreType
 }
 
 export const apiUrl = process.env.REACT_APP_API_URL;
@@ -25,7 +27,8 @@ const storeGenerator = (set: SetAppState, get: GetAppState): AppState => ({
   period: periodStore(set, get),
   discount: discountStore(set, get),
   auth: authStore(set, get),
-  user: userStore(set, get)
+  user: userStore(set, get),
+  rating: ratingStore(set, get)
 })
 
 const storeMerge = (persistedState: any, currentState: any) => {

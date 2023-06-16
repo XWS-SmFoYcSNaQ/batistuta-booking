@@ -10,6 +10,11 @@ service BookingService {
   rpc ConfirmReservationRequest(ReservationConfirm_Request) returns (EmptyMessage) {}
   rpc GetAllReservationsForGuest(AllReservationsForGuest_Request) returns (AllReservationsForGuest_Response) {}
   rpc DeleteReservation(DeleteReservation_Request) returns (EmptyMessage) {}
+  rpc GetReservationsForHost(EmptyMessage) returns (ReservationsForHost_Response) {}
+  rpc GetReservationRequestsForHost(EmptyMessage) returns (ReservationsForHost_Response) {}
+  rpc IsTheCancellationRateLessThanFive(EmptyMessage) returns (StandOutHost_Response) {}
+  rpc HasAtLeastFivePastReservations(EmptyMessage) returns (StandOutHost_Response) {}
+  rpc IsTheReservationDurationLongEnough(EmptyMessage) returns (StandOutHost_Response) {}
 }
 
 message AM_GetAllBookingRequests_Request {}
@@ -45,6 +50,7 @@ message BookingRequestsDTO {
   string endDate = 4;
   string userId = 5;
   int32 numberOfGuests = 6;
+  int32 numberOfCanceledReservations = 7;
 }
 
 message AM_DeleteBookingRequest_Request {
@@ -69,4 +75,12 @@ message AllReservationsForGuest_Response {
 
 message DeleteReservation_Request {
   string id = 1;
+}
+
+message ReservationsForHost_Response {
+  repeated BookingRequestsDTO data = 1;
+}
+
+message StandOutHost_Response {
+  bool flag = 1;
 }

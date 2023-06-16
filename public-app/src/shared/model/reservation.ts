@@ -5,4 +5,5 @@ export interface Reservation {
     endDate?: string;
     userId?: string;
     numberOfGuests?: number;
+    numberOfCanceledReservations?: number
   }

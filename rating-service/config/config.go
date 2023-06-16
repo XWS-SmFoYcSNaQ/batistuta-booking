@@ -1,4 +1,4 @@
-package startup
+package config
 
 import "os"
 
@@ -14,8 +14,11 @@ type Config struct {
 	NatsUser                   string
 	NatsPass                   string
 	AuthServiceAddress         string
+	UserServiceAddress         string
 	CreateRatingCommandSubject string
 	CreateRatingReplySubject   string
+	DeleteRatingCommandSubject string
+	DeleteRatingReplySubject   string
 }
 
 func NewConfig() *Config {
@@ -31,7 +34,10 @@ func NewConfig() *Config {
 		NatsUser:                   os.Getenv("NATS_USER"),
 		NatsPass:                   os.Getenv("NATS_PASS"),
 		AuthServiceAddress:         os.Getenv("AUTH_SERVICE_ADDRESS"),
+		UserServiceAddress:         os.Getenv("USER_SERVICE_ADDRESS"),
 		CreateRatingCommandSubject: os.Getenv("CREATE_RATING_COMMAND_SUBJECT"),
 		CreateRatingReplySubject:   os.Getenv("CREATE_RATING_REPLY_SUBJECT"),
+		DeleteRatingCommandSubject: os.Getenv("DELETE_RATING_COMMAND_SUBJECT"),
+		DeleteRatingReplySubject:   os.Getenv("DELETE_RATING_REPLY_SUBJECT"),
 	}
 }

@@ -31,7 +31,7 @@ const getCurrentUserAccommodationRating = (
   a: Accommodation | null,
   currentUser?: User
 ) => {
-  return a?.ratings?.find((r) => r.userId === currentUser?.Id)?.value;
+  return a?.ratings?.find((r) => r.userId === currentUser?.Id);
 };
 
 export const AccommodationList = ({ host = true }: { host?: boolean }) => {
@@ -51,6 +51,7 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
   const rateAccommodation = appStore(
     (state: AppState) => state.accommodation.rateAccommodation
   );
+  const removeRating = appStore((state: AppState) => state.rating.removeRating);
   const [selectedAccommodation, setSelectedAccommodation] =
     useState<Accommodation | null>(null);
 
@@ -69,6 +70,14 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
       host ? fetchMyAccommodations() : fetchAccommodations();
     } catch (e) {
       throw e;
+    }
+  };
+  const handleRatingRemoval = async (accommodation: Accommodation) => {
+    try {
+      await removeRating(getCurrentUserAccommodationRating(accommodation, currentUser)?.id ?? "");
+      host ? fetchMyAccommodations() : fetchAccommodations();
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -116,10 +125,41 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
                   <TableCell align="right">{d.maxGuests}</TableCell>
                   <TableCell align="right">{getAverageRating(d)}</TableCell>
                   <TableCell align="right">
-                    {getCurrentUserAccommodationRating(d, currentUser)}
+                    {getCurrentUserAccommodationRating(d, currentUser)?.value}
                   </TableCell>
                   <TableCell align="right">
-                    <Stack direction="row" justifyContent="right" gap={1}>
+                    <Stack flexWrap="wrap" direction="row" justifyContent="right" gap={1}>
+                    <Button
+                        variant="outlined"
+                        color="error"
+                        sx={{ whiteSpace: "nowrap" }}
+                        type="button"
+                        onClick={() => handleRatingRemoval(d)}
+                        size="small"
+                      >
+                        Remove Rating
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        sx={{ whiteSpace: "nowrap" }}
+                        type="button"
+                        onClick={() => openRatingDialog(d)}
+                        size="small"
+                      >
+                        Rate
+                      </Button>
+                      <Link to={`/ratings/${d.id}`}>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          sx={{ whiteSpace: "nowrap" }}
+                          type="button"
+                          size="small"
+                        >
+                          Ratings
+                        </Button>
+                      </Link>
                       <Link to={`/accommodation/discounts/${d.id}`}>
                         <Button
                           variant="outlined"
@@ -142,16 +182,7 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
                           Availability
                         </Button>
                       </Link>
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        sx={{ whiteSpace: "nowrap" }}
-                        type="button"
-                        onClick={() => openRatingDialog(d)}
-                        size="small"
-                      >
-                        Rate
-                      </Button>
+                      
                     </Stack>
                   </TableCell>
                 </TableRow>
@@ -181,7 +212,7 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
         initialRating={getCurrentUserAccommodationRating(
           selectedAccommodation,
           currentUser
-        )}
+        )?.value}
         title="Rate accommodation"
         onRate={(value: number) => handleRating(value)}
       />
