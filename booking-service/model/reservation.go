@@ -9,4 +9,5 @@ type Reservation struct {
 	EndDate         string
 	NumberOfGuests  int
 	UserId          string
+	IsActive        bool
 }

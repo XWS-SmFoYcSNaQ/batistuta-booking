@@ -1,27 +1,32 @@
 package infrastructure
 
 import (
-	"context"
+	"booking_service/config"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/auth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
 )
 
-//func GetAuthClient(cfg *config.Config) *auth.AuthServiceClient {
-//	conn := createConnection((*cfg).AuthServiceAddress)
-//	client := auth.NewAuthServiceClient(conn)
+//func GetAccommodationClient(cfg *config.Config) *accommodation.AccommodationServiceClient {
+//	conn := CreateConnection((*cfg).AccommodationServiceAddress)
+//	client := accommodation.NewAccommodationServiceClient(conn)
 //	return &client
 //}
 
-func createConnection(address string) *grpc.ClientConn {
-	conn, err := grpc.DialContext(
-		context.Background(),
-		address,
-		grpc.WithBlock(),
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	)
-	handleError(err, "Failed to create connection with address: "+address)
-	return conn
+func GetAuthClient(cfg *config.Config) *auth.AuthServiceClient {
+	conn, err := CreateConnection((*cfg).AuthServiceAddress)
+	handleError(err, "Couldn't create auth client")
+	client := auth.NewAuthServiceClient(conn)
+	return &client
+}
+
+func CreateConnection(address string) (*grpc.ClientConn, error) {
+	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return nil, err
+	}
+	return conn, nil
 }
 
 func handleError(e error, m string) {

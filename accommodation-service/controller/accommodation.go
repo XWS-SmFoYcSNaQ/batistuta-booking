@@ -38,7 +38,6 @@ func (c AccommodationController) GetAllByHost(ctx context.Context, request *acco
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, err.Error())
 	}
-
 	id, err := uuid.Parse((*res).UserId)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
