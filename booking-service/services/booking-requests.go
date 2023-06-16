@@ -394,6 +394,9 @@ func (s BookingRequestsService) HasAtLeastFivePastReservations(accommodationIDs 
 
 func (s BookingRequestsService) IsTotalReservationDurationGreaterThanFiftyDays(accommodationIDs []string) (bool, error) {
 	// Convert accommodationIDs to []interface{}
+	if len(accommodationIDs) == 0 {
+		return false, nil
+	}
 	placeholders := make([]string, len(accommodationIDs))
 	values := make([]interface{}, len(accommodationIDs))
 	for i, id := range accommodationIDs {
@@ -403,7 +406,7 @@ func (s BookingRequestsService) IsTotalReservationDurationGreaterThanFiftyDays(a
 
 	// Query to calculate the total duration of all reservations
 	totalDurationQuery := `
-		SELECT SUM(DATE_PART('day', TO_TIMESTAMP(end_date, 'YYYY-MM-DD HH24:MI:SS') - TO_TIMESTAMP(start_date, 'YYYY-MM-DD HH24:MI:SS'))) AS total_duration
+		SELECT COALESCE(SUM(DATE_PART('day', TO_TIMESTAMP(end_date, 'YYYY-MM-DD HH24:MI:SS') - TO_TIMESTAMP(start_date, 'YYYY-MM-DD HH24:MI:SS'))), 0) AS total_duration
 		FROM Reservation AS r
 		WHERE r.accommodation_id IN (` + strings.Join(placeholders, ",") + `)
 	`

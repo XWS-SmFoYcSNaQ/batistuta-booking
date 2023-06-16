@@ -283,6 +283,10 @@ func (c ReservationController) IsTheCancellationRateLessThanFive(ctx context.Con
 		accommodationIDs = append(accommodationIDs, accommodationDTO.Id)
 	}
 
+	if len(accommodationIDs) == 0 {
+		return &booking.StandOutHost_Response{Flag: false}, nil
+	}
+
 	resp, err := c.BookingService.IsTheCancellationRateLessThanFive(accommodationIDs)
 	if err != nil {
 		return nil, err
@@ -328,6 +332,10 @@ func (c ReservationController) HasAtLeastFivePastReservations(ctx context.Contex
 		accommodationIDs = append(accommodationIDs, accommodationDTO.Id)
 	}
 
+	if len(accommodationIDs) == 0 {
+		return &booking.StandOutHost_Response{Flag: false}, nil
+	}
+
 	resp, err := c.BookingService.HasAtLeastFivePastReservations(accommodationIDs)
 	if err != nil {
 		return nil, err
@@ -371,6 +379,10 @@ func (c ReservationController) IsTheReservationDurationLongEnough(ctx context.Co
 	var accommodationIDs []string
 	for _, accommodationDTO := range response.Data {
 		accommodationIDs = append(accommodationIDs, accommodationDTO.Id)
+	}
+
+	if len(accommodationIDs) == 0 {
+		return &booking.StandOutHost_Response{Flag: false}, nil
 	}
 
 	resp, err := c.BookingService.IsTotalReservationDurationGreaterThanFiftyDays(accommodationIDs)
