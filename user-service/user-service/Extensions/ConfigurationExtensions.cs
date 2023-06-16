@@ -40,6 +40,7 @@ namespace user_service.Extensions
         public static void AddHostedServices(this WebApplicationBuilder builder)
         {
             builder.Services.AddHostedService<CreateRatingService>();
+            builder.Services.AddHostedService<DeleteRatingService>();
         }
 
         public static void AddDb(this WebApplicationBuilder builder)
@@ -72,6 +73,13 @@ namespace user_service.Extensions
             var createRatingSubjectsConfig = new CreateRatingSubjectsConfig();
             builder.Configuration.Bind("CreateRatingSubjects", createRatingSubjectsConfig);
             builder.Services.AddSingleton(createRatingSubjectsConfig);
+        }
+
+        public static void AddDeleteRatingSubjectsConfig(this WebApplicationBuilder builder)
+        {
+            var deleteRatingSubjectsConfig = new DeleteRatingSubjectsConfig();
+            builder.Configuration.Bind("DeleteRatingSubjects", deleteRatingSubjectsConfig);
+            builder.Services.AddSingleton(deleteRatingSubjectsConfig);
         }
 
         public static void AddGrpcChannelOptions(this WebApplicationBuilder builder)

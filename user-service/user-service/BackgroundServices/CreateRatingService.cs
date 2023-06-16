@@ -1,12 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NATS.Client;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using user_service.Configuration;
 using user_service.data.Db;
 using user_service.domain.Entities;
-using user_service.messaging.Configuration;
 using user_service.messaging.CreateRatingSAGA;
 using user_service.messaging.Interfaces;
 
@@ -17,12 +14,14 @@ namespace user_service.BackgroundServices
         private readonly INatsClient _natsClient;
         private readonly CreateRatingSubjectsConfig _subjects;
         private readonly ILogger<CreateRatingService> _logger;
-        public IServiceProvider Services { get; }
-
-        private string CreateRatingReplaySubject => _subjects.CREATE_RATING_REPLAY_SUBJECT;
         private readonly string ServiceName = nameof(CreateRatingService);
 
-        public CreateRatingService(INatsClient natsClient,
+        private string CreateRatingReplaySubject => _subjects.CREATE_RATING_REPLAY_SUBJECT;
+        private string CreateRatingCommandSubject => _subjects.CREATE_RATING_COMMAND_SUBJECT;
+        public IServiceProvider Services { get; }
+
+        public CreateRatingService(
+            INatsClient natsClient,
             CreateRatingSubjectsConfig createRatingSubjectsConfig,
             ILogger<CreateRatingService> logger,
             IServiceProvider serviceProvider)
@@ -49,13 +48,13 @@ namespace user_service.BackgroundServices
 
         private async Task BackgroundProcessing(CancellationToken stoppingToken)
         {
-            _natsClient.SubscribeAsync(_subjects.CREATE_RATING_COMMAND_SUBJECT, UpdateHostCommandHandler());
+            _natsClient.SubscribeAsync(CreateRatingCommandSubject, CreateRatingHandler());
 
             await Task.Delay(Timeout.Infinite, stoppingToken);
 
         }
 
-        private EventHandler<MsgHandlerEventArgs> UpdateHostCommandHandler()
+        private EventHandler<MsgHandlerEventArgs> CreateRatingHandler()
         {
             return async (sender, args) =>
             {
@@ -82,7 +81,6 @@ namespace user_service.BackgroundServices
                             await RollbackRating(createRatingCommand);
                             break;
                         default:
-                            _logger.LogInformation("Unknown command");
                             break;
                     }
 
@@ -124,7 +122,7 @@ namespace user_service.BackgroundServices
             hostRating.AverageRating = Math.Round((double)hostRating.TotalRating / hostRating.NumOfRatings, 2);
             await dbContext.SaveChangesAsync();
 
-            _logger.LogInformation("Host rating roled back.");
+            _logger.LogInformation("Host rating create/update roledback.");
         }
 
         private async Task UpdateHost(CreateRatingCommand createRatingCommand)
@@ -140,6 +138,7 @@ namespace user_service.BackgroundServices
 
                 if (host == null)
                 {
+                    _logger.LogError($"Host update failed, host with id: {createRatingCommand.Rating.TargetID} doesn't exist.");
                     var createRatingReplay = new CreateRatingReply
                     {
                         Rating = createRatingCommand.Rating,

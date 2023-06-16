@@ -30,6 +30,7 @@ builder.AddServicesConfig();
 builder.AddGrpcChannelOptions();
 builder.AddNatsConfig();
 builder.AddCreateRatingSubjectsConfig();
+builder.AddDeleteRatingSubjectsConfig();
 builder.AddHelpers();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddFluentValidationAutoValidation();

@@ -7,6 +7,7 @@
         public uint TargetType { get; set; }
         public Guid UserID { get; set; }
         public uint Value { get; set; }
+        public DateTime LastModified { get; set; }
         public RatingDetails? OldValue { get; set; }
     }
 }

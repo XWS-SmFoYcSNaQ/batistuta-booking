@@ -53,15 +53,11 @@ func (o *DeleteRatingOrchestrator) handle(reply *delete_rating.DeleteRatingReply
 func (o *DeleteRatingOrchestrator) nextCommandType(reply *delete_rating.DeleteRatingReply) delete_rating.DeleteRatingCommandType {
 	switch (*reply).Type {
 	case delete_rating.DeletionStarted:
-		return delete_rating.UpdateUser
-	case delete_rating.DeletionFailed:
-		return delete_rating.RollbackRating
-	case delete_rating.UserUpdated:
 		if (*reply).Rating.OldValue.TargetType == 1 {
 			return delete_rating.UpdateHost
 		}
 		return delete_rating.UpdateAccommodation
-	case delete_rating.UserUpdateFailed:
+	case delete_rating.DeletionFailed:
 		return delete_rating.RollbackRating
 	case delete_rating.AccommodationUpdated:
 		return delete_rating.ConcludeRatingDeletion
