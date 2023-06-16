@@ -11,6 +11,7 @@ service BookingService {
   rpc GetAllReservationsForGuest(AllReservationsForGuest_Request) returns (AllReservationsForGuest_Response) {}
   rpc DeleteReservation(DeleteReservation_Request) returns (EmptyMessage) {}
   rpc GetReservationsForHost(EmptyMessage) returns (ReservationsForHost_Response) {}
+  rpc GetReservationRequestsForHost(EmptyMessage) returns (ReservationsForHost_Response) {}
 }
 
 message AM_GetAllBookingRequests_Request {}
@@ -46,6 +47,7 @@ message BookingRequestsDTO {
   string endDate = 4;
   string userId = 5;
   int32 numberOfGuests = 6;
+  int32 numberOfCanceledReservations = 7;
 }
 
 message AM_DeleteBookingRequest_Request {

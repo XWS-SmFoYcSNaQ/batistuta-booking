@@ -30,7 +30,8 @@ func SetupDatabase(db *sql.DB) {
 		start_date TEXT NOT NULL,
 		end_date TEXT NOT NULL,
 		number_of_guests integer NOT NULL,
-    	user_id uuid NOT NULL)
+    	user_id uuid NOT NULL,
+    	is_active boolean NOT NULL DEFAULT true)
     `)
 	if err != nil {
 		log.Fatalln(err)

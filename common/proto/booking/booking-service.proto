@@ -53,6 +53,12 @@ service BookingService {
       get: "/booking/reservation/host"
       };
   }
+
+  rpc GetReservationRequestsForHost(EmptyMessage) returns (ReservationsForHost_Response) {
+    option (google.api.http) = {
+      get: "/booking/reservation/requests/host"
+    };
+  }
 }
 
 message AM_GetAllBookingRequests_Request {}
@@ -88,6 +94,7 @@ message BookingRequestsDTO {
   string endDate = 4;
   string userId = 5;
   int32 numberOfGuests = 6;
+  int32 numberOfCanceledReservations = 7;
 }
 
 message AM_DeleteBookingRequest_Request {

@@ -95,7 +95,6 @@ func createConnection(address string) (*grpc.ClientConn, error) {
 
 func (c *AccommodationServiceClient) GetAllAccommodationsForHost(ctx context.Context) (*accommodation.AM_GetAllAccommodations_Response, error) {
 	req := &accommodation.AM_GetAllAccommodations_Request{}
-
 	return c.Client.GetMyAccommodations(ctx, req)
 }
 
