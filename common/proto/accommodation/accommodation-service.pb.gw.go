@@ -31,9 +31,20 @@ var _ = runtime.String
 var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
+var (
+	filter_AccommodationService_GetAllAccommodations_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
 func request_AccommodationService_GetAllAccommodations_0(ctx context.Context, marshaler runtime.Marshaler, client AccommodationServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq AM_GetAllAccommodations_Request
 	var metadata runtime.ServerMetadata
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_AccommodationService_GetAllAccommodations_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	msg, err := client.GetAllAccommodations(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -44,13 +55,20 @@ func local_request_AccommodationService_GetAllAccommodations_0(ctx context.Conte
 	var protoReq AM_GetAllAccommodations_Request
 	var metadata runtime.ServerMetadata
 
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_AccommodationService_GetAllAccommodations_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
 	msg, err := server.GetAllAccommodations(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
 func request_AccommodationService_GetMyAccommodations_0(ctx context.Context, marshaler runtime.Marshaler, client AccommodationServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq AM_GetAllAccommodations_Request
+	var protoReq AM_GetMyAccommodations_Request
 	var metadata runtime.ServerMetadata
 
 	msg, err := client.GetMyAccommodations(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -59,7 +77,7 @@ func request_AccommodationService_GetMyAccommodations_0(ctx context.Context, mar
 }
 
 func local_request_AccommodationService_GetMyAccommodations_0(ctx context.Context, marshaler runtime.Marshaler, server AccommodationServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq AM_GetAllAccommodations_Request
+	var protoReq AM_GetMyAccommodations_Request
 	var metadata runtime.ServerMetadata
 
 	msg, err := server.GetMyAccommodations(ctx, &protoReq)

@@ -21,7 +21,11 @@ type AccommodationController struct {
 }
 
 func (c AccommodationController) GetAll(ctx context.Context, request *accommodation.AM_GetAllAccommodations_Request) (*accommodation.AM_GetAllAccommodations_Response, error) {
-	accommodations, err := c.AccommodationService.GetAll(uuid.Nil)
+	filters, err := utility.ExtractAccommodationFilters(request.Range, request.Benefits, request.Distinguished)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	accommodations, err := c.AccommodationService.GetAll(filters)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -33,7 +37,7 @@ func (c AccommodationController) GetAll(ctx context.Context, request *accommodat
 	return &accommodation.AM_GetAllAccommodations_Response{Data: r}, nil
 }
 
-func (c AccommodationController) GetAllByHost(ctx context.Context, request *accommodation.AM_GetAllAccommodations_Request) (*accommodation.AM_GetAllAccommodations_Response, error) {
+func (c AccommodationController) GetMyAccommodations(ctx context.Context, request *accommodation.AM_GetMyAccommodations_Request) (*accommodation.AM_GetMyAccommodations_Response, error) {
 	res, err := c.AuthService.ValidateToken(&ctx)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, err.Error())
@@ -42,7 +46,7 @@ func (c AccommodationController) GetAllByHost(ctx context.Context, request *acco
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	accommodations, err := c.AccommodationService.GetAll(id)
+	accommodations, err := c.AccommodationService.GetAllByHostId(&id)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -50,7 +54,7 @@ func (c AccommodationController) GetAllByHost(ctx context.Context, request *acco
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	return &accommodation.AM_GetAllAccommodations_Response{Data: data}, nil
+	return &accommodation.AM_GetMyAccommodations_Response{Data: data}, nil
 }
 
 func (c AccommodationController) Create(ctx context.Context, request *accommodation.AM_CreateAccommodation_Request) (*accommodation.AM_CreateAccommodation_Response, error) {

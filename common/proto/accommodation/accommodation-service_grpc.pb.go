@@ -35,7 +35,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AccommodationServiceClient interface {
 	GetAllAccommodations(ctx context.Context, in *AM_GetAllAccommodations_Request, opts ...grpc.CallOption) (*AM_GetAllAccommodations_Response, error)
-	GetMyAccommodations(ctx context.Context, in *AM_GetAllAccommodations_Request, opts ...grpc.CallOption) (*AM_GetAllAccommodations_Response, error)
+	GetMyAccommodations(ctx context.Context, in *AM_GetMyAccommodations_Request, opts ...grpc.CallOption) (*AM_GetMyAccommodations_Response, error)
 	CreateAccommodation(ctx context.Context, in *AM_CreateAccommodation_Request, opts ...grpc.CallOption) (*AM_CreateAccommodation_Response, error)
 	GetAccommodation(ctx context.Context, in *AM_GetAccommodation_Request, opts ...grpc.CallOption) (*AM_GetAccommodation_Response, error)
 	GetAllPeriodsByAccommodation(ctx context.Context, in *AM_GetAllPeriodsByAccommodation_Request, opts ...grpc.CallOption) (*AM_GetAllPeriodsByAccommodation_Response, error)
@@ -62,8 +62,8 @@ func (c *accommodationServiceClient) GetAllAccommodations(ctx context.Context, i
 	return out, nil
 }
 
-func (c *accommodationServiceClient) GetMyAccommodations(ctx context.Context, in *AM_GetAllAccommodations_Request, opts ...grpc.CallOption) (*AM_GetAllAccommodations_Response, error) {
-	out := new(AM_GetAllAccommodations_Response)
+func (c *accommodationServiceClient) GetMyAccommodations(ctx context.Context, in *AM_GetMyAccommodations_Request, opts ...grpc.CallOption) (*AM_GetMyAccommodations_Response, error) {
+	out := new(AM_GetMyAccommodations_Response)
 	err := c.cc.Invoke(ctx, AccommodationService_GetMyAccommodations_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -139,7 +139,7 @@ func (c *accommodationServiceClient) CreateDiscount(ctx context.Context, in *AM_
 // for forward compatibility
 type AccommodationServiceServer interface {
 	GetAllAccommodations(context.Context, *AM_GetAllAccommodations_Request) (*AM_GetAllAccommodations_Response, error)
-	GetMyAccommodations(context.Context, *AM_GetAllAccommodations_Request) (*AM_GetAllAccommodations_Response, error)
+	GetMyAccommodations(context.Context, *AM_GetMyAccommodations_Request) (*AM_GetMyAccommodations_Response, error)
 	CreateAccommodation(context.Context, *AM_CreateAccommodation_Request) (*AM_CreateAccommodation_Response, error)
 	GetAccommodation(context.Context, *AM_GetAccommodation_Request) (*AM_GetAccommodation_Response, error)
 	GetAllPeriodsByAccommodation(context.Context, *AM_GetAllPeriodsByAccommodation_Request) (*AM_GetAllPeriodsByAccommodation_Response, error)
@@ -157,7 +157,7 @@ type UnimplementedAccommodationServiceServer struct {
 func (UnimplementedAccommodationServiceServer) GetAllAccommodations(context.Context, *AM_GetAllAccommodations_Request) (*AM_GetAllAccommodations_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllAccommodations not implemented")
 }
-func (UnimplementedAccommodationServiceServer) GetMyAccommodations(context.Context, *AM_GetAllAccommodations_Request) (*AM_GetAllAccommodations_Response, error) {
+func (UnimplementedAccommodationServiceServer) GetMyAccommodations(context.Context, *AM_GetMyAccommodations_Request) (*AM_GetMyAccommodations_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMyAccommodations not implemented")
 }
 func (UnimplementedAccommodationServiceServer) CreateAccommodation(context.Context, *AM_CreateAccommodation_Request) (*AM_CreateAccommodation_Response, error) {
@@ -213,7 +213,7 @@ func _AccommodationService_GetAllAccommodations_Handler(srv interface{}, ctx con
 }
 
 func _AccommodationService_GetMyAccommodations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AM_GetAllAccommodations_Request)
+	in := new(AM_GetMyAccommodations_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -225,7 +225,7 @@ func _AccommodationService_GetMyAccommodations_Handler(srv interface{}, ctx cont
 		FullMethod: AccommodationService_GetMyAccommodations_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccommodationServiceServer).GetMyAccommodations(ctx, req.(*AM_GetAllAccommodations_Request))
+		return srv.(AccommodationServiceServer).GetMyAccommodations(ctx, req.(*AM_GetMyAccommodations_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
