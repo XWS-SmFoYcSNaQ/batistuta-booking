@@ -8,6 +8,7 @@ using user_service.Helpers;
 using user_service.Interfaces;
 using AuthServiceClient;
 using Microsoft.AspNetCore.HttpOverrides;
+using user_service.domain.Enums;
 
 namespace user_service.Services
 {
@@ -103,7 +104,7 @@ namespace user_service.Services
                 var users = await _dbContext.Users.ToListAsync();
                 var response = new GetAllUsers_Response();
 
-                response.Users.AddRange(users.Select(x => _mapper.Map<UserLessInfo>(x)));
+                response.Users.AddRange(users.Select(x => _mapper.Map<User>(x)));
 
                 return response;
             }
@@ -239,6 +240,41 @@ namespace user_service.Services
             await _dbContext.SaveChangesAsync();
 
             return new Empty_Message();
+        }
+
+        public override async Task<GetAllHostsWithRatings_Response> GetAllHostsWithRatings(
+            Empty_Message request,
+            ServerCallContext context)
+        {
+            var response = new GetAllHostsWithRatings_Response();
+            var hosts = await _dbContext.Users.Where(x => x.Role == domain.Enums.UserRole.Host).ToListAsync();
+
+            var channel = _grpcChannelBuilder.Build(_servicesConfig.RATING_SERVICE_ADDRESS);
+            var ratingClient = new rating_service.RatingService.RatingServiceClient(channel);
+            var hostsRatingsResponse = await ratingClient.GetHostRatingsAsync(new rating_service.Empty(), new CallOptions());
+            var hostsRatingsGroupedByHost = hostsRatingsResponse.Data
+                .ToLookup(x => x.TargetId);
+
+            foreach (var host in hosts)
+            {
+                var hostWithRating = new HostWithRating
+                {
+                    Id = host.Id.ToString(),
+                    Email = host.Email,
+                    FirstName = host.FirstName,
+                    LastName = host.LastName,
+                    LivingPlace = host.LivingPlace,
+                    Username = host.Username,
+                    Role = (UserRole)host.Role
+                };
+
+                hostWithRating.Ratings.AddRange(hostsRatingsGroupedByHost[host.Id.ToString()]
+                    .Select(x => _mapper.Map<user_service.RatingDTO>(x)));
+
+                response.Hosts.Add(hostWithRating);
+            }
+
+            return response;
         }
     }
 }

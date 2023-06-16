@@ -1,30 +1,29 @@
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import "./App.css";
-import { Outlet, useNavigate } from 'react-router';
-import { ListItemIcon, Button } from '@mui/material';
-import { NavLink } from 'react-router-dom';
-import HomeIcon from '@mui/icons-material/Home';
-import HouseIcon from '@mui/icons-material/House';
-import BedIcon from '@mui/icons-material/Bed';
-import LoginIcon from '@mui/icons-material/Login';
-import PersonIcon from '@mui/icons-material/Person';
-import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import BookOnlineIcon from '@mui/icons-material/BookOnline';
-import CheckIcon from '@mui/icons-material/Check';
-import { ToastContainer } from 'react-toastify';
-import { AppState, appStore } from './core/store';
-import 'rsuite/dist/rsuite.min.css';
-import { useEffect, useState } from 'react';
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
+import Divider from "@mui/material/Divider";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import { Outlet, useNavigate } from "react-router";
+import { ListItemIcon, Button } from "@mui/material";
+import { NavLink } from "react-router-dom";
+import HomeIcon from "@mui/icons-material/Home";
+import HouseIcon from "@mui/icons-material/House";
+import BedIcon from "@mui/icons-material/Bed";
+import LoginIcon from "@mui/icons-material/Login";
+import PersonIcon from "@mui/icons-material/Person";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import BookOnlineIcon from "@mui/icons-material/BookOnline";
+import CheckIcon from "@mui/icons-material/Check";
+import { ToastContainer } from "react-toastify";
+import { AppState, appStore } from "./core/store";
+import "rsuite/dist/rsuite.min.css";
+import { useEffect, useState } from "react";
+import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 
 const drawerWidth = 300;
 
@@ -37,58 +36,65 @@ interface NavItem {
 
 const upperNavItems: NavItem[] = [
   {
-    route: '/',
-    text: 'Home',
-    icon: <HomeIcon/>
+    route: "/",
+    text: "Home",
+    icon: <HomeIcon />,
   },
   {
-    route: '/accommodation/my',
-    text: 'My accommodations',
-    icon: <HouseIcon/>,
-    roles: [1]
+    route: "/accommodation/my",
+    text: "My accommodations",
+    icon: <HouseIcon />,
+    roles: [1],
   },
   {
-    route: '/accommodation/all',
-    text: 'Accommodations',
-    icon: <HouseIcon/>
+    route: "/accommodation/all",
+    text: "Accommodations",
+    icon: <HouseIcon />,
   },
   {
-    route: '/rooms',
-    text: 'Rooms',
-    icon: <BedIcon />
+    route: "/user/hosts",
+    text: "Hosts",
+    icon: <AssignmentIndIcon />,
   },
   {
-    route: '/reservations',
-    text: 'My reservations',
-    icon: <BookOnlineIcon />
+    route: "/rooms",
+    text: "Rooms",
+    icon: <BedIcon />,
   },
   {
-    route: 'reservations-to-confirm',
-    text: 'Reservations confirmation',
-    icon: <CheckIcon />
+    route: "/reservations",
+    text: "My reservations",
+    icon: <BookOnlineIcon />,
   },
   {
-    route: '/profile',
-    text: 'Profile',
-    icon: <AccountBoxIcon/>
-  }
+    route: "reservations-to-confirm",
+    text: "Reservations confirmation",
+    icon: <CheckIcon />,
+  },
+  {
+    route: "/profile",
+    text: "Profile",
+    icon: <AccountBoxIcon />,
+  },
 ];
 
 const lowerNavItems: NavItem[] = [
   {
-    route: '/login',
-    text: 'Login',
-    icon: <LoginIcon/>,      
+    route: "/login",
+    text: "Login",
+    icon: <LoginIcon />,
   },
   {
-    route: '/register',
-    text: 'Register',
-    icon: <PersonIcon/>
-  }
+    route: "/register",
+    text: "Register",
+    icon: <PersonIcon />,
+  },
 ];
 
 export default function App() {
-  const isAuthenticated = appStore((state: AppState) => state.auth.user != null);
+  const isAuthenticated = appStore(
+    (state: AppState) => state.auth.user != null
+  );
   const logoutUser = appStore((state: AppState) => state.auth.logout);
   const currentUser = appStore((state: AppState) => state.auth.user);
   const navigate = useNavigate();
@@ -100,21 +106,25 @@ export default function App() {
   }
 
   const filteredLowerNavItems = isAuthenticated
-    ? lowerNavItems.filter(item => item.route !== '/login' && item.route !== '/register')
+    ? lowerNavItems.filter(
+        (item) => item.route !== "/login" && item.route !== "/register"
+      )
     : lowerNavItems;
 
-  const [upperNav, setUpperNav] = useState<NavItem[]>([] as NavItem[])
+  const [upperNav, setUpperNav] = useState<NavItem[]>([] as NavItem[]);
 
   useEffect(() => {
     let filteredUpperNavItems = !isAuthenticated
-    ? upperNavItems.filter(item => item.route !== '/profile')
-    : upperNavItems;
-    filteredUpperNavItems = filteredUpperNavItems.filter(item => !item.roles || item.roles?.includes(currentUser?.Role ?? -1))
-    setUpperNav(filteredUpperNavItems)
-  }, [currentUser, isAuthenticated])
+      ? upperNavItems.filter((item) => item.route !== "/profile")
+      : upperNavItems;
+    filteredUpperNavItems = filteredUpperNavItems.filter(
+      (item) => !item.roles || item.roles?.includes(currentUser?.Role ?? -1)
+    );
+    setUpperNav(filteredUpperNavItems);
+  }, [currentUser, isAuthenticated]);
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -130,9 +140,9 @@ export default function App() {
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          '& .MuiDrawer-paper': {
+          "& .MuiDrawer-paper": {
             width: drawerWidth,
-            boxSizing: 'border-box',
+            boxSizing: "border-box",
           },
         }}
         variant="permanent"
@@ -146,9 +156,7 @@ export default function App() {
             <NavLink to={navItem.route} key={navItem.route}>
               <ListItem disablePadding>
                 <ListItemButton>
-                  <ListItemIcon>
-                    {navItem.icon}
-                  </ListItemIcon>
+                  <ListItemIcon>{navItem.icon}</ListItemIcon>
                   {navItem.text}
                 </ListItemButton>
               </ListItem>
@@ -159,13 +167,11 @@ export default function App() {
         {/* Lower nav items */}
         <List>
           {filteredLowerNavItems.map((navItem, index) => (
-            <NavLink to={navItem.route} key={navItem.route} >
+            <NavLink to={navItem.route} key={navItem.route}>
               <ListItem disablePadding>
                 <ListItemButton>
-                  <ListItemIcon>
-                    {navItem.icon}
-                  </ListItemIcon>
-                    {navItem.text}
+                  <ListItemIcon>{navItem.icon}</ListItemIcon>
+                  {navItem.text}
                 </ListItemButton>
               </ListItem>
             </NavLink>
@@ -175,7 +181,12 @@ export default function App() {
       </Drawer>
       <Box
         component="main"
-        sx={{ flexGrow: 1, bgcolor: 'background.default', py: 8, overflowX: 'visible' }}
+        sx={{
+          flexGrow: 1,
+          bgcolor: "background.default",
+          py: 8,
+          overflowX: "visible",
+        }}
       >
         <Outlet />
       </Box>

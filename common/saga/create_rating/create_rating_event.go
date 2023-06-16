@@ -1,14 +1,18 @@
-package saga
+package create_rating
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"time"
+)
 
 type RatingDetails struct {
-	ID         uuid.UUID
-	TargetID   uuid.UUID
-	TargetType uint32
-	UserID     uuid.UUID
-	Value      uint32
-	OldValue   *RatingDetails
+	ID           uuid.UUID
+	TargetID     uuid.UUID
+	TargetType   uint32
+	UserID       uuid.UUID
+	Value        uint32
+	LastModified time.Time
+	OldValue     *RatingDetails
 }
 
 //command

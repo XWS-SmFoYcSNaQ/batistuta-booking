@@ -59,11 +59,12 @@ export const accommodationStore = (
       console.log(e)
     }
     get().accommodation.setLoading(false)
-  },fetchSearchedAccommodations: async (requestBody: any) => {
+  },
+  fetchSearchedAccommodations: async (requestBody: any) => {
     get().accommodation.setLoading(true)
     get().accommodation.clearData()
     try {
-      const res = await axios.post("http://localhost:11000/accommodation/search",requestBody, {
+      const res = await axios.post("http://localhost:11000/accommodation/search", requestBody, {
         headers: {
           Authorization: `Bearer ${window.localStorage.getItem("jwt")}`
         }

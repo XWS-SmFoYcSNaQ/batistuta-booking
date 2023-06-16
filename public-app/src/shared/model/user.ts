@@ -1,3 +1,5 @@
+import { Rating } from "./rating";
+
 export interface User {
   Id?: string;
   Role?: UserRole;
@@ -6,6 +8,7 @@ export interface User {
   LastName?: string;
   Email?: string;
   LivingPlace?: string;
+  Ratings?: Rating[];
 }
 
 export enum UserRole {
