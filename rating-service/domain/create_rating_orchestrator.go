@@ -58,15 +58,11 @@ func (o *CreateRatingOrchestrator) handle(reply *create_rating.CreateRatingReply
 func (o *CreateRatingOrchestrator) nextCommandType(reply *create_rating.CreateRatingReply) create_rating.CreateRatingCommandType {
 	switch (*reply).Type {
 	case create_rating.CreationStarted:
-		return create_rating.UpdateUser
-	case create_rating.CreationFailed:
-		return create_rating.RollbackRating
-	case create_rating.UserUpdated:
 		if (*reply).Rating.TargetType == 1 {
 			return create_rating.UpdateHost
 		}
 		return create_rating.UpdateAccommodation
-	case create_rating.UserUpdateFailed:
+	case create_rating.CreationFailed:
 		return create_rating.RollbackRating
 	case create_rating.AccommodationUpdated:
 		return create_rating.ConcludeRatingCreation
