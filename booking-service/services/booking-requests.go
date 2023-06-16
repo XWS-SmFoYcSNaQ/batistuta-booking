@@ -313,3 +313,112 @@ func (s BookingRequestsService) GetNumberOfCanceledReservationsForGuest(userId s
 
 	return count
 }
+
+func (s BookingRequestsService) IsTheCancellationRateLessThanFive(accommodationIDs []string) (bool, error) {
+	// Convert accommodationIDs to []interface{}
+	placeholders := make([]string, len(accommodationIDs))
+	values := make([]interface{}, len(accommodationIDs))
+	for i, id := range accommodationIDs {
+		placeholders[i] = "$" + strconv.Itoa(i+1)
+		values[i] = id
+	}
+
+	totalReservationsQuery := `
+	SELECT COUNT(*) 
+	FROM Reservation AS r 
+	WHERE r.accommodation_id IN (` + strings.Join(placeholders, ",") + `)
+`
+
+	// Query to count the number of canceled reservations for the host's accommodations
+	canceledReservationsQuery := `
+		SELECT COUNT(*) 
+		FROM Reservation AS r 
+		WHERE r.is_active = false AND r.accommodation_id IN (` + strings.Join(placeholders, ",") + `)
+	`
+
+	// Execute the queries
+	var totalReservations int
+	var canceledReservations int
+	err := s.DB.QueryRow(totalReservationsQuery, values...).Scan(&totalReservations)
+	if err != nil {
+		return false, err
+	}
+
+	err = s.DB.QueryRow(canceledReservationsQuery, values...).Scan(&canceledReservations)
+	if err != nil {
+		return false, err
+	}
+
+	// Calculate the cancellation rate
+	cancellationRate := float64(canceledReservations) / float64(totalReservations) * 100
+
+	// Check if the cancellation rate is less than 5%
+	if cancellationRate < 5 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (s BookingRequestsService) HasAtLeastFivePastReservations(accommodationIDs []string) (bool, error) {
+	// Convert accommodationIDs to []interface{}
+	placeholders := make([]string, len(accommodationIDs))
+	values := make([]interface{}, len(accommodationIDs))
+	for i, id := range accommodationIDs {
+		placeholders[i] = "$" + strconv.Itoa(i+1)
+		values[i] = id
+	}
+
+	// Query to count the number of past reservations for the host
+	pastReservationsQuery := `
+		SELECT COUNT(*) 
+		FROM Reservation AS r 
+		WHERE TO_TIMESTAMP(end_date, 'YYYY-MM-DD HH24:MI:SS') < CURRENT_DATE AND r.accommodation_id IN (` + strings.Join(placeholders, ",") + `)
+	`
+
+	// Execute the query
+	var count int
+	err := s.DB.QueryRow(pastReservationsQuery, values...).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+
+	// Check if the count is at least 5
+	if count >= 5 {
+		return true, nil
+	}
+
+	return false, nil
+
+}
+
+func (s BookingRequestsService) IsTotalReservationDurationGreaterThanFiftyDays(accommodationIDs []string) (bool, error) {
+	// Convert accommodationIDs to []interface{}
+	placeholders := make([]string, len(accommodationIDs))
+	values := make([]interface{}, len(accommodationIDs))
+	for i, id := range accommodationIDs {
+		placeholders[i] = "$" + strconv.Itoa(i+1)
+		values[i] = id
+	}
+
+	// Query to calculate the total duration of all reservations
+	totalDurationQuery := `
+		SELECT SUM(DATE_PART('day', TO_TIMESTAMP(end_date, 'YYYY-MM-DD HH24:MI:SS') - TO_TIMESTAMP(start_date, 'YYYY-MM-DD HH24:MI:SS'))) AS total_duration
+		FROM Reservation AS r
+		WHERE r.accommodation_id IN (` + strings.Join(placeholders, ",") + `)
+	`
+
+	// Execute the query
+	var totalDuration float64
+	err := s.DB.QueryRow(totalDurationQuery, values...).Scan(&totalDuration)
+	if err != nil {
+		return false, err
+	}
+
+	// Check if the total duration is greater than 50 days
+	if totalDuration > 50 {
+		return true, nil
+	}
+
+	return false, nil
+}

@@ -59,6 +59,24 @@ service BookingService {
       get: "/booking/reservation/requests/host"
     };
   }
+
+  rpc IsTheCancellationRateLessThanFive(EmptyMessage) returns (StandOutHost_Response) {
+    option (google.api.http) = {
+      get: "/booking/host/check/cancellation-rate"
+    };
+  }
+
+  rpc HasAtLeastFivePastReservations(EmptyMessage) returns (StandOutHost_Response) {
+    option (google.api.http) = {
+      get: "/booking/host/check/past-reservations"
+    };
+  }
+
+  rpc IsTheReservationDurationLongEnough(EmptyMessage) returns (StandOutHost_Response) {
+    option (google.api.http) = {
+      get: "/booking/host/check/reservations-duration"
+    };
+  }
 }
 
 message AM_GetAllBookingRequests_Request {}
@@ -125,4 +143,7 @@ message ReservationsForHost_Response {
   repeated BookingRequestsDTO data = 1;
 }
 
+message StandOutHost_Response {
+  bool flag = 1;
+}
 

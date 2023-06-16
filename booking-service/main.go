@@ -4,9 +4,11 @@ import (
 	"booking_service/config"
 	"booking_service/controller"
 	"booking_service/handlers"
+	"booking_service/infrastructure"
 	"booking_service/infrastructure/database"
 	"booking_service/proto/booking"
 	"booking_service/services"
+	commonServices "github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/services"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
@@ -38,12 +40,17 @@ func main() {
 	grpcServer := grpc.NewServer()
 	reflection.Register(grpcServer)
 
+	authClient := infrastructure.GetAuthClient(&cfg)
+
 	//accommodationClient := infrastructure.GetAccommodationClient(&cfg)
 	//authClient := infrastructure.GetAuthClient(&cfg)
 	// Bootstrap gRPC service server and respond to request.
 	bookingHandler := handlers.BookingHandler{
 		ReservationController: &controller.ReservationController{
 			BookingService: &services.BookingRequestsService{DB: db},
+			AuthService: &commonServices.AuthService{
+				AuthClient: authClient,
+			},
 		},
 	}
 	booking.RegisterBookingServiceServer(grpcServer, bookingHandler)
