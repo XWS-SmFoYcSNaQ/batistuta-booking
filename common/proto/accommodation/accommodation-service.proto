@@ -10,7 +10,7 @@ service AccommodationService {
       get: "/accommodation"
     };
   }
-  rpc GetMyAccommodations(AM_GetAllAccommodations_Request) returns (AM_GetAllAccommodations_Response) {
+  rpc GetMyAccommodations(AM_GetMyAccommodations_Request) returns (AM_GetMyAccommodations_Response) {
     option (google.api.http) = {
       get: "/accommodation/me"
     };
@@ -26,7 +26,6 @@ service AccommodationService {
       get: "/accommodation/details/{id}"
     };
   }
-
   rpc GetAllPeriodsByAccommodation(AM_GetAllPeriodsByAccommodation_Request) returns (AM_GetAllPeriodsByAccommodation_Response) {
     option (google.api.http) = {
       get: "/accommodation/period/{accommodationId}"
@@ -60,9 +59,19 @@ service AccommodationService {
 
 //Accommodations
 
-message AM_GetAllAccommodations_Request {}
+message AM_GetAllAccommodations_Request {
+  string range = 1;
+  string benefits = 2;
+  string distinguished = 3;
+}
 
 message AM_GetAllAccommodations_Response {
+  repeated AccommodationDTO data = 1;
+}
+
+message AM_GetMyAccommodations_Request {}
+
+message AM_GetMyAccommodations_Response {
   repeated AccommodationDTO data = 1;
 }
 
