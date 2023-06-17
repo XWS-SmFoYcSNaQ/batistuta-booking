@@ -11,12 +11,13 @@ import {
   Stack,
   Button,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation, Outlet } from "react-router";
 import { Link } from "react-router-dom";
 import { appStore, AppState } from "../../../core/store";
 import { RatingDialog } from "../../../shared";
 import { Accommodation, User } from "../../../shared/model";
+import { AccommodationFilter, Filters } from "../filters";
 
 const getAverageRating = (a: Accommodation) => {
   const sum = a.ratings
@@ -54,10 +55,28 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
   const removeRating = appStore((state: AppState) => state.rating.removeRating);
   const [selectedAccommodation, setSelectedAccommodation] =
     useState<Accommodation | null>(null);
+  const [filtersEnabled, setFiltersEnabled] = useState(false);
+  const [filters, setFilters] = useState<AccommodationFilter | null>(null);
+
+  const fetchData = useCallback(() => {
+    host
+      ? fetchMyAccommodations()
+      : fetchAccommodations(filtersEnabled ? filters : null);
+  }, [
+    fetchAccommodations,
+    fetchMyAccommodations,
+    filters,
+    filtersEnabled,
+    host,
+  ]);
 
   useEffect(() => {
-    host ? fetchMyAccommodations() : fetchAccommodations();
-  }, [fetchAccommodations, fetchMyAccommodations, host]);
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    if (!filtersEnabled) setFilters(null);
+  }, [filtersEnabled]);
 
   const openRatingDialog = (accommodation: Accommodation) => {
     setSelectedAccommodation(accommodation);
@@ -67,15 +86,17 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
     //fetching latest data after rating action needs to be replaced by notifications since rating is asynchronous
     try {
       await rateAccommodation({ id: selectedAccommodation?.id!, value });
-      host ? fetchMyAccommodations() : fetchAccommodations();
+      fetchData();
     } catch (e) {
       throw e;
     }
   };
   const handleRatingRemoval = async (accommodation: Accommodation) => {
     try {
-      await removeRating(getCurrentUserAccommodationRating(accommodation, currentUser)?.id ?? "");
-      host ? fetchMyAccommodations() : fetchAccommodations();
+      await removeRating(
+        getCurrentUserAccommodationRating(accommodation, currentUser)?.id ?? ""
+      );
+      fetchData();
     } catch (e) {
       console.log(e);
     }
@@ -84,6 +105,19 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
   return (
     <div>
       <h2>Accommodations</h2>
+      {!host && !filtersEnabled && (
+        <Button type="button" onClick={() => setFiltersEnabled(true)}>
+          Enable filters
+        </Button>
+      )}
+      {!host && filtersEnabled && (
+        <Filters
+          setFiltersEnabled={(value: boolean) => setFiltersEnabled(value)}
+          setFilters={(filters: AccommodationFilter | null) =>
+            setFilters(filters)
+          }
+        />
+      )}
       {loading && (
         <Box
           sx={{
@@ -128,8 +162,13 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
                     {getCurrentUserAccommodationRating(d, currentUser)?.value}
                   </TableCell>
                   <TableCell align="right">
-                    <Stack flexWrap="wrap" direction="row" justifyContent="right" gap={1}>
-                    <Button
+                    <Stack
+                      flexWrap="wrap"
+                      direction="row"
+                      justifyContent="right"
+                      gap={1}
+                    >
+                      <Button
                         variant="outlined"
                         color="error"
                         sx={{ whiteSpace: "nowrap" }}
@@ -182,7 +221,6 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
                           Availability
                         </Button>
                       </Link>
-                      
                     </Stack>
                   </TableCell>
                 </TableRow>
@@ -209,10 +247,10 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
         open={isDialogOpen}
         setOpen={setDialogOpen}
         onClose={() => setSelectedAccommodation(null)}
-        initialRating={getCurrentUserAccommodationRating(
-          selectedAccommodation,
-          currentUser
-        )?.value}
+        initialRating={
+          getCurrentUserAccommodationRating(selectedAccommodation, currentUser)
+            ?.value
+        }
         title="Rate accommodation"
         onRate={(value: number) => handleRating(value)}
       />

@@ -26,7 +26,7 @@ export const AllAccommodations = () => {
     );
     
       useEffect(() => {
-        fetchAccommodations();
+        fetchAccommodations(null);
       }, [fetchAccommodations]);
 
 
