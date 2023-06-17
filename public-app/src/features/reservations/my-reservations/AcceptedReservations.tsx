@@ -12,6 +12,7 @@ import { VerifyResponse } from '../../../shared/model/authentication';
 import React from 'react';
 import { apiUrl, appStore, AppState } from '../../../core/store';
 import axios, { AxiosRequestConfig } from 'axios';
+import { toast } from 'react-toastify';
 
 export const AcceptedReservations = () => {
     const [loading, setLoading] = useState<number>(1) // to get
@@ -36,13 +37,17 @@ export const AcceptedReservations = () => {
         console.log(data)
     }
 
-    const handleCancel = async (reservationId : string) => {
+    const handleCancel = async (reservationId: string) => {
         try {
           const response = await axios.delete(`${apiUrl}/booking/reservation/${reservationId}`);
-          console.log('Reservation canceled successfully');
+          toast.success('Reservation canceled successfully');
           fetchReservations();
-        } catch (error) {
-          console.error('Error canceling reservation:', error);
+        } catch (error: any) {
+          if (error.response && error.response.data && error.response.data.code === 3) {
+            toast.error(error.response.data.message);
+          } else {
+            toast.error('Error canceling reservation');
+          }
         }
       };
     
