@@ -188,6 +188,18 @@ services:
     image: nats
     container_name: nats
     restart: on-failure
+
+  notification_database:
+    image: mongo:6-jammy
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${NOTIFICATION_DB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${NOTIFICATION_DB_PASSWORD}
+    volumes:
+      - notification_database-mongo-data:/data/db
+    ports:
+      - '12104:27017'
+    command: --quiet
       
 #  public_app:
 #    image: public_app
@@ -204,3 +216,4 @@ services:
 
 volumes:
   user_database-mysql-data:
+  notification_database-mongo-data:
