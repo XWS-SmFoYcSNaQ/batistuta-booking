@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option csharp_namespace = "booking_service";
+
+service BookingService {
+  rpc IsTheCancellationRateLessThanFive(EmptyMessage) returns (StandOutHost_Response);
+  rpc HasAtLeastFivePastReservations(EmptyMessage) returns (StandOutHost_Response);
+  rpc IsTheReservationDurationLongEnough(EmptyMessage) returns (StandOutHost_Response);
+}
+
+message EmptyMessage {
+
+}
+
+message StandOutHost_Response {
+  bool flag = 1;
+}
+

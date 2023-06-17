@@ -13,7 +13,7 @@ namespace user_service.BackgroundServices
         private readonly ILogger<DeleteRatingService> _logger;
         private readonly INatsClient _natsClient;
         private readonly DeleteRatingSubjectsConfig _deleteRatingSubjectsConfig;
-        private static readonly string ServiceName = nameof(DeleteRatingService);
+        private static readonly string _serviceName = nameof(DeleteRatingService);
 
         private string DeleteRatingReplaySubject => _deleteRatingSubjectsConfig.DELETE_RATING_REPLY_SUBJECT;
         private string DeleteRatingCommandSubject => _deleteRatingSubjectsConfig.DELETE_RATING_COMMAND_SUBJECT;
@@ -34,7 +34,7 @@ namespace user_service.BackgroundServices
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation($"{ServiceName} is starting.");
+            _logger.LogInformation($"{_serviceName} is starting.");
 
             _natsClient.SubscribeAsync(DeleteRatingCommandSubject, DeleteRatingHandler());
 
@@ -156,7 +156,7 @@ namespace user_service.BackgroundServices
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"{ServiceName} is stopping.");
+            _logger.LogInformation($"{_serviceName} is stopping.");
             return base.StartAsync(cancellationToken);
         }
     }

@@ -9,6 +9,7 @@ using user_service.Interfaces;
 using AuthServiceClient;
 using Microsoft.AspNetCore.HttpOverrides;
 using user_service.domain.Enums;
+using System.Threading.Channels;
 
 namespace user_service.Services
 {
@@ -257,6 +258,8 @@ namespace user_service.Services
 
             foreach (var host in hosts)
             {
+                // Solution 2
+                // await UpdateHostFeatured(host, context)
                 var hostWithRating = new HostWithRating
                 {
                     Id = host.Id.ToString(),
@@ -265,7 +268,8 @@ namespace user_service.Services
                     LastName = host.LastName,
                     LivingPlace = host.LivingPlace,
                     Username = host.Username,
-                    Role = (UserRole)host.Role
+                    Role = (UserRole)host.Role,
+                    Featured = host.Featured.HasValue ? host.Featured.Value : false
                 };
 
                 hostWithRating.Ratings.AddRange(hostsRatingsGroupedByHost[host.Id.ToString()]
@@ -275,6 +279,144 @@ namespace user_service.Services
             }
 
             return response;
+        }
+
+
+        // Solution 2
+
+        //private async Task UpdateHostFeatured(domain.Entities.User host, ServerCallContext context)
+        //{
+        //    var hostRating = await _dbContext.HostRatings.FirstOrDefaultAsync(x => x.HostId == host.Id);
+
+        //    if (hostRating == null || hostRating.AverageRating <= 4.7)
+        //    {
+        //        host.Featured = false;
+        //        await _dbContext.SaveChangesAsync();
+        //        return;
+        //    }
+
+        //    var bookingChannel = _grpcChannelBuilder.Build(_servicesConfig.BOOKING_SERVICE_ADDRESS);
+        //    var bookingClient = new booking_service.BookingService.BookingServiceClient(bookingChannel);
+
+        //    var cancellationRateResponse = await bookingClient.IsTheCancellationRateLessThanFiveAsync(
+        //        new booking_service.EmptyMessage(),
+        //        new CallOptions().WithHeaders(context.RequestHeaders));
+
+        //    if (!cancellationRateResponse.Flag)
+        //    {
+        //        host.Featured = false;
+        //        await _dbContext.SaveChangesAsync();
+        //        return;
+        //    }
+
+        //    var hasAtLeastFiveReservationsResponse = await bookingClient.HasAtLeastFivePastReservationsAsync(
+        //        new booking_service.EmptyMessage(),
+        //        new CallOptions().WithHeaders(context.RequestHeaders));
+
+        //    if (!hasAtLeastFiveReservationsResponse.Flag)
+        //    {
+        //        host.Featured = false;
+        //        await _dbContext.SaveChangesAsync();
+        //        return;
+        //    }
+
+        //    var isReservationLongEnough = await bookingClient.IsTheReservationDurationLongEnoughAsync(
+        //        new booking_service.EmptyMessage(),
+        //        new CallOptions().WithHeaders(context.RequestHeaders));
+
+        //    if (!isReservationLongEnough.Flag)
+        //    {
+        //        host.Featured = false;
+        //        await _dbContext.SaveChangesAsync();
+        //        return;
+        //    }
+
+        //    host.Featured = true;
+        //    await _dbContext.SaveChangesAsync();
+        //    return;
+        //}
+
+        public override async Task<IsHostFeatured_Response> IsHostFeatured(Empty_Message request, ServerCallContext context)
+        {
+            var authChannel = _grpcChannelBuilder.Build(_servicesConfig.AUTH_SERVICE_ADDRESS);
+            var authClient = new AuthService.AuthServiceClient(authChannel);
+
+            var verifyResponse = await authClient.VerifyAsync(new Empty_Request(), new CallOptions().WithHeaders(context.RequestHeaders));
+
+            if (!verifyResponse.Verified)
+            {
+                _logger.LogError(verifyResponse.ErrorMessage);
+                throw new RpcException(new Status(StatusCode.Unauthenticated, "Unauthenticated"));
+            }
+
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == Guid.Parse(verifyResponse.UserId));
+
+            if (user == null)
+            {
+                _logger.LogError($"Host with id: {verifyResponse.UserId} doesn't exist.");
+                throw new RpcException(new Status(StatusCode.NotFound, "Host not found"));
+            }
+
+            if (user.Role != domain.Enums.UserRole.Host)
+            {
+                _logger.LogError($"User with id : {user.Id} is not host.");
+                throw new RpcException(new Status(StatusCode.PermissionDenied, "Forbidden."));
+            }
+
+            var hostRating = await _dbContext.HostRatings.FirstOrDefaultAsync(x => x.HostId == user.Id);
+
+            if (hostRating == null || hostRating.AverageRating <= 4.7)
+            {
+                return new IsHostFeatured_Response
+                {
+                    Message = "Host rating is not greater then 4.7"
+                };
+            }
+
+            var bookingChannel = _grpcChannelBuilder.Build(_servicesConfig.BOOKING_SERVICE_ADDRESS);
+            var bookingClient = new booking_service.BookingService.BookingServiceClient(bookingChannel);
+
+            var cancellationRateResponse = await bookingClient.IsTheCancellationRateLessThanFiveAsync(
+                new booking_service.EmptyMessage(),
+                new CallOptions().WithHeaders(context.RequestHeaders));
+
+            if (!cancellationRateResponse.Flag)
+            {
+                return new IsHostFeatured_Response
+                {
+                    Message = "Your cancellation rate is too high"
+                };
+            }
+
+            var hasAtLeastFiveReservationsResponse = await bookingClient.HasAtLeastFivePastReservationsAsync(
+                new booking_service.EmptyMessage(),
+                new CallOptions().WithHeaders(context.RequestHeaders));
+
+            if (!hasAtLeastFiveReservationsResponse.Flag)
+            {
+                return new IsHostFeatured_Response
+                {
+                    Message = "You don't have enough reservations"
+                };
+            }
+
+            var isReservationLongEnough = await bookingClient.IsTheReservationDurationLongEnoughAsync(
+                new booking_service.EmptyMessage(),
+                new CallOptions().WithHeaders(context.RequestHeaders));
+
+            if (!isReservationLongEnough.Flag)
+            {
+                return new IsHostFeatured_Response
+                {
+                    Message = "Your reservations duration is not long enough"
+                };
+            }
+
+            return new IsHostFeatured_Response
+            {
+                Featured = true,
+                Message = "Great job, you are featured"
+            };
         }
     }
 }

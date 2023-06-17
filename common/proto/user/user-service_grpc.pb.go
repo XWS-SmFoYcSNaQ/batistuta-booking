@@ -23,6 +23,7 @@ const (
 	UserService_ChangeUserInfo_FullMethodName         = "/user.UserService/ChangeUserInfo"
 	UserService_ChangePassword_FullMethodName         = "/user.UserService/ChangePassword"
 	UserService_GetAllHostsWithRatings_FullMethodName = "/user.UserService/GetAllHostsWithRatings"
+	UserService_IsHostFeatured_FullMethodName         = "/user.UserService/IsHostFeatured"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -33,6 +34,7 @@ type UserServiceClient interface {
 	ChangeUserInfo(ctx context.Context, in *ChangeUserInfo_Request, opts ...grpc.CallOption) (*ChangeUserInfo_Response, error)
 	ChangePassword(ctx context.Context, in *ChangePassword_Request, opts ...grpc.CallOption) (*Empty_Message, error)
 	GetAllHostsWithRatings(ctx context.Context, in *Empty_Message, opts ...grpc.CallOption) (*GetAllHostsWithRatings_Response, error)
+	IsHostFeatured(ctx context.Context, in *Empty_Message, opts ...grpc.CallOption) (*IsHostFeatured_Response, error)
 }
 
 type userServiceClient struct {
@@ -79,6 +81,15 @@ func (c *userServiceClient) GetAllHostsWithRatings(ctx context.Context, in *Empt
 	return out, nil
 }
 
+func (c *userServiceClient) IsHostFeatured(ctx context.Context, in *Empty_Message, opts ...grpc.CallOption) (*IsHostFeatured_Response, error) {
+	out := new(IsHostFeatured_Response)
+	err := c.cc.Invoke(ctx, UserService_IsHostFeatured_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -87,6 +98,7 @@ type UserServiceServer interface {
 	ChangeUserInfo(context.Context, *ChangeUserInfo_Request) (*ChangeUserInfo_Response, error)
 	ChangePassword(context.Context, *ChangePassword_Request) (*Empty_Message, error)
 	GetAllHostsWithRatings(context.Context, *Empty_Message) (*GetAllHostsWithRatings_Response, error)
+	IsHostFeatured(context.Context, *Empty_Message) (*IsHostFeatured_Response, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -105,6 +117,9 @@ func (UnimplementedUserServiceServer) ChangePassword(context.Context, *ChangePas
 }
 func (UnimplementedUserServiceServer) GetAllHostsWithRatings(context.Context, *Empty_Message) (*GetAllHostsWithRatings_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllHostsWithRatings not implemented")
+}
+func (UnimplementedUserServiceServer) IsHostFeatured(context.Context, *Empty_Message) (*IsHostFeatured_Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsHostFeatured not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -191,6 +206,24 @@ func _UserService_GetAllHostsWithRatings_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_IsHostFeatured_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty_Message)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).IsHostFeatured(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_IsHostFeatured_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).IsHostFeatured(ctx, req.(*Empty_Message))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -213,6 +246,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllHostsWithRatings",
 			Handler:    _UserService_GetAllHostsWithRatings_Handler,
+		},
+		{
+			MethodName: "IsHostFeatured",
+			Handler:    _UserService_IsHostFeatured_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

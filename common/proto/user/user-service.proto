@@ -30,6 +30,11 @@ service UserService {
       get: "/api/hosts"
     };
   }
+  rpc IsHostFeatured(Empty_Message) returns(IsHostFeatured_Response) {
+    option(google.api.http) = {
+      get: "/api/featured"
+    };
+  }
 }
 
 enum UserRole {
@@ -48,6 +53,7 @@ message UserLessInfo {
   string LastName = 4;
   string Email = 5;
   string LivingPlace = 6;
+  optional bool Featured = 7;
 }
 
 message User {
@@ -58,6 +64,7 @@ message User {
   string LastName = 5;
   string Email = 6;
   string LivingPlace = 7;
+  optional bool Featured = 8;
 }
 
 message GetAllUsers_Response {
@@ -98,9 +105,15 @@ message HostWithRating {
   string LastName = 5;
   string Email = 6;
   string LivingPlace = 7;
-  repeated RatingDTO Ratings = 8;
+  bool Featured = 8;
+  repeated RatingDTO Ratings = 9;
 }
 
 message GetAllHostsWithRatings_Response {
   repeated HostWithRating Hosts = 1;
+}
+
+message IsHostFeatured_Response {
+  bool Featured = 1;
+  string Message = 2;
 }
