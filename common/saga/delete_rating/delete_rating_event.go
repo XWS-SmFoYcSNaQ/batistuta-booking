@@ -16,7 +16,6 @@ type DeleteRatingCommandType int8
 
 const (
 	StartRatingDeletion DeleteRatingCommandType = iota
-	UpdateUser
 	UpdateAccommodation
 	UpdateHost
 	RollbackRating
@@ -36,8 +35,6 @@ type DeleteRatingReplyType int8
 const (
 	DeletionStarted DeleteRatingReplyType = iota
 	DeletionFailed
-	UserUpdated
-	UserUpdateFailed
 	AccommodationUpdated
 	AccommodationUpdateFailed
 	HostUpdated

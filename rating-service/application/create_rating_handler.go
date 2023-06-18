@@ -1,11 +1,12 @@
 package application
 
 import (
+	"log"
+
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/messaging"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/saga/create_rating"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/rating_service/domain"
 	"github.com/google/uuid"
-	"log"
 )
 
 type CreateRatingCommandHandler struct {
@@ -30,13 +31,6 @@ func NewCreateRatingCommandHandler(ratingService *domain.RatingService, publishe
 func (handler *CreateRatingCommandHandler) handle(command *create_rating.CreateRatingCommand) {
 	reply := create_rating.CreateRatingReply{Rating: command.Rating}
 	switch command.Type {
-	//temporary begin
-	case create_rating.UpdateUser:
-		reply.Type = create_rating.UserUpdated
-	case create_rating.UpdateHost:
-		reply.Type = create_rating.HostUpdated
-	//temporary end
-
 	case create_rating.StartRatingCreation:
 		oldValue := command.Rating.OldValue
 		var err error

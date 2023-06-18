@@ -26,6 +26,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\user-service.data\user-service.data.csproj" />
+		<ProjectReference Include="..\user-service.messaging\user-service.messaging.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

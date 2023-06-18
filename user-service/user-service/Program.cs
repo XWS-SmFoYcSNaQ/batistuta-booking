@@ -2,11 +2,15 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using user_service;
+using user_service.Configuration;
 using user_service.data.Db;
 using user_service.Extensions;
 using user_service.Helpers;
 using user_service.Interceptors;
 using user_service.Interfaces;
+using user_service.messaging;
+using user_service.messaging.Interfaces;
+using user_service.BackgroundServices;
 using user_service.Services;
 using user_service.Validators;
 
@@ -24,13 +28,15 @@ builder.Services.AddGrpc(opts =>
 builder.AddDb();
 builder.AddServicesConfig();
 builder.AddGrpcChannelOptions();
+builder.AddNatsConfig();
+builder.AddCreateRatingSubjectsConfig();
+builder.AddDeleteRatingSubjectsConfig();
 builder.AddHelpers();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
-builder.Services.AddScoped<IValidator<RegisterUser_Request>, RegisterUserRequestValidator>();
-builder.Services.AddScoped<IValidator<ChangePassword_Request>, ChangePasswordRequestValidator>();
-builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.AddServices();
+builder.AddHostedServices();
 
 var app = builder.Build();
 
@@ -41,3 +47,5 @@ app.MapGet("/", () => "Communication with gRPC endpoints must be made through a 
 app.Urls.Add($"http://localhost:{app.Configuration["USER_SERVICE_ADDRESS"]}");
 app.ApplyMigrations();
 app.Run();
+
+

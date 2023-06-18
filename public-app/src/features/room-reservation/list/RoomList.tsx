@@ -19,7 +19,7 @@ export const RoomList = () => {
 	);
 
 	useEffect(() => {
-		fetchAccommodations();
+		fetchAccommodations(null);
 	}, [fetchAccommodations]);
 	return (
 		<>

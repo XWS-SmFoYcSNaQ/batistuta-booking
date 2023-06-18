@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/infrastructure/database"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/model"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/utility"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/accommodation"
 	"github.com/google/uuid"
 	"log"
@@ -16,22 +17,36 @@ type AccommodationService struct {
 	DB *sql.DB
 }
 
-func (s AccommodationService) GetAll(hostId uuid.UUID) ([]*model.Accommodation, error) {
-	var stmt *sql.Stmt
-	var rows *sql.Rows
-	var err error
-
-	if hostId != uuid.Nil {
-		stmt, err = database.GetAllAccommodationsByHostId(s.DB)
-	} else {
-		stmt, err = database.GetAllAccommodations(s.DB)
-	}
+func (s AccommodationService) GetAll(filters *utility.Filter) ([]*model.Accommodation, error) {
+	stmt, err := database.GetAllAccommodations(s.DB, filters)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
 
-	rows, err = getRows(stmt, hostId)
+	rows, err := stmt.Query()
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	accommodations, err := parseAccommodations(rows)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return accommodations, nil
+}
+
+func (s AccommodationService) GetAllByHostId(hostId *uuid.UUID) ([]*model.Accommodation, error) {
+	stmt, err := database.GetAllAccommodationsByHostId(s.DB)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	rows, err := stmt.Query(hostId)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -144,13 +159,6 @@ func (s AccommodationService) GetAccommodationSearchResults(a *accommodation.AM_
 }
 
 //private
-
-func getRows(stmt *sql.Stmt, hostId uuid.UUID) (*sql.Rows, error) {
-	if hostId != uuid.Nil {
-		return stmt.Query(hostId)
-	}
-	return stmt.Query()
-}
 
 func parseAccommodations(rows *sql.Rows) ([]*model.Accommodation, error) {
 	var accommodations []*model.Accommodation
