@@ -349,6 +349,10 @@ func (s BookingRequestsService) IsTheCancellationRateLessThanFive(accommodationI
 		return false, err
 	}
 
+	if (canceledReservations == 0) {
+		return true, nil
+	}
+
 	// Calculate the cancellation rate
 	cancellationRate := float64(canceledReservations) / float64(totalReservations) * 100
 
