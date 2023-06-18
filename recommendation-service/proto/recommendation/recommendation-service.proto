@@ -3,9 +3,20 @@ syntax = "proto3";
 option go_package = "proto/recommendation";
 
 service RecommendationService {
-  rpc Test(Test_Request) returns (Test_Response) {}
+  rpc GetRecommendedAccommodations(EmptyRequest) returns (RecommendedAccommodations_Response) {}
 }
 
-message Test_Request {}
+message EmptyRequest {}
 
-message Test_Response {}
+message RecommendedAccommodations_Response {
+  repeated RecommendedAccommodationDTO data = 1;
+}
+
+message RecommendedAccommodationDTO {
+  string id = 1;
+  string name = 2;
+  string benefits = 3;
+  int32 minGuests = 4;
+  int32 maxGuests = 5;
+  double basePrice = 6;
+}

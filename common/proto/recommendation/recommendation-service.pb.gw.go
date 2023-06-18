@@ -31,20 +31,20 @@ var _ = runtime.String
 var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
-func request_RecommendationService_Test_0(ctx context.Context, marshaler runtime.Marshaler, client RecommendationServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq Test_Request
+func request_RecommendationService_GetRecommendedAccommodations_0(ctx context.Context, marshaler runtime.Marshaler, client RecommendationServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq EmptyRequest
 	var metadata runtime.ServerMetadata
 
-	msg, err := client.Test(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.GetRecommendedAccommodations(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_RecommendationService_Test_0(ctx context.Context, marshaler runtime.Marshaler, server RecommendationServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq Test_Request
+func local_request_RecommendationService_GetRecommendedAccommodations_0(ctx context.Context, marshaler runtime.Marshaler, server RecommendationServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq EmptyRequest
 	var metadata runtime.ServerMetadata
 
-	msg, err := server.Test(ctx, &protoReq)
+	msg, err := server.GetRecommendedAccommodations(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -55,7 +55,7 @@ func local_request_RecommendationService_Test_0(ctx context.Context, marshaler r
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterRecommendationServiceHandlerFromEndpoint instead.
 func RegisterRecommendationServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server RecommendationServiceServer) error {
 
-	mux.Handle("GET", pattern_RecommendationService_Test_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_RecommendationService_GetRecommendedAccommodations_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -63,12 +63,12 @@ func RegisterRecommendationServiceHandlerServer(ctx context.Context, mux *runtim
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.RecommendationService/Test", runtime.WithHTTPPathPattern("/recommendation/test"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.RecommendationService/GetRecommendedAccommodations", runtime.WithHTTPPathPattern("/accommodation/recommendation"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_RecommendationService_Test_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_RecommendationService_GetRecommendedAccommodations_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -76,7 +76,7 @@ func RegisterRecommendationServiceHandlerServer(ctx context.Context, mux *runtim
 			return
 		}
 
-		forward_RecommendationService_Test_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RecommendationService_GetRecommendedAccommodations_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -121,25 +121,25 @@ func RegisterRecommendationServiceHandler(ctx context.Context, mux *runtime.Serv
 // "RecommendationServiceClient" to call the correct interceptors.
 func RegisterRecommendationServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client RecommendationServiceClient) error {
 
-	mux.Handle("GET", pattern_RecommendationService_Test_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_RecommendationService_GetRecommendedAccommodations_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.RecommendationService/Test", runtime.WithHTTPPathPattern("/recommendation/test"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.RecommendationService/GetRecommendedAccommodations", runtime.WithHTTPPathPattern("/accommodation/recommendation"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_RecommendationService_Test_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_RecommendationService_GetRecommendedAccommodations_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_RecommendationService_Test_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RecommendationService_GetRecommendedAccommodations_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -147,9 +147,9 @@ func RegisterRecommendationServiceHandlerClient(ctx context.Context, mux *runtim
 }
 
 var (
-	pattern_RecommendationService_Test_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"recommendation", "test"}, ""))
+	pattern_RecommendationService_GetRecommendedAccommodations_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"accommodation", "recommendation"}, ""))
 )
 
 var (
-	forward_RecommendationService_Test_0 = runtime.ForwardResponseMessage
+	forward_RecommendationService_GetRecommendedAccommodations_0 = runtime.ForwardResponseMessage
 )

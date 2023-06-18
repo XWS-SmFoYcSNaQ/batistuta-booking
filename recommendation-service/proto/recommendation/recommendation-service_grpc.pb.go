@@ -19,14 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	RecommendationService_Test_FullMethodName = "/RecommendationService/Test"
+	RecommendationService_GetRecommendedAccommodations_FullMethodName = "/RecommendationService/GetRecommendedAccommodations"
 )
 
 // RecommendationServiceClient is the client API for RecommendationService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RecommendationServiceClient interface {
-	Test(ctx context.Context, in *Test_Request, opts ...grpc.CallOption) (*Test_Response, error)
+	GetRecommendedAccommodations(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*RecommendedAccommodations_Response, error)
 }
 
 type recommendationServiceClient struct {
@@ -37,9 +37,9 @@ func NewRecommendationServiceClient(cc grpc.ClientConnInterface) RecommendationS
 	return &recommendationServiceClient{cc}
 }
 
-func (c *recommendationServiceClient) Test(ctx context.Context, in *Test_Request, opts ...grpc.CallOption) (*Test_Response, error) {
-	out := new(Test_Response)
-	err := c.cc.Invoke(ctx, RecommendationService_Test_FullMethodName, in, out, opts...)
+func (c *recommendationServiceClient) GetRecommendedAccommodations(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*RecommendedAccommodations_Response, error) {
+	out := new(RecommendedAccommodations_Response)
+	err := c.cc.Invoke(ctx, RecommendationService_GetRecommendedAccommodations_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (c *recommendationServiceClient) Test(ctx context.Context, in *Test_Request
 // All implementations must embed UnimplementedRecommendationServiceServer
 // for forward compatibility
 type RecommendationServiceServer interface {
-	Test(context.Context, *Test_Request) (*Test_Response, error)
+	GetRecommendedAccommodations(context.Context, *EmptyRequest) (*RecommendedAccommodations_Response, error)
 	mustEmbedUnimplementedRecommendationServiceServer()
 }
 
@@ -58,8 +58,8 @@ type RecommendationServiceServer interface {
 type UnimplementedRecommendationServiceServer struct {
 }
 
-func (UnimplementedRecommendationServiceServer) Test(context.Context, *Test_Request) (*Test_Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Test not implemented")
+func (UnimplementedRecommendationServiceServer) GetRecommendedAccommodations(context.Context, *EmptyRequest) (*RecommendedAccommodations_Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRecommendedAccommodations not implemented")
 }
 func (UnimplementedRecommendationServiceServer) mustEmbedUnimplementedRecommendationServiceServer() {}
 
@@ -74,20 +74,20 @@ func RegisterRecommendationServiceServer(s grpc.ServiceRegistrar, srv Recommenda
 	s.RegisterService(&RecommendationService_ServiceDesc, srv)
 }
 
-func _RecommendationService_Test_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Test_Request)
+func _RecommendationService_GetRecommendedAccommodations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RecommendationServiceServer).Test(ctx, in)
+		return srv.(RecommendationServiceServer).GetRecommendedAccommodations(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RecommendationService_Test_FullMethodName,
+		FullMethod: RecommendationService_GetRecommendedAccommodations_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecommendationServiceServer).Test(ctx, req.(*Test_Request))
+		return srv.(RecommendationServiceServer).GetRecommendedAccommodations(ctx, req.(*EmptyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -100,8 +100,8 @@ var RecommendationService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*RecommendationServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Test",
-			Handler:    _RecommendationService_Test_Handler,
+			MethodName: "GetRecommendedAccommodations",
+			Handler:    _RecommendationService_GetRecommendedAccommodations_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

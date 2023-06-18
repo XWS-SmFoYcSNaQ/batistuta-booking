@@ -16,7 +16,7 @@ services:
       USER_SERVICE_ADDRESS: user_service${USER_SERVICE_ADDRESS}
       AUTH_SERVICE_ADDRESS: auth_service${AUTH_SERVICE_ADDRESS}
       RATING_SERVICE_ADDRESS: rating_service:${RATING_SERVICE_ADDRESS}
-      RECOMMENDATION_SERVICE_ADDRESS: recommendation_service:${RECOMMENDATION_SERVICE_ADDRESS}
+      RECOMMENDATION_SERVICE_ADDRESS: recommendation_service${RECOMMENDATION_SERVICE_ADDRESS}
     depends_on:
       - accommodation_service
       - booking_service
@@ -198,6 +198,9 @@ services:
       RECOMMENDATION_DATABASE_ADDRESS: bolt://recommendation_database:7687
       RECOMMENDATION_DATABASE_USERNAME: ${RECOMMENDATION_DATABASE_USERNAME}
       RECOMMENDATION_DATABASE_PASSWORD: ${RECOMMENDATION_DATABASE_PASSWORD}
+      ACCOMMODATION_SERVICE_ADDRESS: accommodation_service${ACCOMMODATION_SERVICE_ADDRESS}
+      USER_SERVICE_ADDRESS: user_service${USER_SERVICE_ADDRESS}
+      BOOKING_SERVICE_ADDRESS: booking_service${BOOKING_SERVICE_ADDRESS}
     depends_on:
       recommendation_database:
         condition: service_healthy
@@ -217,9 +220,9 @@ services:
       - "7473:7473"
     healthcheck:
       test: wget http://localhost:7474 || exit 1
-      interval: 1s
-      timeout: 10s
-      retries: 20
+      interval: 2s
+      timeout: 15s
+      retries: 50
       start_period: 3s
     environment:
       - NEO4J_AUTH=neo4j/neopassword
