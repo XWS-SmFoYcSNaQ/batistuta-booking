@@ -4,7 +4,6 @@ import {
   accommodationRoutes,
 } from "./features/accommodation";
 import { RoomsRoot, roomRoutes } from "./features/room-reservation";
-import { AllAccommodations } from "./features/accommodation/AllAcommodations";
 import {
   MyReservations,
   reservationsRoutes,
@@ -56,10 +55,6 @@ export const router = createBrowserRouter([
         path: "reservations",
         element: <MyReservations />,
         children: reservationsRoutes,
-      },
-      {
-        path: "all-accommodations",
-        element: <AllAccommodations />,
       },
       {
         path: "reservations-to-confirm",
