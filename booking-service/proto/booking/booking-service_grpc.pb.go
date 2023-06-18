@@ -19,18 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	BookingService_GetAll_FullMethodName                             = "/BookingService/GetAll"
-	BookingService_MakeBookingRequest_FullMethodName                 = "/BookingService/MakeBookingRequest"
-	BookingService_DeleteBookingRequest_FullMethodName               = "/BookingService/DeleteBookingRequest"
-	BookingService_GetAllByUserId_FullMethodName                     = "/BookingService/GetAllByUserId"
-	BookingService_ConfirmReservationRequest_FullMethodName          = "/BookingService/ConfirmReservationRequest"
-	BookingService_GetAllReservationsForGuest_FullMethodName         = "/BookingService/GetAllReservationsForGuest"
-	BookingService_DeleteReservation_FullMethodName                  = "/BookingService/DeleteReservation"
-	BookingService_GetReservationsForHost_FullMethodName             = "/BookingService/GetReservationsForHost"
-	BookingService_GetReservationRequestsForHost_FullMethodName      = "/BookingService/GetReservationRequestsForHost"
-	BookingService_IsTheCancellationRateLessThanFive_FullMethodName  = "/BookingService/IsTheCancellationRateLessThanFive"
-	BookingService_HasAtLeastFivePastReservations_FullMethodName     = "/BookingService/HasAtLeastFivePastReservations"
-	BookingService_IsTheReservationDurationLongEnough_FullMethodName = "/BookingService/IsTheReservationDurationLongEnough"
+	BookingService_GetAll_FullMethodName                        = "/BookingService/GetAll"
+	BookingService_MakeBookingRequest_FullMethodName            = "/BookingService/MakeBookingRequest"
+	BookingService_DeleteBookingRequest_FullMethodName          = "/BookingService/DeleteBookingRequest"
+	BookingService_GetAllByUserId_FullMethodName                = "/BookingService/GetAllByUserId"
+	BookingService_ConfirmReservationRequest_FullMethodName     = "/BookingService/ConfirmReservationRequest"
+	BookingService_GetAllReservationsForGuest_FullMethodName    = "/BookingService/GetAllReservationsForGuest"
+	BookingService_DeleteReservation_FullMethodName             = "/BookingService/DeleteReservation"
+	BookingService_GetReservationsForHost_FullMethodName        = "/BookingService/GetReservationsForHost"
+	BookingService_GetReservationRequestsForHost_FullMethodName = "/BookingService/GetReservationRequestsForHost"
+	BookingService_HostStandOutCheck_FullMethodName             = "/BookingService/HostStandOutCheck"
 )
 
 // BookingServiceClient is the client API for BookingService service.
@@ -46,9 +44,7 @@ type BookingServiceClient interface {
 	DeleteReservation(ctx context.Context, in *DeleteReservation_Request, opts ...grpc.CallOption) (*EmptyMessage, error)
 	GetReservationsForHost(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*ReservationsForHost_Response, error)
 	GetReservationRequestsForHost(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*ReservationsForHost_Response, error)
-	IsTheCancellationRateLessThanFive(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*StandOutHost_Response, error)
-	HasAtLeastFivePastReservations(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*StandOutHost_Response, error)
-	IsTheReservationDurationLongEnough(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*StandOutHost_Response, error)
+	HostStandOutCheck(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*StandOutHost_Response, error)
 }
 
 type bookingServiceClient struct {
@@ -140,27 +136,9 @@ func (c *bookingServiceClient) GetReservationRequestsForHost(ctx context.Context
 	return out, nil
 }
 
-func (c *bookingServiceClient) IsTheCancellationRateLessThanFive(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*StandOutHost_Response, error) {
+func (c *bookingServiceClient) HostStandOutCheck(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*StandOutHost_Response, error) {
 	out := new(StandOutHost_Response)
-	err := c.cc.Invoke(ctx, BookingService_IsTheCancellationRateLessThanFive_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *bookingServiceClient) HasAtLeastFivePastReservations(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*StandOutHost_Response, error) {
-	out := new(StandOutHost_Response)
-	err := c.cc.Invoke(ctx, BookingService_HasAtLeastFivePastReservations_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *bookingServiceClient) IsTheReservationDurationLongEnough(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*StandOutHost_Response, error) {
-	out := new(StandOutHost_Response)
-	err := c.cc.Invoke(ctx, BookingService_IsTheReservationDurationLongEnough_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, BookingService_HostStandOutCheck_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -180,9 +158,7 @@ type BookingServiceServer interface {
 	DeleteReservation(context.Context, *DeleteReservation_Request) (*EmptyMessage, error)
 	GetReservationsForHost(context.Context, *EmptyMessage) (*ReservationsForHost_Response, error)
 	GetReservationRequestsForHost(context.Context, *EmptyMessage) (*ReservationsForHost_Response, error)
-	IsTheCancellationRateLessThanFive(context.Context, *EmptyMessage) (*StandOutHost_Response, error)
-	HasAtLeastFivePastReservations(context.Context, *EmptyMessage) (*StandOutHost_Response, error)
-	IsTheReservationDurationLongEnough(context.Context, *EmptyMessage) (*StandOutHost_Response, error)
+	HostStandOutCheck(context.Context, *EmptyMessage) (*StandOutHost_Response, error)
 	mustEmbedUnimplementedBookingServiceServer()
 }
 
@@ -217,14 +193,8 @@ func (UnimplementedBookingServiceServer) GetReservationsForHost(context.Context,
 func (UnimplementedBookingServiceServer) GetReservationRequestsForHost(context.Context, *EmptyMessage) (*ReservationsForHost_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetReservationRequestsForHost not implemented")
 }
-func (UnimplementedBookingServiceServer) IsTheCancellationRateLessThanFive(context.Context, *EmptyMessage) (*StandOutHost_Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method IsTheCancellationRateLessThanFive not implemented")
-}
-func (UnimplementedBookingServiceServer) HasAtLeastFivePastReservations(context.Context, *EmptyMessage) (*StandOutHost_Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method HasAtLeastFivePastReservations not implemented")
-}
-func (UnimplementedBookingServiceServer) IsTheReservationDurationLongEnough(context.Context, *EmptyMessage) (*StandOutHost_Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method IsTheReservationDurationLongEnough not implemented")
+func (UnimplementedBookingServiceServer) HostStandOutCheck(context.Context, *EmptyMessage) (*StandOutHost_Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HostStandOutCheck not implemented")
 }
 func (UnimplementedBookingServiceServer) mustEmbedUnimplementedBookingServiceServer() {}
 
@@ -401,56 +371,20 @@ func _BookingService_GetReservationRequestsForHost_Handler(srv interface{}, ctx 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BookingService_IsTheCancellationRateLessThanFive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BookingService_HostStandOutCheck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EmptyMessage)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BookingServiceServer).IsTheCancellationRateLessThanFive(ctx, in)
+		return srv.(BookingServiceServer).HostStandOutCheck(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: BookingService_IsTheCancellationRateLessThanFive_FullMethodName,
+		FullMethod: BookingService_HostStandOutCheck_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BookingServiceServer).IsTheCancellationRateLessThanFive(ctx, req.(*EmptyMessage))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BookingService_HasAtLeastFivePastReservations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyMessage)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BookingServiceServer).HasAtLeastFivePastReservations(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BookingService_HasAtLeastFivePastReservations_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BookingServiceServer).HasAtLeastFivePastReservations(ctx, req.(*EmptyMessage))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BookingService_IsTheReservationDurationLongEnough_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyMessage)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BookingServiceServer).IsTheReservationDurationLongEnough(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BookingService_IsTheReservationDurationLongEnough_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BookingServiceServer).IsTheReservationDurationLongEnough(ctx, req.(*EmptyMessage))
+		return srv.(BookingServiceServer).HostStandOutCheck(ctx, req.(*EmptyMessage))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -499,16 +433,8 @@ var BookingService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BookingService_GetReservationRequestsForHost_Handler,
 		},
 		{
-			MethodName: "IsTheCancellationRateLessThanFive",
-			Handler:    _BookingService_IsTheCancellationRateLessThanFive_Handler,
-		},
-		{
-			MethodName: "HasAtLeastFivePastReservations",
-			Handler:    _BookingService_HasAtLeastFivePastReservations_Handler,
-		},
-		{
-			MethodName: "IsTheReservationDurationLongEnough",
-			Handler:    _BookingService_IsTheReservationDurationLongEnough_Handler,
+			MethodName: "HostStandOutCheck",
+			Handler:    _BookingService_HostStandOutCheck_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
