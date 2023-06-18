@@ -68,6 +68,35 @@ func (s BookingRequestsService) GetAllByUserId(userId string) ([]*model.BookingR
 
 func (s BookingRequestsService) MakeBookingRequest(r *model.BookingRequest) (uuid.UUID, error) {
 	errorMessage := "error while creating accommodation"
+
+	// Check if there is any overlapping reservation or request for the same accommodation and time interval
+	overlapQuery := `
+		SELECT COUNT(*) FROM (
+			SELECT 1 FROM Reservation AS r
+			WHERE r.accommodation_id = $1 AND (
+				(TO_TIMESTAMP($2, 'YYYY-MM-DD HH24:MI:SS') >= TO_TIMESTAMP(r.start_date, 'YYYY-MM-DD HH24:MI:SS') AND TO_TIMESTAMP($2, 'YYYY-MM-DD HH24:MI:SS') <= TO_TIMESTAMP(r.end_date, 'YYYY-MM-DD HH24:MI:SS')) OR
+				(TO_TIMESTAMP($3, 'YYYY-MM-DD HH24:MI:SS') >= TO_TIMESTAMP(r.start_date, 'YYYY-MM-DD HH24:MI:SS') AND TO_TIMESTAMP($3, 'YYYY-MM-DD HH24:MI:SS') <= TO_TIMESTAMP(r.end_date, 'YYYY-MM-DD HH24:MI:SS')) OR
+				(TO_TIMESTAMP($2, 'YYYY-MM-DD HH24:MI:SS') <= TO_TIMESTAMP(r.start_date, 'YYYY-MM-DD HH24:MI:SS') AND TO_TIMESTAMP($3, 'YYYY-MM-DD HH24:MI:SS') >= TO_TIMESTAMP(r.end_date, 'YYYY-MM-DD HH24:MI:SS'))
+			)
+			UNION ALL
+			SELECT 1 FROM BookingRequest AS br
+			WHERE br.accommodation_id = $1 AND (
+				(TO_TIMESTAMP($2, 'YYYY-MM-DD HH24:MI:SS') >= TO_TIMESTAMP(br.start_date, 'YYYY-MM-DD HH24:MI:SS') AND TO_TIMESTAMP($2, 'YYYY-MM-DD HH24:MI:SS') <= TO_TIMESTAMP(br.end_date, 'YYYY-MM-DD HH24:MI:SS')) OR
+				(TO_TIMESTAMP($3, 'YYYY-MM-DD HH24:MI:SS') >= TO_TIMESTAMP(br.start_date, 'YYYY-MM-DD HH24:MI:SS') AND TO_TIMESTAMP($3, 'YYYY-MM-DD HH24:MI:SS') <= TO_TIMESTAMP(br.end_date, 'YYYY-MM-DD HH24:MI:SS')) OR
+				(TO_TIMESTAMP($2, 'YYYY-MM-DD HH24:MI:SS') <= TO_TIMESTAMP(br.start_date, 'YYYY-MM-DD HH24:MI:SS') AND TO_TIMESTAMP($3, 'YYYY-MM-DD HH24:MI:SS') >= TO_TIMESTAMP(br.end_date, 'YYYY-MM-DD HH24:MI:SS'))
+			)
+		) AS overlap
+	`
+	var overlapCount int
+	err := s.DB.QueryRow(overlapQuery, r.AccommodationId, r.StartDate, r.EndDate).Scan(&overlapCount)
+	if err != nil {
+		return uuid.Nil, errors.New(errorMessage)
+	}
+
+	if overlapCount > 0 {
+		return uuid.Nil, errors.New("Accommodation already have reservations for your dates. Please try other dates, or try later.")
+	}
+
 	stmt, err := s.DB.Prepare("INSERT INTO BookingRequest VALUES ($1, $2, $3, $4, $5, $6)")
 	if err != nil {
 		return uuid.Nil, errors.New(errorMessage)
@@ -347,6 +376,10 @@ func (s BookingRequestsService) IsTheCancellationRateLessThanFive(accommodationI
 	err = s.DB.QueryRow(canceledReservationsQuery, values...).Scan(&canceledReservations)
 	if err != nil {
 		return false, err
+	}
+
+	if (canceledReservations == 0) {
+		return true, nil
 	}
 
 	// Calculate the cancellation rate

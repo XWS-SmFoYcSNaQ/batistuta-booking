@@ -73,22 +73,28 @@ const handleDateRangeChange = (value: DateRange | null) => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const startDate = format(selectedDates[0],'yyyy-MM-dd HH:mm:ssxxx');
-
-    const endDate = format(selectedDates[1],'yyyy-MM-dd HH:mm:ssxxx');
+    const startDate = format(selectedDates[0], 'yyyy-MM-dd HH:mm:ssxxx');
+    const endDate = format(selectedDates[1], 'yyyy-MM-dd HH:mm:ssxxx');
+    
     let requestbody = {
-      accommodationId: room?.id, startDate: startDate, endDate: endDate, numberOfGuests: guests, userId: userId
-  }
+      accommodationId: room?.id,
+      startDate: startDate,
+      endDate: endDate,
+      numberOfGuests: guests,
+      userId: userId
+    };
+  
     try {
-      await axios.post(`${apiUrl}/booking/request`, requestbody)
-      toast.success("Booking request successfully sent!")
-    } catch (e: any) {
-      if(e.message){
-        throw new Error(e.message)
+      await axios.post(`${apiUrl}/booking/request`, requestbody);
+      toast.success("Booking request successfully sent!");
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.code === 3) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Error while creating accommodation.");
       }
-      throw new Error("Error while creating accommodation.")
     }
-  }
+  };
 
   return (
     <>
