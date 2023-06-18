@@ -16,6 +16,7 @@ func registerServices(gwmux *runtime.ServeMux, cfg *config.Config) {
 	client.RegisterUserClient(gwmux, cfg)
 	client.RegisterAuthClient(gwmux, cfg)
 	client.RegisterRatingClient(gwmux, cfg)
+	client.RegisterRecommendationClient(gwmux, cfg)
 }
 
 func GetServer() *http.Server {

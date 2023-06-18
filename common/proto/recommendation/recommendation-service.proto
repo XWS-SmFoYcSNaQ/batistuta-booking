@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "proto/recommendation";
+
+import "google/api/annotations.proto";
+
+service RecommendationService {
+  rpc Test(Test_Request) returns (Test_Response) {
+    option (google.api.http) = {
+      get: "/recommendation/test"
+    };
+  }
+}
+
+message Test_Request {}
+message Test_Response {}

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option go_package = "proto/recommendation";
+
+service RecommendationService {
+  rpc Test(Test_Request) returns (Test_Response) {}
+}
+
+message Test_Request {}
+
+message Test_Response {}
