@@ -12,9 +12,7 @@ service BookingService {
   rpc DeleteReservation(DeleteReservation_Request) returns (EmptyMessage) {}
   rpc GetReservationsForHost(EmptyMessage) returns (ReservationsForHost_Response) {}
   rpc GetReservationRequestsForHost(EmptyMessage) returns (ReservationsForHost_Response) {}
-  rpc IsTheCancellationRateLessThanFive(EmptyMessage) returns (StandOutHost_Response) {}
-  rpc HasAtLeastFivePastReservations(EmptyMessage) returns (StandOutHost_Response) {}
-  rpc IsTheReservationDurationLongEnough(EmptyMessage) returns (StandOutHost_Response) {}
+  rpc HostStandOutCheck(EmptyMessage) returns (StandOutHost_Response) {}
 }
 
 message AM_GetAllBookingRequests_Request {}
@@ -83,4 +81,5 @@ message ReservationsForHost_Response {
 
 message StandOutHost_Response {
   bool flag = 1;
+  string message = 2;
 }
