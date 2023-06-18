@@ -17,8 +17,8 @@ func (h AccommodationHandler) GetAllAccommodations(ctx context.Context, request 
 	return h.AccommodationController.GetAll(ctx, request)
 }
 
-func (h AccommodationHandler) GetMyAccommodations(ctx context.Context, request *accommodation.AM_GetAllAccommodations_Request) (*accommodation.AM_GetAllAccommodations_Response, error) {
-	return h.AccommodationController.GetAllByHost(ctx, request)
+func (h AccommodationHandler) GetMyAccommodations(ctx context.Context, request *accommodation.AM_GetMyAccommodations_Request) (*accommodation.AM_GetMyAccommodations_Response, error) {
+	return h.AccommodationController.GetMyAccommodations(ctx, request)
 }
 
 func (h AccommodationHandler) CreateAccommodation(ctx context.Context, request *accommodation.AM_CreateAccommodation_Request) (*accommodation.AM_CreateAccommodation_Response, error) {
@@ -47,4 +47,12 @@ func (h AccommodationHandler) GetAllDiscountsByAccommodationAndInterval(ctx cont
 
 func (h AccommodationHandler) CreateDiscount(ctx context.Context, request *accommodation.AM_CreateDiscount_Request) (*accommodation.AM_CreateDiscount_Response, error) {
 	return h.DiscountController.Create(ctx, request)
+}
+
+func (h AccommodationHandler) SearchAccommodations(ctx context.Context, request *accommodation.AM_SearchAccommodations_Request) (*accommodation.AM_SearchAccommodations_Response, error) {
+	return h.AccommodationController.SearchAccommodations(ctx, request)
+}
+
+func (h AccommodationHandler) GetAutomaticReservationValue(ctx context.Context, request *accommodation.AM_GetAutomaticReservation_Request) (*accommodation.AM_GetAutomaticReservation_Response, error) {
+	return h.AccommodationController.GetAutomaticReservationValue(ctx, request)
 }

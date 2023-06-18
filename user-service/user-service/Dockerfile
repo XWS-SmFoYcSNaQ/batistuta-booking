@@ -8,6 +8,7 @@ WORKDIR /src
 COPY ["user-service/user-service.csproj", "user-service/"]
 COPY ["user-service.data/user-service.data.csproj", "user-service.data/"]
 COPY ["user-service.domain/user-service.domain.csproj", "user-service.domain/"]
+COPY ["user-service.messaging/user-service.messaging.csproj", "user-service.messaging/"]
 RUN dotnet restore "user-service/user-service.csproj"
 COPY . .
 WORKDIR "/src/user-service"

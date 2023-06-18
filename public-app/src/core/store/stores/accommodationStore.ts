@@ -2,12 +2,13 @@ import { Accommodation } from "../../../shared/model";
 import { SetAppState, GetAppState, AppState, apiUrl } from "..";
 import { produce } from "immer";
 import axios from "axios";
+import { AccommodationFilter } from "../../../features/accommodation/filters";
 
 export interface AccommodationStoreType {
   data: Accommodation[]
   accommodation: Accommodation | null
   loading: boolean
-  fetchAccommodations: () => Promise<void>
+  fetchAccommodations: (filters: AccommodationFilter | null) => Promise<void>
   fetchMyAccommodations: () => Promise<void>
   fetchSearchedAccommodations: (requestBody: any) => Promise<void>
   fetchDetails: (id: string) => Promise<void>
@@ -24,11 +25,21 @@ export const accommodationStore = (
   data: [],
   accommodation: null,
   loading: false,
-  fetchAccommodations: async () => {
+  fetchAccommodations: async (filters: AccommodationFilter | null) => {
+    let params = {}
+    if (filters != null) {
+      params = {
+        range: filters.range.join(","),
+        benefits: filters.benefits.join(","),
+        distinguished: filters.distinguished
+      }
+    }
     get().accommodation.setLoading(true)
     get().accommodation.clearData()
     try {
-      const res = await axios.get(`${apiUrl}/accommodation`)
+      const res = await axios.get(`${apiUrl}/accommodation`, {
+        params: params
+      })
       set(
         produce((draft: AppState) => {
           draft.accommodation.data = res.data.data

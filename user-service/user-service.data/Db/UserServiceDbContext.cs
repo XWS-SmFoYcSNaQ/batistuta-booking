@@ -7,6 +7,7 @@ namespace user_service.data.Db
     public class UserServiceDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<HostRating> HostRatings { get; set; }
 
         public UserServiceDbContext(DbContextOptions options) : base(options) { }
 
@@ -30,6 +31,15 @@ namespace user_service.data.Db
             modelBuilder.Entity<User>().Property(x => x.FirstName).HasMaxLength(32);
             modelBuilder.Entity<User>().Property(x => x.LastName).HasMaxLength(32);
             modelBuilder.Entity<User>().Property(x => x.LivingPlace).HasMaxLength(64);
+
+            modelBuilder.Entity<HostRating>()
+                .Property(x => x.Id)
+                .ValueGeneratedOnAdd();
+            modelBuilder.Entity<HostRating>()
+                .HasOne(x => x.Host)
+                .WithOne()
+                .HasForeignKey<HostRating>(x => x.HostId)
+                .IsRequired(true);
 
             // Seed users
             modelBuilder.Entity<User>().HasData(new[]
