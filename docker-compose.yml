@@ -191,6 +191,8 @@ services:
 
   notification_database:
     image: mongo:6-jammy
+    container_name: notification_database
+    hostname: notification_database
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${NOTIFICATION_DB_USER}
@@ -200,7 +202,24 @@ services:
     ports:
       - '12104:27017'
     command: --quiet
-      
+
+  notification_service:
+    container_name: notification_service
+    hostname: notification_service
+    restart: always
+    build:
+      context: ./notification-service
+      dockerfile: notification-service/Dockerfile
+    environment:
+      NOTIFICATION_SERVICE_ADDRESS: ${NOTIFICATION_SERVICE_ADDRESS}
+      DbConfig__Server: ${NOTIFICATION_DB_SERVER}
+      DbConfig__Port: ${NOTIFICATION_DB_PORT}
+      DbConfig__User: ${NOTIFICATION_DB_USER}
+      DbConfig__Password: ${NOTIFICATION_DB_PASSWORD}
+      DbConfig__DatabaseName: ${NOTIFICATION_DB_NAME}
+    depends_on:
+      - notification_database
+
 #  public_app:
 #    image: public_app
 #    container_name: public_app
