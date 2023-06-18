@@ -47,14 +47,6 @@ func (h BookingHandler) GetReservationRequestsForHost(ctx context.Context, reque
 	return h.ReservationController.GetReservationRequestsForHost(ctx, request)
 }
 
-func (h BookingHandler) IsTheCancellationRateLessThanFive(ctx context.Context, request *booking.EmptyMessage) (*booking.StandOutHost_Response, error) {
-	return h.ReservationController.IsTheCancellationRateLessThanFive(ctx, request)
-}
-
-func (h BookingHandler) HasAtLeastFivePastReservations(ctx context.Context, request *booking.EmptyMessage) (*booking.StandOutHost_Response, error) {
-	return h.ReservationController.HasAtLeastFivePastReservations(ctx, request)
-}
-
-func (h BookingHandler) IsTheReservationDurationLongEnough(ctx context.Context, request *booking.EmptyMessage) (*booking.StandOutHost_Response, error) {
-	return h.ReservationController.IsTheReservationDurationLongEnough(ctx, request)
+func (h BookingHandler) HostStandOutCheck(ctx context.Context, request *booking.EmptyMessage) (*booking.StandOutHost_Response, error) {
+	return h.ReservationController.HostStandOutCheck(ctx, request)
 }
