@@ -218,7 +218,7 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
                 <TableCell align="right">Average Rating</TableCell>
                 <TableCell align="right">My Rating</TableCell>
                 <TableCell align="right">Location</TableCell>
-                <TableCell align="right">Automatically Accept Reservation</TableCell>
+                <TableCell align="right">Automatic Acceptance Of Reservations</TableCell>
                 <TableCell align="center">Action</TableCell>
               </TableRow>
             </TableHead>
@@ -240,7 +240,9 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
                     {getCurrentUserAccommodationRating(d, currentUser)?.value}
                   </TableCell>
                   <TableCell align="right">{d.location}</TableCell>
-                  <TableCell align="right">{d.automaticReservation === 1 ? "enabled" : "disabled"}</TableCell>
+                  <TableCell align="right">
+                    <span style={{ color: d.automaticReservation === 1 ? "green" : "red" }}>{d.automaticReservation === 1 ? "enabled" : "disabled"}</span>
+                  </TableCell>
                   <TableCell align="right">
                     <Stack
                       flexWrap="wrap"
