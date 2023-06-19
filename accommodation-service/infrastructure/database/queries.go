@@ -52,6 +52,12 @@ func FormFilterWhereClause(filter *utility.Filter) string {
 		strs = append(strs, "benefits LIKE '%"+f+"%'")
 	}
 
+	if filter.Distinguished {
+		for _, f := range filter.DistinguishedHostIds {
+			strs = append(strs, "host_id::text LIKE '"+f+"'")
+		}
+	}
+
 	if len(strs) > 0 {
 		return " WHERE " + strings.Join(strs, " AND ")
 	}

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option csharp_namespace = "booking_service";
+
+service BookingService {
+  rpc HostStandOutCheck(EmptyMessage) returns (StandOutHost_Response);
+}
+
+message EmptyMessage {
+
+}
+
+message StandOutHost_Response {
+  bool flag = 1;
+  string message = 2;
+}
+

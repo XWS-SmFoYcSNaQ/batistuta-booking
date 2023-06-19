@@ -30,6 +30,8 @@ service UserService {
       get: "/api/hosts"
     };
   }
+  rpc GetFeaturedHosts(Empty_Message) returns(GetFeaturedHosts_Response);
+  rpc UpdateHostFeatured(UpdateHostFeatured_Request) returns(Empty_Message);
 }
 
 enum UserRole {
@@ -48,6 +50,7 @@ message UserLessInfo {
   string LastName = 4;
   string Email = 5;
   string LivingPlace = 6;
+  optional bool Featured = 7;
 }
 
 message User {
@@ -58,6 +61,7 @@ message User {
   string LastName = 5;
   string Email = 6;
   string LivingPlace = 7;
+  optional bool Featured = 8;
 }
 
 message GetAllUsers_Response {
@@ -98,9 +102,18 @@ message HostWithRating {
   string LastName = 5;
   string Email = 6;
   string LivingPlace = 7;
-  repeated RatingDTO Ratings = 8;
+  bool Featured = 8;
+  repeated RatingDTO Ratings = 9;
 }
 
 message GetAllHostsWithRatings_Response {
   repeated HostWithRating Hosts = 1;
+}
+
+message GetFeaturedHosts_Response {
+  repeated User Hosts = 1;
+}
+
+message UpdateHostFeatured_Request {
+  string HostId = 1;
 }

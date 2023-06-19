@@ -16,6 +16,7 @@ type Config struct {
 	NatsPort                   string
 	NatsUser                   string
 	NatsPass                   string
+	UserServiceAddress         string
 	CreateRatingCommandSubject string
 	CreateRatingReplySubject   string
 	DeleteRatingCommandSubject string
@@ -41,6 +42,7 @@ func getConfig() Config {
 		NatsPort:                   os.Getenv("NATS_PORT"),
 		NatsUser:                   os.Getenv("NATS_USER"),
 		NatsPass:                   os.Getenv("NATS_PASS"),
+		UserServiceAddress:         os.Getenv("USER_SERVICE_ADDRESS"),
 		CreateRatingCommandSubject: os.Getenv("CREATE_RATING_COMMAND_SUBJECT"),
 		CreateRatingReplySubject:   os.Getenv("CREATE_RATING_REPLY_SUBJECT"),
 		DeleteRatingCommandSubject: os.Getenv("DELETE_RATING_COMMAND_SUBJECT"),

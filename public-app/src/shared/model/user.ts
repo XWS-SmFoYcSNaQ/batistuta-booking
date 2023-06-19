@@ -9,6 +9,7 @@ export interface User {
   Email?: string;
   LivingPlace?: string;
   Ratings?: Rating[];
+  Featured?: boolean;
 }
 
 export enum UserRole {

@@ -9,6 +9,8 @@ using user_service.Interfaces;
 using AuthServiceClient;
 using Microsoft.AspNetCore.HttpOverrides;
 using user_service.domain.Enums;
+using System.Threading.Channels;
+using Google.Protobuf.WellKnownTypes;
 
 namespace user_service.Services
 {
@@ -265,7 +267,8 @@ namespace user_service.Services
                     LastName = host.LastName,
                     LivingPlace = host.LivingPlace,
                     Username = host.Username,
-                    Role = (UserRole)host.Role
+                    Role = (UserRole)host.Role,
+                    Featured = host.Featured.HasValue ? host.Featured.Value : false
                 };
 
                 hostWithRating.Ratings.AddRange(hostsRatingsGroupedByHost[host.Id.ToString()]
@@ -273,6 +276,45 @@ namespace user_service.Services
 
                 response.Hosts.Add(hostWithRating);
             }
+
+            return response;
+        }
+
+        public override async Task<Empty_Message> UpdateHostFeatured(UpdateHostFeatured_Request request, ServerCallContext context)
+        {
+            var hostRating = await _dbContext
+                .HostRatings
+                .Include(x => x.Host)
+                .FirstOrDefaultAsync(x => x.HostId == Guid.Parse(request.HostId));
+
+            if (hostRating == null || hostRating.AverageRating <= 4.7)
+            {
+                return new Empty_Message();
+            }
+
+
+            var bookingChannel = _grpcChannelBuilder.Build(_servicesConfig.BOOKING_SERVICE_ADDRESS);
+            var bookingClient = new booking_service.BookingService.BookingServiceClient(bookingChannel);
+
+            var hostFeaturedResponse = await bookingClient.HostStandOutCheckAsync(new booking_service.EmptyMessage());
+
+            if (!hostFeaturedResponse.Flag)
+            {
+                _logger.LogInformation(hostFeaturedResponse.Message);
+                return new Empty_Message();
+            }
+
+            hostRating.Host.Featured = true;
+            await _dbContext.SaveChangesAsync();
+
+            return new Empty_Message();
+        }
+
+        public override async Task<GetFeaturedHosts_Response> GetFeaturedHosts(Empty_Message request, ServerCallContext context)
+        {
+            var featuredHosts = await _dbContext.Users.Where(x => x.Role == domain.Enums.UserRole.Host && x.Featured == true).ToListAsync();
+            var response = new GetFeaturedHosts_Response();
+            response.Hosts.AddRange(featuredHosts.Select(x => _mapper.Map<User>(x)));
 
             return response;
         }

@@ -10,12 +10,12 @@ import (
 )
 
 func GetAuthClient(cfg *config.Config) *auth.AuthServiceClient {
-	conn := createConnection((*cfg).AuthServiceAddress)
+	conn := CreateConnection((*cfg).AuthServiceAddress)
 	client := auth.NewAuthServiceClient(conn)
 	return &client
 }
 
-func createConnection(address string) *grpc.ClientConn {
+func CreateConnection(address string) *grpc.ClientConn {
 	conn, err := grpc.DialContext(
 		context.Background(),
 		address,
