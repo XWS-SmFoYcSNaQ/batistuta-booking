@@ -226,3 +226,19 @@ func (s AccommodationService) GetAutomaticReservationValue(id string) (int32, er
 
 	return automaticReservation, nil
 }
+
+func (s AccommodationService) GetHostIdByAccommodationId(id string) (string, error) {
+	var hostId string
+	stmt, err := s.DB.Prepare("SELECT host_id FROM Accommodation WHERE id = $1")
+	if err != nil {
+		return "", err
+	}
+	defer stmt.Close()
+
+	err = stmt.QueryRow(id).Scan(&hostId)
+	if err != nil {
+		return "", err
+	}
+
+	return hostId, nil
+}

@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "proto/recommendation";
+
+import "google/api/annotations.proto";
+
+service RecommendationService {
+  rpc GetRecommendedAccommodations(RecommendedAccommodations_Request) returns (RecommendedAccommodations_Response) {
+    option (google.api.http) = {
+      get: "/accommodation/recommendation/{id}"
+    };
+  }
+}
+
+message RecommendedAccommodations_Request {
+  string id = 1;
+}
+
+message RecommendedAccommodations_Response {
+  repeated RecommendedAccommodationDTO data = 1;
+}
+
+message RecommendedAccommodationDTO {
+  string id = 1;
+  string name = 2;
+  string benefits = 3;
+  int32 minGuests = 4;
+  int32 maxGuests = 5;
+  double basePrice = 6;
+}

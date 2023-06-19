@@ -66,6 +66,12 @@ service AccommodationService {
       body: "*"
     };
   }
+
+  rpc GetHostIdByAccommodationId(AM_GetAllDiscountsByAccommodation_Request) returns (AM_GetHostIdByAccommodationId_Response) {
+    option (google.api.http) = {
+      get: "/accommodation/host/{accommodationId}"
+    };
+  }
 }
 
 //Accommodations
@@ -156,6 +162,10 @@ message AM_SearchAccommodations_Request {
 
 message AM_SearchAccommodations_Response {
   repeated AccommodationSearchResultDTO data = 1;
+}
+
+message AM_GetHostIdByAccommodationId_Response {
+  string id = 1;
 }
 
 //Discounts

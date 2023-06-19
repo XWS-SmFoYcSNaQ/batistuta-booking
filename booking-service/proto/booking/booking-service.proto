@@ -47,8 +47,11 @@ message BookingRequestsDTO {
   string startDate = 3;
   string endDate = 4;
   string userId = 5;
-  int32 numberOfGuests = 6;
-  int32 numberOfCanceledReservations = 7;
+  string accommodationName = 6;
+  string accommodationBenefits = 7;
+  string location = 8;
+  int32 numberOfGuests = 9;
+  int32 numberOfCanceledReservations = 10;
 }
 
 message AM_DeleteBookingRequest_Request {

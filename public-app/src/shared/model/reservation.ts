@@ -6,4 +6,7 @@ export interface Reservation {
     userId?: string;
     numberOfGuests?: number;
     numberOfCanceledReservations?: number
+    accommodationName?: string;
+    accommodationBenefits?: string;
+    location?: string;
   }

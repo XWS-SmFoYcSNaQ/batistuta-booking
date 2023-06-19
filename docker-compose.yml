@@ -16,10 +16,12 @@ services:
       USER_SERVICE_ADDRESS: user_service${USER_SERVICE_ADDRESS}
       AUTH_SERVICE_ADDRESS: auth_service${AUTH_SERVICE_ADDRESS}
       RATING_SERVICE_ADDRESS: rating_service:${RATING_SERVICE_ADDRESS}
+      RECOMMENDATION_SERVICE_ADDRESS: recommendation_service${RECOMMENDATION_SERVICE_ADDRESS}
     depends_on:
       - accommodation_service
       - booking_service
       - rating_service
+      - recommendation_service
     ports:
       - "11000:11000"
 
@@ -75,6 +77,7 @@ services:
       BOOKING_DATABASE_PASSWORD: ${BOOKING_DATABASE_PASSWORD}
       ACCOMMODATION_SERVICE_ADDRESS: accommodation_service${ACCOMMODATION_SERVICE_ADDRESS}
       AUTH_SERVICE_ADDRESS: auth_service${AUTH_SERVICE_ADDRESS}
+      USER_SERVICE_ADDRESS: user_service${USER_SERVICE_ADDRESS}
     depends_on:
       - booking_database
 
@@ -184,6 +187,49 @@ services:
       POSTGRES_DB: ${RATING_DB_NAME}
     ports:
       - '12107:5432'
+
+  recommendation_service:
+    image: recommendation_service
+    container_name: recommendation_service
+    hostname: recommendation_service
+    build:
+      context: .
+      dockerfile: ./recommendation-service/Dockerfile
+    restart: on-failure
+    environment:
+      RECOMMENDATION_SERVICE_ADDRESS: ${RECOMMENDATION_SERVICE_ADDRESS}
+      RECOMMENDATION_DATABASE_ADDRESS: bolt://recommendation_database:7687
+      RECOMMENDATION_DATABASE_USERNAME: ${RECOMMENDATION_DATABASE_USERNAME}
+      RECOMMENDATION_DATABASE_PASSWORD: ${RECOMMENDATION_DATABASE_PASSWORD}
+      ACCOMMODATION_SERVICE_ADDRESS: accommodation_service${ACCOMMODATION_SERVICE_ADDRESS}
+      USER_SERVICE_ADDRESS: user_service${USER_SERVICE_ADDRESS}
+      BOOKING_SERVICE_ADDRESS: booking_service${BOOKING_SERVICE_ADDRESS}
+      RATING_SERVICE_ADDRESS: rating_service:${RATING_SERVICE_ADDRESS}
+    depends_on:
+      recommendation_database:
+        condition: service_healthy
+
+  # NoSQL: Neo4J DB
+  recommendation_database:
+    image: neo4j:latest
+    container_name: recommendation_database
+    hostname: recommendation_database
+    restart: on-failure
+    ports:
+      # bolt
+      - "7687:7687"
+      # http
+      - "7474:7474"
+      # https
+      - "7473:7473"
+    healthcheck:
+      test: wget http://localhost:7474 || exit 1
+      interval: 2s
+      timeout: 15s
+      retries: 50
+      start_period: 30s
+    environment:
+      - NEO4J_AUTH=neo4j/neopassword
 
   nats:
     image: nats
