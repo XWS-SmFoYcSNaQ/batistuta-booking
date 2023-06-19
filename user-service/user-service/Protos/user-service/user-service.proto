@@ -12,7 +12,8 @@ service UserService {
   rpc ChangeUserInfo(ChangeUserInfo_Request) returns(ChangeUserInfo_Response);
   rpc ChangePassword(ChangePassword_Request) returns(Empty_Message);
   rpc GetAllHostsWithRatings(Empty_Message) returns (GetAllHostsWithRatings_Response);
-  rpc IsHostFeatured(Empty_Message) returns(IsHostFeatured_Response);
+  rpc GetFeaturedHosts(Empty_Message) returns(GetFeaturedHosts_Response);
+  rpc UpdateHostFeatured(UpdateHostFeatured_Request) returns(Empty_Message);
 }
 
 enum UserRole {
@@ -126,7 +127,10 @@ message GetAllHostsWithRatings_Response {
   repeated HostWithRating Hosts = 1;
 }
 
-message IsHostFeatured_Response {
-  bool Featured = 1;
-  string Message = 2;
+message GetFeaturedHosts_Response {
+  repeated User Hosts = 1;
+}
+
+message UpdateHostFeatured_Request {
+  string HostId = 1;
 }

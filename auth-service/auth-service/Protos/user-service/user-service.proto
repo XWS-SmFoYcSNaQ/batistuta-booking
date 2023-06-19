@@ -34,6 +34,7 @@ message User {
   string LastName = 5;
   string Email = 6;
   string LivingPlace = 7;
+  optional bool Featured = 8;
 }
 
 message UserLessInfo {
@@ -43,6 +44,7 @@ message UserLessInfo {
     string LastName = 4;
     string Email = 5;
     string LivingPlace = 6;
+    optional bool Featured = 7;
   }
 
 message RegisterUser_Request {
