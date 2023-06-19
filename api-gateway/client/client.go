@@ -9,9 +9,9 @@ import (
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/rating"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/recommendation"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/user"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"log"
 
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

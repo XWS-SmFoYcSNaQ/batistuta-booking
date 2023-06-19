@@ -11,7 +11,7 @@ import { useState } from "react";
 import { AccommodationFilter } from "./AccommodationFilter";
 
 const valueLabelFormat = (value: number) => {
-  return `${value} EUR`;
+  return `${value} \u20AC`;
 };
 
 const calculateValue = (value: number) => {
@@ -142,7 +142,7 @@ export const Filters = ({
             onChange={(e) => setDistinguished(e.target.checked)}
           />
         }
-        label="Distinguished Host"
+        label="Featured Hosts Only"
       />
 
       <Box sx={{ display: "flex" }}>
