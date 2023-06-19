@@ -151,7 +151,7 @@ export const Filters = ({
           color="error"
           onClick={() => setFiltersEnabled(false)}
         >
-          Disabled Fitlers
+          Disable Fitlers
         </Button>
         <Button type="button" onClick={submitHandler}>
           Filter

@@ -48,3 +48,11 @@ func (h AccommodationHandler) GetAllDiscountsByAccommodationAndInterval(ctx cont
 func (h AccommodationHandler) CreateDiscount(ctx context.Context, request *accommodation.AM_CreateDiscount_Request) (*accommodation.AM_CreateDiscount_Response, error) {
 	return h.DiscountController.Create(ctx, request)
 }
+
+func (h AccommodationHandler) SearchAccommodations(ctx context.Context, request *accommodation.AM_SearchAccommodations_Request) (*accommodation.AM_SearchAccommodations_Response, error) {
+	return h.AccommodationController.SearchAccommodations(ctx, request)
+}
+
+func (h AccommodationHandler) GetAutomaticReservationValue(ctx context.Context, request *accommodation.AM_GetAutomaticReservation_Request) (*accommodation.AM_GetAutomaticReservation_Response, error) {
+	return h.AccommodationController.GetAutomaticReservationValue(ctx, request)
+}

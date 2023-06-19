@@ -379,56 +379,20 @@ func local_request_BookingService_GetReservationRequestsForHost_0(ctx context.Co
 
 }
 
-func request_BookingService_IsTheCancellationRateLessThanFive_0(ctx context.Context, marshaler runtime.Marshaler, client BookingServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_BookingService_HostStandOutCheck_0(ctx context.Context, marshaler runtime.Marshaler, client BookingServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq EmptyMessage
 	var metadata runtime.ServerMetadata
 
-	msg, err := client.IsTheCancellationRateLessThanFive(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.HostStandOutCheck(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_BookingService_IsTheCancellationRateLessThanFive_0(ctx context.Context, marshaler runtime.Marshaler, server BookingServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_BookingService_HostStandOutCheck_0(ctx context.Context, marshaler runtime.Marshaler, server BookingServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq EmptyMessage
 	var metadata runtime.ServerMetadata
 
-	msg, err := server.IsTheCancellationRateLessThanFive(ctx, &protoReq)
-	return msg, metadata, err
-
-}
-
-func request_BookingService_HasAtLeastFivePastReservations_0(ctx context.Context, marshaler runtime.Marshaler, client BookingServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq EmptyMessage
-	var metadata runtime.ServerMetadata
-
-	msg, err := client.HasAtLeastFivePastReservations(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return msg, metadata, err
-
-}
-
-func local_request_BookingService_HasAtLeastFivePastReservations_0(ctx context.Context, marshaler runtime.Marshaler, server BookingServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq EmptyMessage
-	var metadata runtime.ServerMetadata
-
-	msg, err := server.HasAtLeastFivePastReservations(ctx, &protoReq)
-	return msg, metadata, err
-
-}
-
-func request_BookingService_IsTheReservationDurationLongEnough_0(ctx context.Context, marshaler runtime.Marshaler, client BookingServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq EmptyMessage
-	var metadata runtime.ServerMetadata
-
-	msg, err := client.IsTheReservationDurationLongEnough(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return msg, metadata, err
-
-}
-
-func local_request_BookingService_IsTheReservationDurationLongEnough_0(ctx context.Context, marshaler runtime.Marshaler, server BookingServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq EmptyMessage
-	var metadata runtime.ServerMetadata
-
-	msg, err := server.IsTheReservationDurationLongEnough(ctx, &protoReq)
+	msg, err := server.HostStandOutCheck(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -664,7 +628,7 @@ func RegisterBookingServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 
 	})
 
-	mux.Handle("GET", pattern_BookingService_IsTheCancellationRateLessThanFive_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_BookingService_HostStandOutCheck_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -672,12 +636,12 @@ func RegisterBookingServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.BookingService/IsTheCancellationRateLessThanFive", runtime.WithHTTPPathPattern("/booking/host/check/cancellation-rate"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.BookingService/HostStandOutCheck", runtime.WithHTTPPathPattern("/booking/host/check"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_BookingService_IsTheCancellationRateLessThanFive_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_BookingService_HostStandOutCheck_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -685,57 +649,7 @@ func RegisterBookingServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			return
 		}
 
-		forward_BookingService_IsTheCancellationRateLessThanFive_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
-	mux.Handle("GET", pattern_BookingService_HasAtLeastFivePastReservations_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		var stream runtime.ServerTransportStream
-		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.BookingService/HasAtLeastFivePastReservations", runtime.WithHTTPPathPattern("/booking/host/check/past-reservations"))
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := local_request_BookingService_HasAtLeastFivePastReservations_0(annotatedContext, inboundMarshaler, server, req, pathParams)
-		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
-		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
-		if err != nil {
-			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_BookingService_HasAtLeastFivePastReservations_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
-	mux.Handle("GET", pattern_BookingService_IsTheReservationDurationLongEnough_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		var stream runtime.ServerTransportStream
-		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.BookingService/IsTheReservationDurationLongEnough", runtime.WithHTTPPathPattern("/booking/host/check/reservations-duration"))
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := local_request_BookingService_IsTheReservationDurationLongEnough_0(annotatedContext, inboundMarshaler, server, req, pathParams)
-		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
-		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
-		if err != nil {
-			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_BookingService_IsTheReservationDurationLongEnough_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_BookingService_HostStandOutCheck_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -978,69 +892,25 @@ func RegisterBookingServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 
 	})
 
-	mux.Handle("GET", pattern_BookingService_IsTheCancellationRateLessThanFive_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_BookingService_HostStandOutCheck_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.BookingService/IsTheCancellationRateLessThanFive", runtime.WithHTTPPathPattern("/booking/host/check/cancellation-rate"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.BookingService/HostStandOutCheck", runtime.WithHTTPPathPattern("/booking/host/check"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_BookingService_IsTheCancellationRateLessThanFive_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_BookingService_HostStandOutCheck_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_BookingService_IsTheCancellationRateLessThanFive_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
-	mux.Handle("GET", pattern_BookingService_HasAtLeastFivePastReservations_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.BookingService/HasAtLeastFivePastReservations", runtime.WithHTTPPathPattern("/booking/host/check/past-reservations"))
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_BookingService_HasAtLeastFivePastReservations_0(annotatedContext, inboundMarshaler, client, req, pathParams)
-		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
-		if err != nil {
-			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_BookingService_HasAtLeastFivePastReservations_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
-	mux.Handle("GET", pattern_BookingService_IsTheReservationDurationLongEnough_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.BookingService/IsTheReservationDurationLongEnough", runtime.WithHTTPPathPattern("/booking/host/check/reservations-duration"))
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_BookingService_IsTheReservationDurationLongEnough_0(annotatedContext, inboundMarshaler, client, req, pathParams)
-		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
-		if err != nil {
-			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_BookingService_IsTheReservationDurationLongEnough_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_BookingService_HostStandOutCheck_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -1066,11 +936,7 @@ var (
 
 	pattern_BookingService_GetReservationRequestsForHost_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"booking", "reservation", "requests", "host"}, ""))
 
-	pattern_BookingService_IsTheCancellationRateLessThanFive_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"booking", "host", "check", "cancellation-rate"}, ""))
-
-	pattern_BookingService_HasAtLeastFivePastReservations_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"booking", "host", "check", "past-reservations"}, ""))
-
-	pattern_BookingService_IsTheReservationDurationLongEnough_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"booking", "host", "check", "reservations-duration"}, ""))
+	pattern_BookingService_HostStandOutCheck_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"booking", "host", "check"}, ""))
 )
 
 var (
@@ -1092,9 +958,5 @@ var (
 
 	forward_BookingService_GetReservationRequestsForHost_0 = runtime.ForwardResponseMessage
 
-	forward_BookingService_IsTheCancellationRateLessThanFive_0 = runtime.ForwardResponseMessage
-
-	forward_BookingService_HasAtLeastFivePastReservations_0 = runtime.ForwardResponseMessage
-
-	forward_BookingService_IsTheReservationDurationLongEnough_0 = runtime.ForwardResponseMessage
+	forward_BookingService_HostStandOutCheck_0 = runtime.ForwardResponseMessage
 )
