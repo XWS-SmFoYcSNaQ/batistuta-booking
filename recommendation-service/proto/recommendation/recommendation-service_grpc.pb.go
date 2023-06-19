@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RecommendationServiceClient interface {
-	GetRecommendedAccommodations(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*RecommendedAccommodations_Response, error)
+	GetRecommendedAccommodations(ctx context.Context, in *RecommendedAccommodations_Request, opts ...grpc.CallOption) (*RecommendedAccommodations_Response, error)
 }
 
 type recommendationServiceClient struct {
@@ -37,7 +37,7 @@ func NewRecommendationServiceClient(cc grpc.ClientConnInterface) RecommendationS
 	return &recommendationServiceClient{cc}
 }
 
-func (c *recommendationServiceClient) GetRecommendedAccommodations(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*RecommendedAccommodations_Response, error) {
+func (c *recommendationServiceClient) GetRecommendedAccommodations(ctx context.Context, in *RecommendedAccommodations_Request, opts ...grpc.CallOption) (*RecommendedAccommodations_Response, error) {
 	out := new(RecommendedAccommodations_Response)
 	err := c.cc.Invoke(ctx, RecommendationService_GetRecommendedAccommodations_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -50,7 +50,7 @@ func (c *recommendationServiceClient) GetRecommendedAccommodations(ctx context.C
 // All implementations must embed UnimplementedRecommendationServiceServer
 // for forward compatibility
 type RecommendationServiceServer interface {
-	GetRecommendedAccommodations(context.Context, *EmptyRequest) (*RecommendedAccommodations_Response, error)
+	GetRecommendedAccommodations(context.Context, *RecommendedAccommodations_Request) (*RecommendedAccommodations_Response, error)
 	mustEmbedUnimplementedRecommendationServiceServer()
 }
 
@@ -58,7 +58,7 @@ type RecommendationServiceServer interface {
 type UnimplementedRecommendationServiceServer struct {
 }
 
-func (UnimplementedRecommendationServiceServer) GetRecommendedAccommodations(context.Context, *EmptyRequest) (*RecommendedAccommodations_Response, error) {
+func (UnimplementedRecommendationServiceServer) GetRecommendedAccommodations(context.Context, *RecommendedAccommodations_Request) (*RecommendedAccommodations_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRecommendedAccommodations not implemented")
 }
 func (UnimplementedRecommendationServiceServer) mustEmbedUnimplementedRecommendationServiceServer() {}
@@ -75,7 +75,7 @@ func RegisterRecommendationServiceServer(s grpc.ServiceRegistrar, srv Recommenda
 }
 
 func _RecommendationService_GetRecommendedAccommodations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
+	in := new(RecommendedAccommodations_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func _RecommendationService_GetRecommendedAccommodations_Handler(srv interface{}
 		FullMethod: RecommendationService_GetRecommendedAccommodations_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecommendationServiceServer).GetRecommendedAccommodations(ctx, req.(*EmptyRequest))
+		return srv.(RecommendationServiceServer).GetRecommendedAccommodations(ctx, req.(*RecommendedAccommodations_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }

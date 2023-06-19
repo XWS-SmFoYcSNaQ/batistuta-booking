@@ -5,14 +5,16 @@ option go_package = "proto/recommendation";
 import "google/api/annotations.proto";
 
 service RecommendationService {
-  rpc GetRecommendedAccommodations(EmptyRequest) returns (RecommendedAccommodations_Response) {
+  rpc GetRecommendedAccommodations(RecommendedAccommodations_Request) returns (RecommendedAccommodations_Response) {
     option (google.api.http) = {
-      get: "/accommodation/recommendation"
+      get: "/accommodation/recommendation/{id}"
     };
   }
 }
 
-message EmptyRequest {}
+message RecommendedAccommodations_Request {
+  string id = 1;
+}
 
 message RecommendedAccommodations_Response {
   repeated RecommendedAccommodationDTO data = 1;

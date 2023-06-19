@@ -3,14 +3,18 @@ package controller
 import (
 	"context"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/accommodation"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/booking"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/rating"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/user"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	"log"
 	"os"
 	"recommendation-service/infrastructure"
 	"recommendation-service/proto/recommendation"
 	"recommendation-service/services"
+	"strconv"
 )
 
 type RecommendationController struct {
@@ -21,7 +25,7 @@ type RecommendationController struct {
 //	return c.RecommendationService.Test()
 //}
 
-func (c RecommendationController) GetRecommendedAccommodations(ctx context.Context, request *recommendation.EmptyRequest) (*recommendation.RecommendedAccommodations_Response, error) {
+func (c RecommendationController) GetRecommendedAccommodations(ctx context.Context, request *recommendation.RecommendedAccommodations_Request) (*recommendation.RecommendedAccommodations_Response, error) {
 	// Get the authorization header from the incoming context
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
@@ -47,7 +51,7 @@ func (c RecommendationController) GetRecommendedAccommodations(ctx context.Conte
 	//authCtx := metadata.AppendToOutgoingContext(ctx, "Authorization", authHeader)
 
 	// Make the gRPC call with the updated context
-	accommodationsResponse, err := accommodationClient.GetAllAccommodations(ctx, &accommodation.AM_GetAllAccommodations_Request{Range: "", Benefits: "", Distinguished: ""})
+	accommodationsResponse, err := accommodationClient.GetAllAccommodations(ctx, &accommodation.AM_GetAllAccommodations_Request{})
 	if err != nil {
 		return nil, err
 	}
@@ -70,6 +74,43 @@ func (c RecommendationController) GetRecommendedAccommodations(ctx context.Conte
 		return nil, err
 	}
 	// Create a gRPC connection to the API Gateway server
-	c.RecommendationService.SetDataForDb(accommodationsResponse.Data, usersResponse.Users)
-	return &recommendation.RecommendedAccommodations_Response{Data: nil}, nil
+
+	ratingConn, err := infrastructure.CreateConnection(os.Getenv("RATING_SERVICE_ADDRESS"))
+	if err != nil {
+		return nil, err
+	}
+	defer userConn.Close()
+
+	ratingClient := rating.NewRatingServiceClient(ratingConn)
+	ratingResponse, err := ratingClient.GetAllRatings(ctx, &rating.Empty{})
+
+	bookingConn, err := infrastructure.CreateConnection(os.Getenv("BOOKING_SERVICE_ADDRESS"))
+	if err != nil {
+		return nil, err
+	}
+	defer bookingConn.Close()
+
+	bookingClient := booking.NewBookingServiceClient(bookingConn)
+
+	var allReservations []*booking.BookingRequestsDTO
+
+	for _, userIter := range usersResponse.Users {
+		request := &booking.AllReservationsForGuest_Request{
+			Id: userIter.Id,
+		}
+
+		response, err := bookingClient.GetAllReservationsForGuest(ctx, request)
+		if err != nil {
+			return nil, err
+		}
+
+		allReservations = append(allReservations, response.Data...)
+	}
+
+	log.Println("Broj svih rezervacija je " + strconv.Itoa(len(allReservations)))
+	c.RecommendationService.SetDataForDb(accommodationsResponse.Data, usersResponse.Users, ratingResponse.Data, allReservations)
+
+	recommendedAccommodations, err := c.RecommendationService.GetRecommendedAccommodations(request.Id)
+
+	return &recommendation.RecommendedAccommodations_Response{Data: recommendedAccommodations}, nil
 }

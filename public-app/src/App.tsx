@@ -24,6 +24,7 @@ import { AppState, appStore } from "./core/store";
 import "rsuite/dist/rsuite.min.css";
 import { useEffect, useState } from "react";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import RecommendIcon from '@mui/icons-material/Recommend';
 
 const drawerWidth = 300;
 
@@ -70,6 +71,11 @@ const upperNavItems: NavItem[] = [
     route: "reservations-to-confirm",
     text: "Reservations confirmation",
     icon: <CheckIcon />,
+  },
+  {
+    route: "recommended-accommodations",
+    text: "Recommended accommodations",
+    icon: <RecommendIcon />
   },
   {
     route: "/profile",

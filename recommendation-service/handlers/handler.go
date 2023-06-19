@@ -11,6 +11,6 @@ type RecommendationHandler struct {
 	RecommendationController *controller.RecommendationController
 }
 
-func (h RecommendationHandler) GetRecommendedAccommodations(ctx context.Context, request *recommendation.EmptyRequest) (*recommendation.RecommendedAccommodations_Response, error) {
+func (h RecommendationHandler) GetRecommendedAccommodations(ctx context.Context, request *recommendation.RecommendedAccommodations_Request) (*recommendation.RecommendedAccommodations_Response, error) {
 	return h.RecommendationController.GetRecommendedAccommodations(ctx, request)
 }
