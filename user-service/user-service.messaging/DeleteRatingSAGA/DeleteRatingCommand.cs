@@ -4,6 +4,7 @@
     {
         UpdateHost = 2,
         RollbackRating = 3,
+        ConcludeRatingDeletion = 4,
         UnknownCommand = 5
     }
 

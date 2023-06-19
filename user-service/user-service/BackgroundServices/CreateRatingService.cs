@@ -6,6 +6,7 @@ using user_service.data.Db;
 using user_service.domain.Entities;
 using user_service.messaging.CreateRatingSAGA;
 using user_service.messaging.Interfaces;
+using user_service.Services;
 
 namespace user_service.BackgroundServices
 {
@@ -67,6 +68,14 @@ namespace user_service.BackgroundServices
                         case CreateRatingCommandType.RollbackRating:
                             await RollbackRating(createRatingCommand);
                             break;
+                        case CreateRatingCommandType.ConcludeRatingCreation:
+                            {
+                                using var scope = Services.CreateScope();
+                                var hostFeaturedUpadter = scope.ServiceProvider.GetRequiredService<HostFeaturedUpdater>();
+                                await hostFeaturedUpadter.UpdateFeatured(createRatingCommand.Rating.TargetID);
+                                break;
+                            }
+
                         default:
                             break;
                     }

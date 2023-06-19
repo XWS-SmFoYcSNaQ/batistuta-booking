@@ -7,6 +7,13 @@ using notification_service.Extensions;
 using notification_service.Hubs;
 using notification_service.messaging.Configuration;
 using notification_service.Domain;
+using notification_service.Repositories;
+using notification_service.Helpers;
+using Grpc.Core;
+using Microsoft.AspNetCore.Mvc;
+using notification_service.Contracts.Requests;
+using System.Security.Claims;
+using notification_service.Domain.Enums;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,5 +68,53 @@ app.UseCors();
 app.Urls.Add($"http://localhost:{app.Configuration["NOTIFICATION_SERVICE_ADDRESS"]}" ?? "http://localhost:12009");
 
 app.MapHub<NotificationHub>("/hubs/notification");
+app.MapPut("/notificationOptions", async (ClaimsPrincipal user,
+    UpdateUserNotificationOptionsRequest updateRequest,
+    INotificationRepository notificationRepository,
+    GrpcChannelBuilder grpcChannelBuilder,
+    IOptions<ServicesConfig> servicesConfig,
+    ILoggerFactory loggerFactory) =>
+{
+    var logger = loggerFactory.CreateLogger("UpdateNotificationOptions");
+    try
+    {
+        var userId = user.Claims.FirstOrDefault(x => x.Type == "userId").Value;
+        var userRole = user.Claims.FirstOrDefault(x => x.Type == "userRole").Value;
+
+        var userNotificationOptions = await notificationRepository.GetUserNotificationsOptions(Guid.Parse(userId));
+        if (userNotificationOptions == null)
+        {
+            userNotificationOptions = new UserNotificationOptionsEntity
+            {
+                UserId = Guid.Parse(userId)
+            };
+        };
+
+        if (userRole.Equals("Guest"))
+        {
+            if (updateRequest.ActivedNotifications.Contains(NotificationType.ReservationRequestResponded))
+                userNotificationOptions.ActivatedNotifications.Add(NotificationType.ReservationRequestResponded);
+            else
+                userNotificationOptions.ActivatedNotifications.Clear();
+        }
+        else
+        {
+            userNotificationOptions.ActivatedNotifications = updateRequest.ActivedNotifications;
+            if (userNotificationOptions.ActivatedNotifications.Contains(NotificationType.ReservationRequestResponded))
+                userNotificationOptions.ActivatedNotifications.Remove(NotificationType.ReservationRequestResponded);
+        }
+
+        await notificationRepository.UpsertUserNotificationsOptions(userNotificationOptions);
+
+        return Results.NoContent();
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex.ToString());
+        return Results.Problem("Error updating notifications options.");
+    }
+
+
+});
 
 app.Run();

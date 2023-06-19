@@ -28,7 +28,12 @@ namespace notification_service.Helpers
             using var channel = _grpcChannelBuilder.Build(_servicesConfig.Value.AuthServiceAddress);
             var authClient = new AuthServiceClient.AuthService.AuthServiceClient(channel);
 
-            var accessToken = Context.Request.Query["access_token"].ToString();
+            var accessToken = $"Bearer {Context.Request.Query["access_token"].ToString()}";
+
+            if (!Context.Request.Path.ToString().StartsWith("/hubs"))
+            {
+                accessToken = Context.Request.Headers.Authorization.ToString();
+            }
 
             if (accessToken == null)
             {
@@ -38,7 +43,7 @@ namespace notification_service.Helpers
 
             var verifyRequestMetadata = new Metadata
             {
-                new Metadata.Entry("Authorization", $"Bearer {accessToken}")
+                new Metadata.Entry("Authorization", accessToken)
             };
             var verifyResponse = await authClient.VerifyAsync(new AuthServiceClient.Empty_Request(), new CallOptions().WithHeaders(verifyRequestMetadata));
 
@@ -49,8 +54,9 @@ namespace notification_service.Helpers
             };
 
             Logger.LogInformation($"Connected as {verifyResponse.UserId}");
-            var claim = new Claim("userId", verifyResponse.UserId);
-            var claimsIdentity = new ClaimsIdentity(new[] { claim }, "MyScheme");
+            var userIdClaim = new Claim("userId", verifyResponse.UserId);
+            var userRoleClaim = new Claim("userRole", verifyResponse.UserRole.ToString());
+            var claimsIdentity = new ClaimsIdentity(new[] { userIdClaim, userRoleClaim }, "MyScheme");
             var claimsPrinciple = new ClaimsPrincipal(claimsIdentity);
             var authenticationTicket = new AuthenticationTicket(claimsPrinciple, "MyScheme");
 

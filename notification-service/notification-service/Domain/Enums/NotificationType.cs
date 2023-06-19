@@ -6,7 +6,7 @@
         ReservationCancelled = 1,
         HostRated = 2,
         AccommodationRated = 3,
-        HostFeaturedChanged = 4,
+        HostFeaturedStatusChanged = 4,
         ReservationRequestResponded = 5
     }
 }

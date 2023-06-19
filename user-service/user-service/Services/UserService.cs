@@ -20,7 +20,7 @@ namespace user_service.Services
         private readonly IPasswordHasher _passwordHasher;
         private readonly GrpcChannelBuilder _grpcChannelBuilder;
         private readonly ServicesConfig _servicesConfig;
-
+        private readonly HostFeaturedUpdater _hostFeaturedUpdater;
 
         public UserService(UserServiceDbContext dbContext,
             IMapper mapper,
@@ -29,7 +29,8 @@ namespace user_service.Services
             IValidator<ChangePassword_Request> changePasswordRequestValidator,
             IPasswordHasher passwordHasher,
             GrpcChannelBuilder grpcChannelBuilder,
-            ServicesConfig servicesConfig)
+            ServicesConfig servicesConfig,
+            HostFeaturedUpdater hostFeaturedUpdater)
         {
             _dbContext = dbContext;
             _mapper = mapper;
@@ -39,6 +40,7 @@ namespace user_service.Services
             _passwordHasher = passwordHasher;
             _grpcChannelBuilder = grpcChannelBuilder;
             _servicesConfig = servicesConfig;
+            _hostFeaturedUpdater = hostFeaturedUpdater;
         }
 
         public override async Task<RegisterUser_Response> RegisterUser(RegisterUser_Request request, ServerCallContext context)
@@ -278,30 +280,7 @@ namespace user_service.Services
 
         public override async Task<Empty_Message> UpdateHostFeatured(UpdateHostFeatured_Request request, ServerCallContext context)
         {
-            var hostRating = await _dbContext
-                .HostRatings
-                .Include(x => x.Host)
-                .FirstOrDefaultAsync(x => x.HostId == Guid.Parse(request.HostId));
-
-            if (hostRating == null || hostRating.AverageRating <= 4.7)
-            {
-                return new Empty_Message();
-            }
-
-
-            var bookingChannel = _grpcChannelBuilder.Build(_servicesConfig.BOOKING_SERVICE_ADDRESS);
-            var bookingClient = new booking_service.BookingService.BookingServiceClient(bookingChannel);
-
-            var hostFeaturedResponse = await bookingClient.HostStandOutCheckAsync(new booking_service.EmptyMessage());
-
-            if (!hostFeaturedResponse.Flag)
-            {
-                _logger.LogInformation(hostFeaturedResponse.Message);
-                return new Empty_Message();
-            }
-
-            hostRating.Host.Featured = true;
-            await _dbContext.SaveChangesAsync();
+            await _hostFeaturedUpdater.UpdateFeatured(Guid.Parse(request.HostId));
 
             return new Empty_Message();
         }

@@ -35,6 +35,7 @@ namespace user_service.Extensions
             builder.Services.AddScoped<IValidator<ChangePassword_Request>, ChangePasswordRequestValidator>();
             builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
             builder.Services.AddSingleton<INatsClient, NatsClient>();
+            builder.Services.AddScoped<HostFeaturedUpdater>();
         }
 
         public static void AddHostedServices(this WebApplicationBuilder builder)

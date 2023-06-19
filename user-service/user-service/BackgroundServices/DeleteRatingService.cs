@@ -5,6 +5,7 @@ using user_service.Configuration;
 using user_service.data.Db;
 using user_service.messaging.DeleteRatingSAGA;
 using user_service.messaging.Interfaces;
+using user_service.Services;
 
 namespace user_service.BackgroundServices
 {
@@ -28,7 +29,6 @@ namespace user_service.BackgroundServices
             _logger = logger;
             _natsClient = natsClient;
             _deleteRatingSubjectsConfig = deleteRatingSubjectsConfig;
-
             Services = serviceProvider;
         }
 
@@ -67,6 +67,13 @@ namespace user_service.BackgroundServices
                         case DeleteRatingCommandType.RollbackRating:
                             await RollbackRating(deleteRatingCommand);
                             break;
+                        case DeleteRatingCommandType.ConcludeRatingDeletion:
+                            {
+                                using var scope = Services.CreateScope();
+                                var hostFeaturedUpadter = scope.ServiceProvider.GetRequiredService<HostFeaturedUpdater>();
+                                await hostFeaturedUpadter.UpdateFeatured(deleteRatingCommand.Rating.OldValue.TargetID);
+                                break;
+                            }
                         default:
                             break;
                     }

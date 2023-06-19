@@ -59,6 +59,14 @@ namespace notification_service.HostedServices
 
                     var userNotification = new UserNotificationEntity(notificationMessage);
 
+                    var userNotificationsOptions = await _notificationRepository.GetUserNotificationsOptions(userNotification.NotifierId);
+
+                    if (userNotificationsOptions == null || !userNotificationsOptions.IsNotificationTypeActivated(userNotification.Notification.Type))
+                    {
+                        _logger.LogInformation($"User with id: {userNotification.NotifierId} has turned of notifications of type: {userNotification.Notification.Type}");
+                        return;
+                    }
+
                     using var scope = Services.CreateScope();
                     var hub = scope.ServiceProvider.GetRequiredService<IHubContext<NotificationHub>>();
 
@@ -70,7 +78,7 @@ namespace notification_service.HostedServices
                         foreach (var connection in userConnections)
                         {
                             await hub.Clients.Client(connection)
-                                .SendAsync("notification", new NotificationClientMessage(userNotification.Notification));
+                                .SendAsync("Notification", new NotificationClientMessage(userNotification.Notification));
                         }
                     }
 
