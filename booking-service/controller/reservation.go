@@ -8,12 +8,10 @@ import (
 	"context"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/accommodation"
 	commonServices "github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/services"
-	"google.golang.org/grpc/metadata"
-	"os"
-
-	//commonServices "github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/services"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	"os"
 )
 
 type ReservationController struct {
