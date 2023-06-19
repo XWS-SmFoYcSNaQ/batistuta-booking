@@ -6,7 +6,8 @@ type Range struct {
 }
 
 type Filter struct {
-	Range         *Range
-	Benefits      []string
-	Distinguished bool
+	Range                *Range
+	Benefits             []string
+	Distinguished        bool
+	DistinguishedHostIds []string
 }
