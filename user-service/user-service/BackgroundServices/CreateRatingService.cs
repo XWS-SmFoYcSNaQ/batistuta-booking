@@ -14,7 +14,7 @@ namespace user_service.BackgroundServices
         private readonly INatsClient _natsClient;
         private readonly CreateRatingSubjectsConfig _subjects;
         private readonly ILogger<CreateRatingService> _logger;
-        private readonly string ServiceName = nameof(CreateRatingService);
+        private readonly string _serviceName = nameof(CreateRatingService);
 
         private string CreateRatingReplaySubject => _subjects.CREATE_RATING_REPLAY_SUBJECT;
         private string CreateRatingCommandSubject => _subjects.CREATE_RATING_COMMAND_SUBJECT;
@@ -34,24 +34,11 @@ namespace user_service.BackgroundServices
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation($"{ServiceName} is starting.");
+            _logger.LogInformation($"{_serviceName} is starting.");
 
-            await BackgroundProcessing(stoppingToken);
-        }
-
-        public override async Task StopAsync(CancellationToken cancellationToken)
-        {
-            _logger.LogInformation($"{ServiceName} is stopping.");
-
-            await base.StopAsync(cancellationToken);
-        }
-
-        private async Task BackgroundProcessing(CancellationToken stoppingToken)
-        {
             _natsClient.SubscribeAsync(CreateRatingCommandSubject, CreateRatingHandler());
 
             await Task.Delay(Timeout.Infinite, stoppingToken);
-
         }
 
         private EventHandler<MsgHandlerEventArgs> CreateRatingHandler()
@@ -198,5 +185,11 @@ namespace user_service.BackgroundServices
             _natsClient.Publish(CreateRatingReplaySubject, JsonSerializer.Serialize(replay));
         }
 
+        public override async Task StopAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInformation($"{_serviceName} is stopping.");
+
+            await base.StopAsync(cancellationToken);
+        }
     }
 }

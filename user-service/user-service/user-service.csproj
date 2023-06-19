@@ -10,6 +10,7 @@
 
 	<ItemGroup>
 		<None Remove="Protos\auth-service\auth-service.proto" />
+		<None Remove="Protos\booking-service\booking-service.proto" />
 		<None Remove="Protos\rating-service\rating-service.proto" />
 	</ItemGroup>
 
@@ -31,6 +32,7 @@
 
 	<ItemGroup>
 		<Protobuf Include="Protos\auth-service\auth-service.proto" GrpcServices="Client" />
+		<Protobuf Include="Protos\booking-service\booking-service.proto" GrpcServices="Client" />
 		<Protobuf Include="Protos\rating-service\rating-service.proto" GrpcServices="Client" />
 		<Protobuf Include="Protos\user-service\user-service.proto" GrpcServices="Both" />
 	</ItemGroup>

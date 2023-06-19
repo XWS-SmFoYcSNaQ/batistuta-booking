@@ -10,6 +10,8 @@ import {
   TableBody,
   Stack,
   Button,
+  TextField,
+  Grid,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, Outlet } from "react-router";
@@ -17,6 +19,8 @@ import { Link } from "react-router-dom";
 import { appStore, AppState } from "../../../core/store";
 import { RatingDialog } from "../../../shared";
 import { Accommodation, User } from "../../../shared/model";
+import { DateRangePicker } from "rsuite";
+import { DateRange } from "rsuite/esm/DateRangePicker";
 import { AccommodationFilter, Filters } from "../filters";
 
 const getAverageRating = (a: Accommodation) => {
@@ -38,6 +42,9 @@ const getCurrentUserAccommodationRating = (
 export const AccommodationList = ({ host = true }: { host?: boolean }) => {
   const location = useLocation();
   const loading = appStore((state: AppState) => state.accommodation.loading);
+  const fetchSearchedAccommodations = appStore(
+    (state: AppState) => state.accommodation.fetchSearchedAccommodations
+  );
   const fetchMyAccommodations = appStore(
     (state: AppState) => state.accommodation.fetchMyAccommodations
   );
@@ -68,6 +75,13 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
     filters,
     filtersEnabled,
     host,
+  ]);
+
+  const [locationSearch, setLocationSearch] = useState("");
+  const [numberOfGuests, setNumberOfGuests] = useState(0);
+  const [selectedDates, setSelectedDates] = useState<[Date, Date]>([
+    new Date(),
+    new Date()
   ]);
 
   useEffect(() => {
@@ -102,9 +116,71 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
     }
   };
 
+  const handleDateRangeChange = (value: DateRange | null) => {
+    if (value !== null) {
+      setSelectedDates([value[0], value[1]]);
+    }
+  };
+
+  const handleSearch = () => {
+    let requestbody = {
+      numberOfGuests: numberOfGuests, start: selectedDates[0].toISOString(), end: selectedDates[1].toISOString(), location: locationSearch
+    }
+    fetchSearchedAccommodations(requestbody)
+  };
+
   return (
     <div>
       <h2>Accommodations</h2>
+      <div>
+        <Grid container spacing={2} alignItems="center" sx={{ marginTop: "30px", marginBottom: "30px" }}>
+          <Grid item>
+            <TextField
+              required
+              label="Location"
+              value={locationSearch}
+              onChange={(event) => setLocationSearch(event.target.value)}
+            />
+          </Grid>
+          <Grid item>
+            <TextField
+              required
+              type="number"
+              label="Number of guests"
+              value={numberOfGuests}
+              onChange={(event) => setNumberOfGuests(parseInt(event.target.value))}
+            />
+          </Grid>
+          <Grid item>
+            <DateRangePicker
+              placeholder="Select Date Range"
+              title="Select Date Range"
+              onChange={handleDateRangeChange}
+              value={selectedDates}
+            />
+          </Grid>
+          <Grid item>
+            <Button
+              size="large"
+              color="primary"
+              type="button"
+              onClick={handleSearch}
+            >
+              Search
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              size="large"
+              color="error"
+              type="button"
+              onClick={fetchData}
+            >
+              Reset
+            </Button>
+          </Grid>
+        </Grid>
+      </div>
       {!host && !filtersEnabled && (
         <Button type="button" onClick={() => setFiltersEnabled(true)}>
           Enable filters
@@ -141,6 +217,8 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
                 <TableCell align="right">Max Guests</TableCell>
                 <TableCell align="right">Average Rating</TableCell>
                 <TableCell align="right">My Rating</TableCell>
+                <TableCell align="right">Location</TableCell>
+                <TableCell align="right">Automatic Acceptance Of Reservations</TableCell>
                 <TableCell align="center">Action</TableCell>
               </TableRow>
             </TableHead>
@@ -153,13 +231,17 @@ export const AccommodationList = ({ host = true }: { host?: boolean }) => {
                   <TableCell component="th" scope="row">
                     {d.name}
                   </TableCell>
-                  <TableCell align="right">{d.basePrice}&nbsp;EUR</TableCell>
+                  <TableCell align="right">{d.basePrice}&nbsp;&#8364;</TableCell>
                   <TableCell align="right">{d.benefits}</TableCell>
                   <TableCell align="right">{d.minGuests}</TableCell>
                   <TableCell align="right">{d.maxGuests}</TableCell>
                   <TableCell align="right">{getAverageRating(d)}</TableCell>
                   <TableCell align="right">
                     {getCurrentUserAccommodationRating(d, currentUser)?.value}
+                  </TableCell>
+                  <TableCell align="right">{d.location}</TableCell>
+                  <TableCell align="right">
+                    <span style={{ color: d.automaticReservation === 1 ? "green" : "red" }}>{d.automaticReservation === 1 ? "enabled" : "disabled"}</span>
                   </TableCell>
                   <TableCell align="right">
                     <Stack
