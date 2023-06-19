@@ -16,6 +16,8 @@ import { useEffect, useState } from "react";
 import { Rating, User } from "../../../shared/model";
 import { RatingDialog } from "../../../shared";
 import { Link } from "react-router-dom";
+import ClearIcon from '@mui/icons-material/Clear';
+import CheckIcon from '@mui/icons-material/Check';
 
 const getAverageRating = (a: User) => {
   const sum = a.Ratings?.map((r) => r.Value).reduce(
@@ -97,6 +99,7 @@ export const HostList = () => {
                 <TableCell align="right">Place of Living</TableCell>
                 <TableCell align="right">Average Rating</TableCell>
                 <TableCell align="right">My Rating</TableCell>
+                <TableCell align="center">Featured</TableCell>
                 <TableCell align="center">Action</TableCell>
               </TableRow>
             </TableHead>
@@ -116,6 +119,9 @@ export const HostList = () => {
                   <TableCell align="right">{getAverageRating(d)}</TableCell>
                   <TableCell align="right">
                     {getCurrentUserHostRating(d, currentUser)?.Value}
+                  </TableCell>
+                  <TableCell align="center">
+                    { d.Featured ? <CheckIcon/> : <ClearIcon/> }
                   </TableCell>
                   <TableCell align="right">
                     <Stack direction="row" justifyContent="right" gap={1}>

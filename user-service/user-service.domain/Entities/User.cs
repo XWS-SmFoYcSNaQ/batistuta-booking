@@ -12,5 +12,6 @@ namespace user_service.domain.Entities
         public required string LastName { get; set; }
         public required string Email { get; set; }
         public required string LivingPlace { get; set; }
+        public bool? Featured { get; set; }
     }
 }
