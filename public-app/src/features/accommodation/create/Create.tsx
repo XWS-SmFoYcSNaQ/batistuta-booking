@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Accommodation } from "../../../shared/model";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, Checkbox, FormControlLabel, TextField } from "@mui/material";
 import { AppState, appStore } from "../../../core/store";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
@@ -94,6 +94,22 @@ export const Create = () => {
                   e.target.value === "" ? undefined : parseFloat(e.target.value),
               })
             }
+          />
+          <TextField
+            required
+            label="Location"
+            value={data.location ?? ""}
+            onChange={(e) => setData({ ...data, location: e.target.value })}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                onChange={(e) =>
+                  setData({ ...data, automaticReservation: e.target.checked ? 1 : 0 })
+                }
+              />
+            }
+            label="Automatically accept reservation"
           />
         </div>
         <Box marginTop="20px" sx={{ display: "flex", justifyContent: "right", gap: "15px" }}>

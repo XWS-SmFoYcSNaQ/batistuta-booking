@@ -37,7 +37,12 @@ service AccommodationService {
       body: "*"
     };
   }
-
+  rpc SearchAccommodations(AM_SearchAccommodations_Request) returns (AM_SearchAccommodations_Response) {
+    option (google.api.http) = {
+      post: "/accommodation/search",
+      body: "*"
+    };
+  }
 
   rpc GetAllDiscountsByAccommodation(AM_GetAllDiscountsByAccommodation_Request) returns (AM_GetAllDiscountsByAccommodation_Response) {
     option (google.api.http) = {
@@ -52,6 +57,12 @@ service AccommodationService {
   rpc CreateDiscount(AM_CreateDiscount_Request) returns (AM_CreateDiscount_Response) {
     option (google.api.http) = {
       post: "/accommodation/discount",
+      body: "*"
+    };
+  }
+  rpc GetAutomaticReservationValue(AM_GetAutomaticReservation_Request) returns (AM_GetAutomaticReservation_Response) {
+    option (google.api.http) = {
+      post: "/accommodation/automatic-reservation",
       body: "*"
     };
   }
@@ -78,9 +89,11 @@ message AM_GetMyAccommodations_Response {
 message AM_CreateAccommodation_Request {
   string name = 1;
   string benefits = 2;
-  int32 minGuests = 3;
-  int32 maxGuests = 4;
-  double basePrice = 5;
+  string location = 3;
+  int32 minGuests = 4;
+  int32 maxGuests = 5;
+  int32 automaticReservation = 6;
+  double basePrice = 7;
 }
 
 message AM_CreateAccommodation_Response {
@@ -95,11 +108,21 @@ message AM_GetAccommodation_Response {
   string id = 1;
   string name = 2;
   string benefits = 3;
-  int32 minGuests = 4;
-  int32 maxGuests = 5;
-  double basePrice = 6;
-  repeated PeriodDTO periods = 7;
-  repeated DiscountDTO discounts = 8;
+  string location = 4;
+  int32 minGuests = 5;
+  int32 maxGuests = 6;
+  int32 automaticReservation = 7;
+  double basePrice = 8;
+  repeated PeriodDTO periods = 9;
+  repeated DiscountDTO discounts = 10;
+}
+
+message AM_GetAutomaticReservation_Request {
+  string id = 1;
+}
+
+message AM_GetAutomaticReservation_Response {
+  int32 automaticReservation = 1;
 }
 
 //Periods
@@ -122,6 +145,17 @@ message AM_CreatePeriod_Request {
 
 message AM_CreatePeriod_Response {
   string id = 1;
+}
+
+message AM_SearchAccommodations_Request {
+  string start = 1;
+  string end =  2;
+  string location = 3;
+  int32 numberOfGuests = 4;
+}
+
+message AM_SearchAccommodations_Response {
+  repeated AccommodationSearchResultDTO data = 1;
 }
 
 //Discounts
@@ -163,10 +197,12 @@ message AccommodationDTO {
   string id = 1;
   string name = 2;
   string benefits = 3;
-  int32 minGuests = 4;
-  int32 maxGuests = 5;
-  double basePrice = 6;
-  repeated AccommodationRatingDTO ratings = 7;
+  string location = 4;
+  int32 minGuests = 5;
+  int32 maxGuests = 6;
+  int32 automaticReservation = 7;
+  double basePrice = 8;
+  repeated AccommodationRatingDTO ratings = 9;
 }
 
 message AccommodationRatingDTO {
@@ -181,6 +217,18 @@ message PeriodDTO {
   string end = 3;
   string accommodationId = 4;
   string userId = 5;
+}
+
+message AccommodationSearchResultDTO {
+  string id = 1;
+  string name = 2;
+  string benefits = 3;
+  string location = 4;
+  int32 minGuests = 5;
+  int32 maxGuests = 6;
+  int32 automaticReservation = 7;
+  double basePrice = 8;
+  double totalPrice = 9;
 }
 
 message DiscountDTO {

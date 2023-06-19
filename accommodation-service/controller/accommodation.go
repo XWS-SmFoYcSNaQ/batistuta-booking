@@ -11,6 +11,8 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"strconv"
+	"strings"
 )
 
 type AccommodationController struct {
@@ -71,12 +73,14 @@ func (c AccommodationController) Create(ctx context.Context, request *accommodat
 	}
 
 	id, err := c.AccommodationService.Create(&model.Accommodation{
-		Name:      request.Name,
-		HostId:    hostId,
-		Benefits:  request.Benefits,
-		MinGuests: int(request.MinGuests),
-		MaxGuests: int(request.MaxGuests),
-		BasePrice: request.BasePrice,
+		Name:                 request.Name,
+		HostId:               hostId,
+		Benefits:             request.Benefits,
+		MinGuests:            int(request.MinGuests),
+		MaxGuests:            int(request.MaxGuests),
+		BasePrice:            request.BasePrice,
+		Location:             request.Location,
+		AutomaticReservation: request.AutomaticReservation,
 	})
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
@@ -95,4 +99,64 @@ func (c AccommodationController) GetById(ctx context.Context, request *accommoda
 	}
 
 	return utility.AccommodationDetailsToDTO(a)
+}
+
+func (c AccommodationController) SearchAccommodations(ctx context.Context, request *accommodation.AM_SearchAccommodations_Request) (*accommodation.AM_SearchAccommodations_Response, error) {
+	if request.NumberOfGuests <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "number of guests must be greater than 0 ("+strconv.Itoa(int(request.NumberOfGuests))+")")
+	}
+
+	accommodations, err := c.AccommodationService.GetAccommodationSearchResults(&accommodation.AM_SearchAccommodations_Request{
+		Start:          request.Start,
+		End:            request.End,
+		NumberOfGuests: request.NumberOfGuests,
+		Location:       request.Location,
+	})
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	var availableAccommodations []*model.Accommodation
+	for _, a := range accommodations {
+		start, err := utility.ParseISOString(request.Start)
+		if err != nil {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+		end, err := utility.ParseISOString(request.End)
+		if err != nil {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+		available, err := c.PeriodService.IsAvailableForGivenInterval(a.ID, start, end)
+		if err != nil {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+		if available && strings.Contains(a.Location, request.Location) {
+			availableAccommodations = append(availableAccommodations, a)
+		}
+	}
+
+	var res []*accommodation.AccommodationSearchResultDTO
+	for _, d := range availableAccommodations {
+		a := accommodation.AccommodationSearchResultDTO{
+			Id:         d.ID.String(),
+			Name:       d.Name,
+			Benefits:   d.Benefits,
+			MinGuests:  int32(d.MinGuests),
+			MaxGuests:  int32(d.MaxGuests),
+			BasePrice:  d.BasePrice,
+			Location:   d.Location,
+			TotalPrice: 0.0,
+		}
+		res = append(res, &a)
+	}
+
+	return &accommodation.AM_SearchAccommodations_Response{Data: res}, nil
+}
+
+func (c AccommodationController) GetAutomaticReservationValue(ctx context.Context, request *accommodation.AM_GetAutomaticReservation_Request) (*accommodation.AM_GetAutomaticReservation_Response, error) {
+	resp, err := c.AccommodationService.GetAutomaticReservationValue(request.Id)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return &accommodation.AM_GetAutomaticReservation_Response{AutomaticReservation: int32(resp)}, nil
 }

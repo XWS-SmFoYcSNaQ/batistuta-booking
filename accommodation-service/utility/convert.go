@@ -15,13 +15,15 @@ func AccommodationToDTO(d *model.Accommodation) (*accommodation.AccommodationDTO
 		return nil, err
 	}
 	return &accommodation.AccommodationDTO{
-		Id:        d.ID.String(),
-		Name:      d.Name,
-		Benefits:  d.Benefits,
-		MinGuests: int32(d.MinGuests),
-		MaxGuests: int32(d.MaxGuests),
-		BasePrice: d.BasePrice,
-		Ratings:   ratings,
+		Id:                   d.ID.String(),
+		Name:                 d.Name,
+		Benefits:             d.Benefits,
+		MinGuests:            int32(d.MinGuests),
+		MaxGuests:            int32(d.MaxGuests),
+		BasePrice:            d.BasePrice,
+		Ratings:              ratings,
+		Location:             d.Location,
+		AutomaticReservation: d.AutomaticReservation,
 	}, nil
 }
 
@@ -118,14 +120,16 @@ func AccommodationDetailsToDTO(a *model.Accommodation) (*accommodation.AM_GetAcc
 		return nil, err
 	}
 	return &accommodation.AM_GetAccommodation_Response{
-		Id:        a.ID.String(),
-		Name:      a.Name,
-		Benefits:  a.Benefits,
-		MinGuests: int32(a.MinGuests),
-		MaxGuests: int32(a.MaxGuests),
-		BasePrice: a.BasePrice,
-		Periods:   periods,
-		Discounts: discounts,
+		Id:                   a.ID.String(),
+		Name:                 a.Name,
+		Benefits:             a.Benefits,
+		MinGuests:            int32(a.MinGuests),
+		MaxGuests:            int32(a.MaxGuests),
+		BasePrice:            a.BasePrice,
+		Location:             a.Location,
+		AutomaticReservation: a.AutomaticReservation,
+		Periods:              periods,
+		Discounts:            discounts,
 	}, nil
 }
 
