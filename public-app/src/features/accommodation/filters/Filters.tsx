@@ -142,7 +142,7 @@ export const Filters = ({
             onChange={(e) => setDistinguished(e.target.checked)}
           />
         }
-        label="Distinguished Host"
+        label="Featured Hosts Only"
       />
 
       <Box sx={{ display: "flex" }}>
