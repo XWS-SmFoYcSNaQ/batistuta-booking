@@ -1,10 +1,15 @@
 package services
 
 import (
+	"booking_service/infrastructure"
 	"booking_service/model"
+	"context"
 	"database/sql"
 	"errors"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/accommodation"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/user"
 	"github.com/google/uuid"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -178,6 +183,31 @@ func (s BookingRequestsService) ConfirmReservation(id string) error {
 		return errors.New("Error while deleting other requests")
 	}
 
+	// Create a gRPC connection to the API Gateway server
+	connAcc, err := infrastructure.CreateConnection(os.Getenv("ACCOMMODATION_SERVICE_ADDRESS"))
+	if err != nil {
+		return err
+	}
+	defer connAcc.Close()
+
+	// Create the gRPC client by specifying the registered client from the API Gateway
+	clientAcc := accommodation.NewAccommodationServiceClient(connAcc)
+	responseAcc, err := clientAcc.GetHostIdByAccommodationId(context.Background(), &accommodation.AM_GetAllDiscountsByAccommodation_Request{AccommodationId: reservation.AccommodationId})
+	if err != nil {
+		return err
+	}
+
+	conn, err := infrastructure.CreateConnection(os.Getenv("USER_SERVICE_ADDRESS"))
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	client := user.NewUserServiceClient(conn)
+	_, err = client.UpdateHostFeatured(context.Background(), &user.UpdateHostFeatured_Request{HostId: responseAcc.Id})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -240,6 +270,30 @@ func (s BookingRequestsService) DeleteReservation(reservationId string) error {
 		return errors.New(errorMessage)
 	}
 
+	// Create a gRPC connection to the API Gateway server
+	connAcc, err := infrastructure.CreateConnection(os.Getenv("ACCOMMODATION_SERVICE_ADDRESS"))
+	if err != nil {
+		return err
+	}
+	defer connAcc.Close()
+
+	// Create the gRPC client by specifying the registered client from the API Gateway
+	clientAcc := accommodation.NewAccommodationServiceClient(connAcc)
+	responseAcc, err := clientAcc.GetHostIdByAccommodationId(context.Background(), &accommodation.AM_GetAllDiscountsByAccommodation_Request{AccommodationId: reservation.AccommodationId})
+	if err != nil {
+		return err
+	}
+
+	conn, err := infrastructure.CreateConnection(os.Getenv("USER_SERVICE_ADDRESS"))
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	client := user.NewUserServiceClient(conn)
+	_, err = client.UpdateHostFeatured(context.Background(), &user.UpdateHostFeatured_Request{HostId: responseAcc.Id})
+	if err != nil {
+		return err
+	}
 	return nil
 
 }
@@ -378,7 +432,7 @@ func (s BookingRequestsService) IsTheCancellationRateLessThanFive(accommodationI
 		return false, err
 	}
 
-	if (canceledReservations == 0) {
+	if canceledReservations == 0 {
 		return true, nil
 	}
 

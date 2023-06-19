@@ -77,12 +77,18 @@ export const PendingReservations = () => {
                                     sx={{ height: 140 }}
                                     image="" />
                                 <CardContent>
-                                    <Typography gutterBottom variant="h4" component="div">
+                                <Typography gutterBottom variant="h4" component="div">
+                                        {reservation.accommodationName}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        {reservation.numberOfGuests} guests
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
                                         Start at : {reservation.startDate}
                                         End at : {reservation.endDate}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                        {reservation.numberOfGuests} guests
+                                        Location : {reservation.location}
                                     </Typography>
                                 </CardContent>
                                 <CardActions>

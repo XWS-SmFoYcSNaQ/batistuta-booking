@@ -76,6 +76,7 @@ services:
       BOOKING_DATABASE_PASSWORD: ${BOOKING_DATABASE_PASSWORD}
       ACCOMMODATION_SERVICE_ADDRESS: accommodation_service${ACCOMMODATION_SERVICE_ADDRESS}
       AUTH_SERVICE_ADDRESS: auth_service${AUTH_SERVICE_ADDRESS}
+      USER_SERVICE_ADDRESS: user_service${USER_SERVICE_ADDRESS}
     depends_on:
       - booking_database
 
@@ -225,7 +226,7 @@ services:
       interval: 2s
       timeout: 15s
       retries: 50
-      start_period: 3s
+      start_period: 30s
     environment:
       - NEO4J_AUTH=neo4j/neopassword
 

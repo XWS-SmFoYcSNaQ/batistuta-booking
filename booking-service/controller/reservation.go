@@ -26,15 +26,29 @@ func (c ReservationController) GetAll(ctx context.Context, request *booking.AM_G
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
+	// Create a gRPC connection to the API Gateway server
+	conn, err := infrastructure.CreateConnection(os.Getenv("ACCOMMODATION_SERVICE_ADDRESS"))
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+	client := accommodation.NewAccommodationServiceClient(conn)
 	var res []*booking.BookingRequestsDTO
 	for _, d := range bookingRequests {
+		response, err := client.GetAccommodation(ctx, &accommodation.AM_GetAccommodation_Request{Id: d.AccommodationId})
+		if err != nil {
+			return nil, err
+		}
 		a := booking.BookingRequestsDTO{
-			Id:              d.ID.String(),
-			AccommodationId: d.AccommodationId,
-			StartDate:       d.StartDate,
-			EndDate:         d.EndDate,
-			NumberOfGuests:  int32(d.NumberOfGuests),
-			UserId:          d.UserId,
+			Id:                    d.ID.String(),
+			AccommodationId:       d.AccommodationId,
+			StartDate:             d.StartDate,
+			EndDate:               d.EndDate,
+			NumberOfGuests:        int32(d.NumberOfGuests),
+			UserId:                d.UserId,
+			Location:              response.Location,
+			AccommodationName:     response.Name,
+			AccommodationBenefits: response.Benefits,
 		}
 		res = append(res, &a)
 	}
@@ -44,18 +58,34 @@ func (c ReservationController) GetAll(ctx context.Context, request *booking.AM_G
 
 func (c ReservationController) GetAllByUserId(ctx context.Context, request *booking.AM_GetAllBookingRequestsByUserId_Request) (*booking.AM_GetAllBookingRequests_Response, error) {
 	bookingRequests, err := c.BookingService.GetAllByUserId(request.Id)
+	// Create a gRPC connection to the API Gateway server
+	conn, err := infrastructure.CreateConnection(os.Getenv("ACCOMMODATION_SERVICE_ADDRESS"))
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	// Create the gRPC client by specifying the registered client from the API Gateway
+	client := accommodation.NewAccommodationServiceClient(conn)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 	var res []*booking.BookingRequestsDTO
 	for _, d := range bookingRequests {
+		response, err := client.GetAccommodation(ctx, &accommodation.AM_GetAccommodation_Request{Id: d.AccommodationId})
+		if err != nil {
+			return nil, err
+		}
 		a := booking.BookingRequestsDTO{
-			Id:              d.ID.String(),
-			AccommodationId: d.AccommodationId,
-			StartDate:       d.StartDate,
-			EndDate:         d.EndDate,
-			NumberOfGuests:  int32(d.NumberOfGuests),
-			UserId:          d.UserId,
+			Id:                    d.ID.String(),
+			AccommodationId:       d.AccommodationId,
+			StartDate:             d.StartDate,
+			EndDate:               d.EndDate,
+			NumberOfGuests:        int32(d.NumberOfGuests),
+			UserId:                d.UserId,
+			Location:              response.Location,
+			AccommodationName:     response.Name,
+			AccommodationBenefits: response.Benefits,
 		}
 		res = append(res, &a)
 	}
@@ -73,6 +103,26 @@ func (c ReservationController) MakeBookingRequest(ctx context.Context, request *
 	})
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	// Create a gRPC connection to the API Gateway server
+	conn, err := infrastructure.CreateConnection(os.Getenv("ACCOMMODATION_SERVICE_ADDRESS"))
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	// Create the gRPC client by specifying the registered client from the API Gateway
+	client := accommodation.NewAccommodationServiceClient(conn)
+	response, err := client.GetAutomaticReservationValue(ctx, &accommodation.AM_GetAutomaticReservation_Request{Id: request.AccommodationId})
+	if err != nil {
+		return nil, err
+	}
+	if response.AutomaticReservation != 0 {
+		err := c.BookingService.ConfirmReservation(id.String())
+		if err != nil {
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		}
 	}
 	return &booking.AM_CreateBookingRequest_Response{Id: id.String()}, nil
 }
@@ -99,14 +149,30 @@ func (c ReservationController) GetAllReservationsForGuest(ctx context.Context, r
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 	var res []*booking.BookingRequestsDTO
+	// Create a gRPC connection to the API Gateway server
+	conn, err := infrastructure.CreateConnection(os.Getenv("ACCOMMODATION_SERVICE_ADDRESS"))
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	// Create the gRPC client by specifying the registered client from the API Gateway
+	client := accommodation.NewAccommodationServiceClient(conn)
 	for _, d := range bookingRequests {
+		response, err := client.GetAccommodation(ctx, &accommodation.AM_GetAccommodation_Request{Id: d.AccommodationId})
+		if err != nil {
+			return nil, err
+		}
 		a := booking.BookingRequestsDTO{
-			Id:              d.ID.String(),
-			AccommodationId: d.AccommodationId,
-			StartDate:       d.StartDate,
-			EndDate:         d.EndDate,
-			NumberOfGuests:  int32(d.NumberOfGuests),
-			UserId:          d.UserId,
+			Id:                    d.ID.String(),
+			AccommodationId:       d.AccommodationId,
+			StartDate:             d.StartDate,
+			EndDate:               d.EndDate,
+			NumberOfGuests:        int32(d.NumberOfGuests),
+			UserId:                d.UserId,
+			Location:              response.Location,
+			AccommodationName:     response.Name,
+			AccommodationBenefits: response.Benefits,
 		}
 		res = append(res, &a)
 	}
@@ -148,7 +214,7 @@ func (c ReservationController) GetReservationsForHost(ctx context.Context, reque
 	authCtx := metadata.AppendToOutgoingContext(ctx, "Authorization", authHeader)
 
 	// Make the gRPC call with the updated context
-	response, err := client.GetMyAccommodations(authCtx, &accommodation.AM_GetAllAccommodations_Request{})
+	response, err := client.GetMyAccommodations(authCtx, &accommodation.AM_GetMyAccommodations_Request{})
 	if err != nil {
 		return nil, err
 	}
@@ -169,13 +235,20 @@ func (c ReservationController) GetReservationsForHost(ctx context.Context, reque
 
 	// Populate the response with the reservation data
 	for _, reservation := range reservations {
+		response, err := client.GetAccommodation(ctx, &accommodation.AM_GetAccommodation_Request{Id: reservation.AccommodationId})
+		if err != nil {
+			return nil, err
+		}
 		bookingDTO := booking.BookingRequestsDTO{
-			Id:              reservation.ID.String(),
-			AccommodationId: reservation.AccommodationId,
-			StartDate:       reservation.StartDate,
-			EndDate:         reservation.EndDate,
-			UserId:          reservation.UserId,
-			NumberOfGuests:  int32(reservation.NumberOfGuests),
+			Id:                    reservation.ID.String(),
+			AccommodationId:       reservation.AccommodationId,
+			StartDate:             reservation.StartDate,
+			EndDate:               reservation.EndDate,
+			UserId:                reservation.UserId,
+			NumberOfGuests:        int32(reservation.NumberOfGuests),
+			Location:              response.Location,
+			AccommodationName:     response.Name,
+			AccommodationBenefits: response.Benefits,
 		}
 		res = append(res, &bookingDTO)
 	}
@@ -209,7 +282,7 @@ func (c ReservationController) GetReservationRequestsForHost(ctx context.Context
 	authCtx := metadata.AppendToOutgoingContext(ctx, "Authorization", authHeader)
 
 	// Make the gRPC call with the updated context
-	response, err := client.GetMyAccommodations(authCtx, &accommodation.AM_GetAllAccommodations_Request{})
+	response, err := client.GetMyAccommodations(authCtx, &accommodation.AM_GetMyAccommodations_Request{})
 	if err != nil {
 		return nil, err
 	}
@@ -230,6 +303,10 @@ func (c ReservationController) GetReservationRequestsForHost(ctx context.Context
 
 	// Populate the response with the reservation data
 	for _, reservation := range reservations {
+		response, err := client.GetAccommodation(ctx, &accommodation.AM_GetAccommodation_Request{Id: reservation.AccommodationId})
+		if err != nil {
+			return nil, err
+		}
 		bookingDTO := booking.BookingRequestsDTO{
 			Id:                           reservation.ID.String(),
 			AccommodationId:              reservation.AccommodationId,
@@ -238,6 +315,9 @@ func (c ReservationController) GetReservationRequestsForHost(ctx context.Context
 			UserId:                       reservation.UserId,
 			NumberOfGuests:               int32(reservation.NumberOfGuests),
 			NumberOfCanceledReservations: c.BookingService.GetNumberOfCanceledReservationsForGuest(reservation.UserId),
+			Location:                     response.Location,
+			AccommodationName:            response.Name,
+			AccommodationBenefits:        response.Benefits,
 		}
 		res = append(res, &bookingDTO)
 	}
@@ -272,7 +352,7 @@ func (c ReservationController) HostStandOutCheck(ctx context.Context, request *b
 	authCtx := metadata.AppendToOutgoingContext(ctx, "Authorization", authHeader)
 
 	// Make the gRPC call with the updated context
-	response, err := client.GetMyAccommodations(authCtx, &accommodation.AM_GetAllAccommodations_Request{})
+	response, err := client.GetMyAccommodations(authCtx, &accommodation.AM_GetMyAccommodations_Request{})
 	if err != nil {
 		return nil, err
 	}

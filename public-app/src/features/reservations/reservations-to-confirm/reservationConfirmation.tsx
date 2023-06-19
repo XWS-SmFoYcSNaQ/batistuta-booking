@@ -68,13 +68,19 @@ export const ReservationConfirmation = () => {
                                   sx={{ height: 140 }}
                                   image="" />
                               <CardContent>
-                                  <Typography gutterBottom variant="h4" component="div">
-                                      Start at : {reservation.startDate}
-                                      End at : {reservation.endDate}
-                                  </Typography>
-                                  <Typography variant="body2" color="text.secondary">
-                                      {reservation.numberOfGuests} guests
-                                  </Typography>
+                              <Typography gutterBottom variant="h4" component="div">
+                                        {reservation.accommodationName}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        {reservation.numberOfGuests} guests
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Start at : {reservation.startDate}
+                                        End at : {reservation.endDate}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Location : {reservation.location}
+                                    </Typography>
                                   <Typography variant="body2" color="text.secondary">
                                       User canceled reservations {reservation.numberOfCanceledReservations} times in past!
                                   </Typography>
