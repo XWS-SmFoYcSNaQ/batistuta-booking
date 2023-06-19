@@ -34,13 +34,6 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
-
 export const MyReservations = () => {
   const location = useLocation();
   const [value, setValue] = useState(0);
@@ -58,16 +51,14 @@ export const MyReservations = () => {
     <>
       <Box sx={{ width: '100%' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+          <Tabs value={value} onChange={handleChange}>
             <Tab
               label="Pending"
-              {...a11yProps(0)}
               component={Link}
               to="/reservations/pending"
             />
             <Tab
               label="Accepted"
-              {...a11yProps(1)}
               component={Link}
               to="/reservations/accepted"
             />

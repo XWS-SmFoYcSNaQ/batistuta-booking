@@ -87,7 +87,7 @@ export const Discounts = () => {
       />
       <Box sx={{ marginTop: "30px" }}>
         <Box sx={{ marginBottom: "25px" }}>
-          Base Price: {accommodation?.basePrice}&nbsp;EUR
+          Base Price: {accommodation?.basePrice}&nbsp;&#8364;
         </Box>
         {currentUser?.Role === 1 && (
           <form onSubmit={handleSubmit}>

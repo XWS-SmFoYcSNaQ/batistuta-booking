@@ -11,7 +11,7 @@ import { useState } from "react";
 import { AccommodationFilter } from "./AccommodationFilter";
 
 const valueLabelFormat = (value: number) => {
-  return `${value} EUR`;
+  return `${value} \u20AC`;
 };
 
 const calculateValue = (value: number) => {
