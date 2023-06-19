@@ -188,6 +188,8 @@ services:
     image: nats
     container_name: nats
     restart: on-failure
+    ports:
+      - '4222:4222'
 
   notification_database:
     image: mongo:6-jammy
@@ -217,6 +219,8 @@ services:
       DbConfig__User: ${NOTIFICATION_DB_USER}
       DbConfig__Password: ${NOTIFICATION_DB_PASSWORD}
       DbConfig__DatabaseName: ${NOTIFICATION_DB_NAME}
+      NotificationSubject: ${NOTIFICATION_SUBJECT}
+      Services__AuthServiceAddress: ${AUTH_SERVICE_ADDRESS}
     depends_on:
       - notification_database
 

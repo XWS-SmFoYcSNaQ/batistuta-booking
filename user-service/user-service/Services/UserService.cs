@@ -7,9 +7,6 @@ using user_service.data.Db;
 using user_service.Helpers;
 using user_service.Interfaces;
 using AuthServiceClient;
-using Microsoft.AspNetCore.HttpOverrides;
-using user_service.domain.Enums;
-using System.Threading.Channels;
 
 namespace user_service.Services
 {

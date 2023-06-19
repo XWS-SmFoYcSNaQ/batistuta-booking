@@ -1,18 +1,6 @@
-using FluentValidation;
 using FluentValidation.AspNetCore;
-using Microsoft.EntityFrameworkCore;
-using user_service;
-using user_service.Configuration;
-using user_service.data.Db;
 using user_service.Extensions;
-using user_service.Helpers;
 using user_service.Interceptors;
-using user_service.Interfaces;
-using user_service.messaging;
-using user_service.messaging.Interfaces;
-using user_service.BackgroundServices;
-using user_service.Services;
-using user_service.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
