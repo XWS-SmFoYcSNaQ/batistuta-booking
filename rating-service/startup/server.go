@@ -39,6 +39,8 @@ func (server *Server) Start() {
 	ratingRepo := server.initRatingRepository(postgresClient)
 	authService := services.NewAuthService(server.GetAuthClient())
 
+	notificationPublisher := server.initPublisher(server.config.NotificationSubject)
+
 	createCommandPublisher := server.initPublisher(server.config.CreateRatingCommandSubject)
 	createReplySubscriber := server.initSubscriber(server.config.CreateRatingReplySubject, CreateQueueGroup)
 	createRatingOrchestrator := server.initCreateRatingOrchestrator(&createCommandPublisher, &createReplySubscriber)
@@ -54,8 +56,8 @@ func (server *Server) Start() {
 	deleteReplyPublisher := server.initPublisher(server.config.DeleteRatingReplySubject)
 
 	productService := server.initRatingService(ratingRepo, createRatingOrchestrator, deleteRatingOrchestrator)
-	server.initCreateRatingHandler(productService, &createReplyPublisher, &createCommandSubscriber)
-	server.initDeleteRatingHandler(productService, &deleteReplyPublisher, &deleteCommandSubscriber)
+	server.initCreateRatingHandler(productService, &createReplyPublisher, &createCommandSubscriber, &notificationPublisher)
+	server.initDeleteRatingHandler(productService, &deleteReplyPublisher, &deleteCommandSubscriber, &notificationPublisher)
 
 	productHandler := server.initRatingHandler(productService, authService)
 	server.startGrpcServer(productHandler)
@@ -114,15 +116,15 @@ func (server *Server) initSubscriber(subject, queueGroup string) messaging.Subsc
 	return subscriber
 }
 
-func (server *Server) initCreateRatingHandler(service *domain.RatingService, publisher *messaging.Publisher, subscriber *messaging.Subscriber) {
-	_, err := application.NewCreateRatingCommandHandler(service, publisher, subscriber)
+func (server *Server) initCreateRatingHandler(service *domain.RatingService, publisher *messaging.Publisher, subscriber *messaging.Subscriber, notificationPublisher *messaging.Publisher) {
+	_, err := application.NewCreateRatingCommandHandler(service, publisher, subscriber, notificationPublisher)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func (server *Server) initDeleteRatingHandler(service *domain.RatingService, publisher *messaging.Publisher, subscriber *messaging.Subscriber) {
-	_, err := application.NewDeleteRatingCommandHandler(service, publisher, subscriber)
+func (server *Server) initDeleteRatingHandler(service *domain.RatingService, publisher *messaging.Publisher, subscriber *messaging.Subscriber, notificationPublisher *messaging.Publisher) {
+	_, err := application.NewDeleteRatingCommandHandler(service, publisher, subscriber, notificationPublisher)
 	if err != nil {
 		log.Fatal(err)
 	}

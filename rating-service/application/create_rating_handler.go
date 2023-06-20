@@ -1,6 +1,7 @@
 package application
 
 import (
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/notification"
 	"log"
 
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/messaging"
@@ -10,16 +11,18 @@ import (
 )
 
 type CreateRatingCommandHandler struct {
-	ratingService     *domain.RatingService
-	replyPublisher    *messaging.Publisher
-	commandSubscriber *messaging.Subscriber
+	ratingService         *domain.RatingService
+	replyPublisher        *messaging.Publisher
+	commandSubscriber     *messaging.Subscriber
+	notificationPublisher *messaging.Publisher
 }
 
-func NewCreateRatingCommandHandler(ratingService *domain.RatingService, publisher *messaging.Publisher, subscriber *messaging.Subscriber) (*CreateRatingCommandHandler, error) {
+func NewCreateRatingCommandHandler(ratingService *domain.RatingService, publisher *messaging.Publisher, subscriber *messaging.Subscriber, notificationPublisher *messaging.Publisher) (*CreateRatingCommandHandler, error) {
 	o := &CreateRatingCommandHandler{
-		ratingService:     ratingService,
-		replyPublisher:    publisher,
-		commandSubscriber: subscriber,
+		ratingService:         ratingService,
+		replyPublisher:        publisher,
+		commandSubscriber:     subscriber,
+		notificationPublisher: notificationPublisher,
 	}
 	err := (*o.commandSubscriber).Subscribe(o.handle)
 	if err != nil {
@@ -75,6 +78,12 @@ func (handler *CreateRatingCommandHandler) handle(command *create_rating.CreateR
 		reply.Type = create_rating.RatingRolledBack
 	case create_rating.ConcludeRatingCreation:
 		log.Println("RATING CREATED SUCCESSFULLY")
+		(*handler.notificationPublisher).Publish(&notification.Message{
+			Title:      "Rating Created Successfully",
+			Content:    "Rating Created Successfully",
+			Type:       notification.AccommodationRated,
+			NotifierId: (*command).Rating.UserID,
+		})
 		reply.Type = create_rating.RatingCreationConcluded
 	default:
 		reply.Type = create_rating.UnknownReply
