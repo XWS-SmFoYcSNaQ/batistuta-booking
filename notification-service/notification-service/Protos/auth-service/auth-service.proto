@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option csharp_namespace = "AuthServiceClient";
+
+package auth;
+
+// The auth service definition.
+service AuthService {
+  rpc Verify (Empty_Request) returns (Verify_Response);
+}
+
+message Empty_Request {
+
+}
+
+enum UserRole {
+    Host = 0;
+    Guest = 1;
+}
+
+message Verify_Response {
+  bool Verified = 1;
+  string ErrorMessage = 2;
+  string UserId = 3;
+  UserRole UserRole = 4;
+}
