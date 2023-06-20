@@ -138,7 +138,7 @@ export default function App() {
       >
         <Toolbar>
           <Typography variant="h5" noWrap component="div">
-            Welcome {currentUser && currentUser?.FirstName} to Batistuta Booking
+          {currentUser && currentUser?.FirstName}, welcome to Batistuta Booking
           </Typography>
         </Toolbar>
       </AppBar>

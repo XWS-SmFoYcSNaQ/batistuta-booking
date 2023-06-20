@@ -36,8 +36,6 @@ export const FlightsRecommendation: React.FC<FlightsRecommendationProps> = ({ st
   const [flightsFlag, setFlightsFlag] = useState(true);
 
   const handleGetFlights = async () => {
-    console.log("departure: ", departure)
-    console.log("arrival: ", arrival)
     try {
       const departureResponse = await axios.get(`http://localhost:9000/api/flight/search`, {
         params: {

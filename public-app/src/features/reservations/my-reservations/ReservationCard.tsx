@@ -22,8 +22,8 @@ const ReservationCard: React.FC<ReservationCardProps> = ({ reservation, onCancel
     <Card sx={{ minWidth: 250, maxWidth: 350, margin: '1rem' }}>
       <CardMedia sx={{ height: 140 }} image="" />
       <CardContent>
-      <Typography gutterBottom variant="h5" component="div">
-          &nbsp;{reservation.accommodationName}
+        <Typography gutterBottom variant="h5" component="div">
+          {reservation.accommodationName}, {reservation.location}
         </Typography>
         <Typography gutterBottom variant="h6" component="div">
           Starts at: &nbsp;{reservation.startDate}
@@ -60,7 +60,7 @@ const ReservationCard: React.FC<ReservationCardProps> = ({ reservation, onCancel
             borderRadius: '8px'
           }}
         >
-          <FlightsRecommendation startDate={reservation.startDate} endDate={reservation.endDate} location={"Novi Sad"} />
+          <FlightsRecommendation startDate={reservation.startDate} endDate={reservation.endDate} location={reservation.location} />
         </Box>
       </Modal>
     </Card>
