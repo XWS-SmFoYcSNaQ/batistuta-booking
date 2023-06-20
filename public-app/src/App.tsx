@@ -24,6 +24,7 @@ import { AppState, appStore } from "./core/store";
 import "rsuite/dist/rsuite.min.css";
 import { useEffect, useState } from "react";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import NotificationsIcon from '@mui/icons-material/Notifications';
 
 const drawerWidth = 300;
 
@@ -76,6 +77,11 @@ const upperNavItems: NavItem[] = [
     text: "Profile",
     icon: <AccountBoxIcon />,
   },
+  {
+    route: "/notifications",
+    text: "Notifications",
+    icon: <NotificationsIcon />
+  }
 ];
 
 const lowerNavItems: NavItem[] = [

@@ -64,6 +64,8 @@ export const authStore = (
           })
         );
         success = true;
+        const appState = get();
+        await appState.notification.connect();
         toast.success(`Logged in successfully`, { position: "top-center" });
       }
     } catch (e: any) {
@@ -101,6 +103,8 @@ export const authStore = (
           })
         );
         success = true;
+        const appState = get();
+        await appState.notification.connect();
       }
     } catch(e: any) {
       if (e.response && e.response.data && e.response.data.message) {
@@ -198,13 +202,15 @@ export const authStore = (
       return success;
     }
   },
-  logout: () => {
-    set (
-      produce((draft: AppState) => {
-        draft.auth.user = undefined
-        return;
-      })
-    )
+  logout: async () => {
+    const state = get();
+    await state && state.notification && state.notification.connection && state.notification.connection.stop();
+    set((draft: AppState) => {
+      draft.notification.connection = null;
+      draft.notification.data = [];
+      draft.auth.user = undefined;
+      return draft;
+    });
   },
   verify: async() => {
     try {

@@ -219,23 +219,31 @@ services:
       DbConfig__User: ${NOTIFICATION_DB_USER}
       DbConfig__Password: ${NOTIFICATION_DB_PASSWORD}
       DbConfig__DatabaseName: ${NOTIFICATION_DB_NAME}
-      NotificationSubject: ${NOTIFICATION_SUBJECT}
-      Services__AuthServiceAddress: ${AUTH_SERVICE_ADDRESS}
+      NotificationNatsConfig__NotificationSubject: ${NOTIFICATION_SUBJECT}
+      NotificationNatsConfig__QueueGroup: ${NOTIFICATION_SUBJECT}
+      Services__AuthServiceAddress: auth_service${AUTH_SERVICE_ADDRESS}
+      NatsConfiguration__Host: ${NATS_HOST}
+      NatsConfiguration__Port: ${NATS_PORT}
+      NatsConfiguration__User: ${NATS_USER}
+      NatsConfiguration__Pass: ${NATS_PASS}
     depends_on:
       - notification_database
-
-#  public_app:
-#    image: public_app
-#    container_name: public_app
-#    hostname: public_app
-#    build:
-#      context: ./public-app/.
-#      dockerfile: Dockerfile
-#    ports:
-#      - "3000:3000"
-#    restart: always
-#    depends_on:
-#      - api_gateway
+      - auth_service
+    ports:
+      - '12009:12009'
+  # public_app:
+  #   image: public_app
+  #   container_name: public_app
+  #   hostname: public_app
+  #   build:
+  #     context: ./public-app/.
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   restart: always
+  #   depends_on:
+  #     - api_gateway
+  #     - notification_service
 
 volumes:
   user_database-mysql-data:

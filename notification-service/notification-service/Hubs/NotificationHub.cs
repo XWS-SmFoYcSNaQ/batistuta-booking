@@ -55,9 +55,9 @@ namespace notification_service.Hubs
                     {
                         foreach (var userNotification in userNotifications)
                         {
-                            userNotification.ReadAt = DateTime.UtcNow;
                             await Clients.Client(connection)
-                                .SendAsync("notification", new NotificationClientMessage(userNotification.Notification));
+                                .SendAsync("Notification", new NotificationClientMessage(userNotification));
+                            userNotification.ReadAt = userNotification.ReadAt == null ? DateTime.UtcNow : userNotification.ReadAt;
                         }
                     }
 
@@ -73,13 +73,15 @@ namespace notification_service.Hubs
         }
 
 
-        public override Task OnDisconnectedAsync(Exception? exception)
+        public override async Task OnDisconnectedAsync(Exception? exception)
         {
             var userId = Guid.Parse(Context.User.Claims.FirstOrDefault(x => x.Type == "userId").Value);
 
+            await Clients.Caller.SendAsync("Disconnected");
+
             Connections.Remove(userId, Context.ConnectionId);
 
-            return base.OnDisconnectedAsync(exception);
+            await base.OnDisconnectedAsync(exception);
         }
     }
 }

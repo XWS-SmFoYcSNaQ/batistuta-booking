@@ -17,10 +17,12 @@ namespace notification_service.Domain
 
         public UserNotificationEntity(NotificationMessage notificationMessage)
         {
+            Id = ObjectId.GenerateNewId();
             NotifierId = notificationMessage.NotifierId;
             ActorId = notificationMessage.ActorId;
             Notification = new NotificationEntity
             {
+                Id = ObjectId.GenerateNewId(),
                 Title = notificationMessage.Title,
                 Content = notificationMessage.Content,
                 Type = notificationMessage.Type,

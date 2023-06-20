@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using user_service.Configuration;
 using user_service.data.Db;
 using user_service.Helpers;
+using user_service.messaging.Interfaces;
+using user_service.Models;
 
 namespace user_service.Services
 {
@@ -11,17 +14,20 @@ namespace user_service.Services
         private readonly ILogger<HostFeaturedUpdater> _logger;
         private readonly GrpcChannelBuilder _grpcChannelBuilder;
         private readonly ServicesConfig _servicesConfig;
+        private readonly INatsClient _natsClient;
 
         public HostFeaturedUpdater(
             UserServiceDbContext userServiceDbContext,
             ILogger<HostFeaturedUpdater> logger,
             GrpcChannelBuilder grpcChannelBuilder,
-            ServicesConfig servicesConfig)
+            ServicesConfig servicesConfig,
+            INatsClient natsClient)
         {
             _dbContext = userServiceDbContext;
             _logger = logger;
             _grpcChannelBuilder = grpcChannelBuilder;
             _servicesConfig = servicesConfig;
+            _natsClient = natsClient;
         }
 
 
@@ -39,7 +45,18 @@ namespace user_service.Services
                 if (host != null)
                 {
                     host.Featured = false;
-                    await _dbContext.SaveChangesAsync();
+                    var rows = await _dbContext.SaveChangesAsync();
+                    if (rows > 0)
+                    {
+                        var notification = new NotificationMessage
+                        {
+                            Content = "Featured status changed",
+                            Title = "Status changed",
+                            NotifierId = hostId,
+                            Type = NotificationType.HostFeaturedStatusChanged
+                        };
+                        _natsClient.Publish("notification", JsonSerializer.Serialize(notification));
+                    }
                 }
                 _logger.LogError($"Host with id: {hostId} doesn't have rating greater then 4.7");
                 return;

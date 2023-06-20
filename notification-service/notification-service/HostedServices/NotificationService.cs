@@ -74,12 +74,12 @@ namespace notification_service.HostedServices
                     userConnections = NotificationHub.Connections.GetConnections(userNotification.NotifierId);
                     if (userConnections.Any())
                     {
-                        userNotification.ReadAt = DateTime.UtcNow;
                         foreach (var connection in userConnections)
                         {
                             await hub.Clients.Client(connection)
-                                .SendAsync("Notification", new NotificationClientMessage(userNotification.Notification));
+                                .SendAsync("Notification", new NotificationClientMessage(userNotification));
                         }
+                        userNotification.ReadAt = DateTime.UtcNow;
                     }
 
                     await _notificationRepository.CreateNotification(userNotification);

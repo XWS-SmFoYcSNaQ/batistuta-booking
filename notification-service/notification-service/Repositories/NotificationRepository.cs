@@ -45,7 +45,7 @@ namespace notification_service.Repositories
                     .Limit(limit - usersRecentNotifications.Count)
                     .ToListAsync();
 
-                usersRecentNotifications.UnionBy(userRecentSeenNotifications, x => x.Id);
+                usersRecentNotifications = usersRecentNotifications.UnionBy(userRecentSeenNotifications, x => x.Id).ToList();
             }
 
             return usersRecentNotifications;
