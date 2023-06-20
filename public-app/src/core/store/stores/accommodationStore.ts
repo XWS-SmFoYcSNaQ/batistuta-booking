@@ -2,15 +2,18 @@ import { Accommodation } from "../../../shared/model";
 import { SetAppState, GetAppState, AppState, apiUrl } from "..";
 import { produce } from "immer";
 import axios from "axios";
+import { AccommodationFilter } from "../../../features/accommodation/filters";
 
 export interface AccommodationStoreType {
   data: Accommodation[]
   accommodation: Accommodation | null
   loading: boolean
-  fetchAccommodations: () => Promise<void>
+  fetchAccommodations: (filters: AccommodationFilter | null) => Promise<void>
   fetchMyAccommodations: () => Promise<void>
+  fetchSearchedAccommodations: (requestBody: any) => Promise<void>
   fetchDetails: (id: string) => Promise<void>
   createAccommodation: (data: Accommodation) => Promise<void>
+  rateAccommodation: ({ id, value }: { id: string, value: number }) => Promise<void>
   clearData: () => void
   setLoading: (val: boolean) => void
 }
@@ -22,11 +25,21 @@ export const accommodationStore = (
   data: [],
   accommodation: null,
   loading: false,
-  fetchAccommodations: async () => {
+  fetchAccommodations: async (filters: AccommodationFilter | null) => {
+    let params = {}
+    if (filters != null) {
+      params = {
+        range: filters.range.join(","),
+        benefits: filters.benefits.join(","),
+        distinguished: filters.distinguished
+      }
+    }
     get().accommodation.setLoading(true)
     get().accommodation.clearData()
     try {
-      const res = await axios.get(`${apiUrl}/accommodation`)
+      const res = await axios.get(`${apiUrl}/accommodation`, {
+        params: params
+      })
       set(
         produce((draft: AppState) => {
           draft.accommodation.data = res.data.data
@@ -43,6 +56,26 @@ export const accommodationStore = (
     get().accommodation.clearData()
     try {
       const res = await axios.get(`${apiUrl}/accommodation/me`, {
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("jwt")}`
+        }
+      })
+      set(
+        produce((draft: AppState) => {
+          draft.accommodation.data = res.data.data
+          return draft
+        })
+      )
+    } catch (e) {
+      console.log(e)
+    }
+    get().accommodation.setLoading(false)
+  },
+  fetchSearchedAccommodations: async (requestBody: any) => {
+    get().accommodation.setLoading(true)
+    get().accommodation.clearData()
+    try {
+      const res = await axios.post("http://localhost:11000/accommodation/search", requestBody, {
         headers: {
           Authorization: `Bearer ${window.localStorage.getItem("jwt")}`
         }
@@ -82,10 +115,28 @@ export const accommodationStore = (
         }
       })
     } catch (e: any) {
-      if(e.response && e.response.data && e.response.data.message){
+      if (e.response && e.response.data && e.response.data.message) {
         throw new Error(e.response.data.message)
       }
       throw new Error("Error while creating accommodation.")
+    }
+  },
+  rateAccommodation: async ({ id, value }: { id: string, value: number }) => {
+    const data = {
+      AccommodationId: id,
+      Value: value
+    }
+    try {
+      await axios.post(`${apiUrl}/rating/accommodation`, data, {
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("jwt")}`
+        }
+      })
+    } catch (e: any) {
+      if (e.response && e.response.data && e.response.data.message) {
+        throw new Error(e.response.data.message)
+      }
+      throw new Error("Error while rating accommodation.")
     }
   },
   clearData: () => {

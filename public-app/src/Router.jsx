@@ -1,10 +1,24 @@
 import App from "./App";
-import { AccommodationRoot, accommodationRoutes } from "./features/accommodation";
+import {
+  AccommodationRoot,
+  accommodationRoutes,
+} from "./features/accommodation";
+import { RoomsRoot, roomRoutes } from "./features/room-reservation";
+import {
+  MyReservations,
+  reservationsRoutes,
+} from "./features/reservations/my-reservations";
+import { ReservationConfirmation } from "./features/reservations/reservations-to-confirm/reservationConfirmation";
 import Login from "./features/auth/login/Login";
 import Register from "./features/auth/register/Register";
 import UserProfile from "./features/profile/UserProfile";
+import { userRoutes } from "./features/user";
+import { UserRoot } from "./features/user/UserRoot";
 import { ErrorPage } from "./shared/ErrorPage";
 import { createBrowserRouter } from "react-router-dom";
+import { RatingList } from "./features/rating"
+import Notifications from "./features/notifications/Notifications";
+import { RecommendedAccommodations } from "./features/recommendation/RecommendedAccommodations"
 
 export const router = createBrowserRouter([
   {
@@ -15,20 +29,51 @@ export const router = createBrowserRouter([
       {
         path: "accommodation",
         element: <AccommodationRoot />,
-        children: accommodationRoutes
+        children: accommodationRoutes,
+      },
+      {
+        path: "user",
+        element: <UserRoot />,
+        children: userRoutes,
       },
       {
         path: "login",
-        element: <Login/>
+        element: <Login />,
       },
       {
         path: "register",
-        element: <Register/>
+        element: <Register />,
       },
       {
         path: "profile",
-        element: <UserProfile/>
-      }
-    ]
+        element: <UserProfile />,
+      },
+      {
+        path: "rooms",
+        element: <RoomsRoot />,
+        children: roomRoutes,
+      },
+      {
+        path: "reservations",
+        element: <MyReservations />,
+        children: reservationsRoutes,
+      },
+      {
+        path: "reservations-to-confirm",
+        element: <ReservationConfirmation />,
+      },
+      {
+        path: "ratings/:id",
+        element: <RatingList />
+      },
+      {
+        path: "notifications",
+        element: <Notifications/>
+      },
+      {
+        path: "recommended-accommodations",
+        element: <RecommendedAccommodations />
+      },
+    ],
   },
 ]);

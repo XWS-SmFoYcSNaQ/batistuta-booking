@@ -19,6 +19,32 @@ namespace user_service.data.Migrations
                 .HasAnnotation("ProductVersion", "7.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("user_service.domain.Entities.HostRating", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<double>("AverageRating")
+                        .HasColumnType("double");
+
+                    b.Property<Guid>("HostId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<uint>("NumOfRatings")
+                        .HasColumnType("int unsigned");
+
+                    b.Property<uint>("TotalRating")
+                        .HasColumnType("int unsigned");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HostId")
+                        .IsUnique();
+
+                    b.ToTable("HostRatings");
+                });
+
             modelBuilder.Entity("user_service.domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -29,6 +55,9 @@ namespace user_service.data.Migrations
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("varchar(64)");
+
+                    b.Property<bool?>("Featured")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -91,6 +120,17 @@ namespace user_service.data.Migrations
                             Role = "Host",
                             Username = "host"
                         });
+                });
+
+            modelBuilder.Entity("user_service.domain.Entities.HostRating", b =>
+                {
+                    b.HasOne("user_service.domain.Entities.User", "Host")
+                        .WithOne()
+                        .HasForeignKey("user_service.domain.Entities.HostRating", "HostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Host");
                 });
 #pragma warning restore 612, 618
         }

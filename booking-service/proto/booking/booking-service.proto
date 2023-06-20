@@ -3,13 +3,86 @@ syntax = "proto3";
 option go_package = "proto/booking";
 
 service BookingService {
-  rpc GetAll(BK_Request) returns (BK_Response) {}
+  rpc GetAll(AM_GetAllBookingRequests_Request) returns (AM_GetAllBookingRequests_Response) {}
+  rpc MakeBookingRequest(AM_BookingRequest_Request) returns (AM_CreateBookingRequest_Response) {}
+  rpc DeleteBookingRequest(AM_DeleteBookingRequest_Request) returns (AM_DeleteBookingRequest_Response) {}
+  rpc GetAllByUserId(AM_GetAllBookingRequestsByUserId_Request) returns (AM_GetAllBookingRequests_Response) {}
+  rpc ConfirmReservationRequest(ReservationConfirm_Request) returns (EmptyMessage) {}
+  rpc GetAllReservationsForGuest(AllReservationsForGuest_Request) returns (AllReservationsForGuest_Response) {}
+  rpc DeleteReservation(DeleteReservation_Request) returns (EmptyMessage) {}
+  rpc GetReservationsForHost(EmptyMessage) returns (ReservationsForHost_Response) {}
+  rpc GetReservationRequestsForHost(EmptyMessage) returns (ReservationsForHost_Response) {}
+  rpc HostStandOutCheck(EmptyMessage) returns (StandOutHost_Response) {}
 }
 
-message BK_Request {
-  string name = 1;
+message AM_GetAllBookingRequests_Request {}
+
+message AM_GetAllBookingRequestsByUserId_Response {
+  repeated BookingRequestsDTO data = 1;
 }
 
-message BK_Response {
+message AM_GetAllBookingRequests_Response {
+  repeated BookingRequestsDTO data = 1;
+}
+
+message AM_GetAllBookingRequestsByUserId_Request {
+  string id = 1;
+}
+
+message AM_BookingRequest_Request {
+  string accommodationId = 1;
+  string startDate = 2;
+  string endDate = 3;
+  string userId = 4;
+  int32 numberOfGuests = 5;
+}
+
+message AM_CreateBookingRequest_Response {
+  string id = 1;
+}
+
+message BookingRequestsDTO {
+  string id = 1;
+  string accommodationId = 2;
+  string startDate = 3;
+  string endDate = 4;
+  string userId = 5;
+  string accommodationName = 6;
+  string accommodationBenefits = 7;
+  string location = 8;
+  int32 numberOfGuests = 9;
+  int32 numberOfCanceledReservations = 10;
+}
+
+message AM_DeleteBookingRequest_Request {
+  string id = 1;
+}
+
+message AM_DeleteBookingRequest_Response { }
+
+message ReservationConfirm_Request {
+  string id = 1;
+}
+
+message EmptyMessage {}
+
+message AllReservationsForGuest_Request {
+  string id = 1;
+}
+
+message AllReservationsForGuest_Response {
+  repeated BookingRequestsDTO data = 1;
+}
+
+message DeleteReservation_Request {
+  string id = 1;
+}
+
+message ReservationsForHost_Response {
+  repeated BookingRequestsDTO data = 1;
+}
+
+message StandOutHost_Response {
+  bool flag = 1;
   string message = 2;
 }

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option csharp_namespace = "rating_service";
+
+
+service RatingService {
+  rpc GetHostRatings (Empty) returns (RatingsList);
+}
+
+message Empty {}
+
+
+message RatingsList {
+  repeated RatingDTO Data = 1;
+}
+
+message RatingDTO {
+  string Id = 1;
+  string UserId = 2;
+  string TargetId = 3;
+  uint32 TargetType = 4;
+  uint32 Value = 5;
+}

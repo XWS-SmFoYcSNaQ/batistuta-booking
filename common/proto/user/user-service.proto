@@ -1,0 +1,119 @@
+syntax = "proto3";
+
+option go_package = "proto/user";
+
+package user;
+
+import "google/api/annotations.proto";
+
+// The user service definition.
+service UserService {
+  rpc GetAllUsers (Empty_Message) returns (GetAllUsers_Response) {
+    option (google.api.http) = {
+      get: "/api/users"
+    };
+  }
+  rpc ChangeUserInfo(ChangeUserInfo_Request) returns(ChangeUserInfo_Response) {
+    option (google.api.http) = {
+      patch: "/api/users/{Username}",
+      body: "*"
+    };
+  }
+  rpc ChangePassword(ChangePassword_Request) returns(Empty_Message) {
+    option(google.api.http) = {
+      patch: "/api/users/password",
+      body: "*"
+    };
+  }
+  rpc GetAllHostsWithRatings(Empty_Message) returns (GetAllHostsWithRatings_Response) {
+    option(google.api.http) = {
+      get: "/api/hosts"
+    };
+  }
+  rpc GetFeaturedHosts(Empty_Message) returns(GetFeaturedHosts_Response);
+  rpc UpdateHostFeatured(UpdateHostFeatured_Request) returns(Empty_Message);
+}
+
+enum UserRole {
+  Host = 0;
+  Guest = 1;
+}
+
+message Empty_Message {
+
+}
+
+message UserLessInfo {
+  UserRole Role = 1;
+  string Username = 2;
+  string FirstName = 3;
+  string LastName = 4;
+  string Email = 5;
+  string LivingPlace = 6;
+  optional bool Featured = 7;
+}
+
+message User {
+  string Id = 1;
+  UserRole Role = 2;
+  string Username = 3;
+  string FirstName = 4;
+  string LastName = 5;
+  string Email = 6;
+  string LivingPlace = 7;
+  optional bool Featured = 8;
+}
+
+message GetAllUsers_Response {
+  repeated User Users = 1;
+}
+
+message ChangeUserInfo_Request {
+  optional string FirstName = 1;
+  optional string LastName = 2;
+  optional string LivingPlace = 3;
+  string Username = 4;
+}
+
+message ChangeUserInfo_Response {
+  bool Success = 1;
+  string ErrorMessage = 2;
+  optional UserLessInfo User = 3;
+}
+
+message ChangePassword_Request {
+  string CurrentPassword = 1;
+  string NewPassword = 2;
+}
+
+message RatingDTO {
+  string Id = 1;
+  string UserId = 2;
+  string TargetId = 3;
+  uint32 TargetType = 4;
+  uint32 Value = 5;
+}
+
+message HostWithRating {
+  string Id = 1;
+  UserRole Role = 2;
+  string Username = 3;
+  string FirstName = 4;
+  string LastName = 5;
+  string Email = 6;
+  string LivingPlace = 7;
+  bool Featured = 8;
+  repeated RatingDTO Ratings = 9;
+}
+
+message GetAllHostsWithRatings_Response {
+  repeated HostWithRating Hosts = 1;
+}
+
+message GetFeaturedHosts_Response {
+  repeated User Hosts = 1;
+}
+
+message UpdateHostFeatured_Request {
+  string HostId = 1;
+}

@@ -7,8 +7,13 @@ package user;
 // The user service definition.
 service UserService {
   rpc RegisterUser (RegisterUser_Request) returns (RegisterUser_Response);
-  rpc GetAllUsers (Empty_Request) returns (GetAllUsers_Response);
+  rpc GetAllUsers (Empty_Message) returns (GetAllUsers_Response);
   rpc VerifyUserPassword (VerifyUser_Request) returns (VerifyUser_Response);
+  rpc ChangeUserInfo(ChangeUserInfo_Request) returns(ChangeUserInfo_Response);
+  rpc ChangePassword(ChangePassword_Request) returns(Empty_Message);
+  rpc GetAllHostsWithRatings(Empty_Message) returns (GetAllHostsWithRatings_Response);
+  rpc GetFeaturedHosts(Empty_Message) returns(GetFeaturedHosts_Response);
+  rpc UpdateHostFeatured(UpdateHostFeatured_Request) returns(Empty_Message);
 }
 
 enum UserRole {
@@ -16,7 +21,7 @@ enum UserRole {
     Guest = 1;
 };
 
-message Empty_Request {
+message Empty_Message {
 
 }
 
@@ -33,6 +38,19 @@ message User {
   string LastName = 5;
   string Email = 6;
   string LivingPlace = 7;
+  optional bool Featured = 8;
+}
+
+
+
+message UserLessInfo {
+  UserRole Role = 1;
+  string Username = 2;
+  string FirstName = 3;
+  string LastName = 4;
+  string Email = 5;
+  string LivingPlace = 6;
+  optional bool Featured = 7;
 }
 
 message RegisterUser_Request {
@@ -53,14 +71,6 @@ message RegisterUser_Response {
 }
 
 message GetAllUsers_Response {
-  message User {
-    UserRole Role = 1;
-    string Username = 2;
-    string FirstName = 3;
-    string LastName = 4;
-    string Email = 5;
-    string LivingPlace = 6;
-  }
   repeated User Users = 1;
 }
 
@@ -73,4 +83,54 @@ message VerifyUser_Response {
   bool Verified = 1;
   string ErrorMessage = 2;
   User User = 3;
+}
+
+message ChangeUserInfo_Request {
+  optional string FirstName = 1;
+  optional string LastName = 2;
+  optional string LivingPlace = 3;
+  string Username = 4;
+}
+
+message ChangeUserInfo_Response {
+  bool Success = 1;
+  string ErrorMessage = 2;
+  optional UserLessInfo User = 3;
+}
+
+message ChangePassword_Request {
+  string CurrentPassword = 1;
+  string NewPassword = 2;
+}
+
+message RatingDTO {
+  string Id = 1;
+  string UserId = 2;
+  string TargetId = 3;
+  uint32 TargetType = 4;
+  uint32 Value = 5;
+}
+
+message HostWithRating {
+  string Id = 1;
+  UserRole Role = 2;
+  string Username = 3;
+  string FirstName = 4;
+  string LastName = 5;
+  string Email = 6;
+  string LivingPlace = 7;
+  bool Featured = 8;
+  repeated RatingDTO Ratings = 9;
+}
+
+message GetAllHostsWithRatings_Response {
+  repeated HostWithRating Hosts = 1;
+}
+
+message GetFeaturedHosts_Response {
+  repeated User Hosts = 1;
+}
+
+message UpdateHostFeatured_Request {
+  string HostId = 1;
 }

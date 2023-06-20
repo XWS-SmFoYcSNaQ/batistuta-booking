@@ -6,19 +6,24 @@ package user;
 
 // The user service definition.
 service UserService {
-  rpc GetUser (US_Request) returns (US_Response);
   rpc RegisterUser (RegisterUser_Request) returns (RegisterUser_Response);
   rpc GetAllUsers (Empty_Request) returns (GetAllUsers_Response);
   rpc VerifyUserPassword (VerifyUser_Request) returns (VerifyUser_Response);
+  rpc ChangeUserInfo(ChangeUserInfo_Request) returns(ChangeUserInfo_Response);
 }
 
 enum UserRole {
     Host = 0;
     Guest = 1;
-}
+};
 
 message Empty_Request {
 
+}
+
+message Error {
+  string PropertyName = 1; 
+  string ErrorMessage = 2;
 }
 
 message User {
@@ -29,20 +34,18 @@ message User {
   string LastName = 5;
   string Email = 6;
   string LivingPlace = 7;
+  optional bool Featured = 8;
 }
 
-message Error {
-  string PropertyName = 1; 
-  string ErrorMessage = 2;
-}
-
-message US_Request {
-  string name = 1;
-}
-
-message US_Response {
-  string message = 1;
-}
+message UserLessInfo {
+    UserRole Role = 1;
+    string Username = 2;
+    string FirstName = 3;
+    string LastName = 4;
+    string Email = 5;
+    string LivingPlace = 6;
+    optional bool Featured = 7;
+  }
 
 message RegisterUser_Request {
   UserRole Role = 1;
@@ -62,15 +65,7 @@ message RegisterUser_Response {
 }
 
 message GetAllUsers_Response {
-  message User {
-    UserRole Role = 1;
-    string Username = 2;
-    string FirstName = 3;
-    string LastName = 4;
-    string Email = 5;
-    string LivingPlace = 6;
-  }
-  repeated User Users = 1;
+  repeated UserLessInfo Users = 1;
 }
 
 message VerifyUser_Request {
@@ -79,7 +74,20 @@ message VerifyUser_Request {
 }
 
 message VerifyUser_Response {
-  bool verified = 1;
+  bool Verified = 1;
   string ErrorMessage = 2;
   User User = 3;
+}
+
+message ChangeUserInfo_Request {
+  optional string FirstName = 1;
+  optional string LastName = 2;
+  optional string LivingPlace = 3;
+  string Username = 4;
+}
+
+message ChangeUserInfo_Response {
+  bool Success = 1;
+  string ErrorMessage = 2;
+  optional UserLessInfo User = 3;
 }

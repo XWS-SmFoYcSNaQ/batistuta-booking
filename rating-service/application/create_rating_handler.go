@@ -1,0 +1,95 @@
+package application
+
+import (
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/notification"
+	"log"
+
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/messaging"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/saga/create_rating"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/rating_service/domain"
+	"github.com/google/uuid"
+)
+
+type CreateRatingCommandHandler struct {
+	ratingService         *domain.RatingService
+	replyPublisher        *messaging.Publisher
+	commandSubscriber     *messaging.Subscriber
+	notificationPublisher *messaging.Publisher
+}
+
+func NewCreateRatingCommandHandler(ratingService *domain.RatingService, publisher *messaging.Publisher, subscriber *messaging.Subscriber, notificationPublisher *messaging.Publisher) (*CreateRatingCommandHandler, error) {
+	o := &CreateRatingCommandHandler{
+		ratingService:         ratingService,
+		replyPublisher:        publisher,
+		commandSubscriber:     subscriber,
+		notificationPublisher: notificationPublisher,
+	}
+	err := (*o.commandSubscriber).Subscribe(o.handle)
+	if err != nil {
+		return nil, err
+	}
+	return o, nil
+}
+
+func (handler *CreateRatingCommandHandler) handle(command *create_rating.CreateRatingCommand) {
+	reply := create_rating.CreateRatingReply{Rating: command.Rating}
+	switch command.Type {
+	case create_rating.StartRatingCreation:
+		oldValue := command.Rating.OldValue
+		var err error
+		r := domain.Rating{
+			ID:           command.Rating.ID,
+			UserID:       command.Rating.UserID,
+			TargetID:     command.Rating.TargetID,
+			Value:        command.Rating.Value,
+			TargetType:   command.Rating.TargetType,
+			LastModified: command.Rating.LastModified,
+		}
+		if oldValue == nil {
+			r.ID = uuid.New()
+			reply.Rating.ID = r.ID
+			err = (*handler.ratingService).Insert(&r)
+		} else {
+			r.ID = (*oldValue).ID
+			reply.Rating.ID = r.ID
+			err = (*handler.ratingService).Update(&r)
+		}
+		if err != nil {
+			log.Println(err)
+			reply.Type = create_rating.CreationFailed
+		} else {
+			reply.Type = create_rating.CreationStarted
+		}
+	case create_rating.RollbackRating:
+		oldValue := command.Rating.OldValue
+		if oldValue == nil {
+			(*handler.ratingService).Delete(&domain.Rating{ID: command.Rating.ID})
+		} else {
+			(*handler.ratingService).Update(&domain.Rating{
+				ID:           oldValue.ID,
+				TargetID:     oldValue.TargetID,
+				UserID:       oldValue.UserID,
+				TargetType:   oldValue.TargetType,
+				Value:        oldValue.Value,
+				LastModified: command.Rating.LastModified,
+			})
+		}
+		log.Println("RATING ROLLED BACK")
+		reply.Type = create_rating.RatingRolledBack
+	case create_rating.ConcludeRatingCreation:
+		log.Println("RATING CREATED SUCCESSFULLY")
+		(*handler.notificationPublisher).Publish(&notification.Message{
+			Title:      "Rating Created Successfully",
+			Content:    "Rating Created Successfully",
+			Type:       notification.AccommodationRated,
+			NotifierId: (*command).Rating.UserID,
+		})
+		reply.Type = create_rating.RatingCreationConcluded
+	default:
+		reply.Type = create_rating.UnknownReply
+	}
+
+	if reply.Type != create_rating.UnknownReply {
+		(*handler.replyPublisher).Publish(reply)
+	}
+}

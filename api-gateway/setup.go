@@ -1,8 +1,8 @@
 package main
 
 import (
-	"api_gateway/client"
-	"api_gateway/config"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/api_gateway/client"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/api_gateway/config"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/spf13/viper"
 	"log"
@@ -15,6 +15,8 @@ func registerServices(gwmux *runtime.ServeMux, cfg *config.Config) {
 	client.RegisterBookingClient(gwmux, cfg)
 	client.RegisterUserClient(gwmux, cfg)
 	client.RegisterAuthClient(gwmux, cfg)
+	client.RegisterRatingClient(gwmux, cfg)
+	client.RegisterRecommendationClient(gwmux, cfg)
 }
 
 func GetServer() *http.Server {

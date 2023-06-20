@@ -5,9 +5,11 @@ VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "user-service", "user-service\user-service.csproj", "{37DCD935-139B-4642-A088-AD946E8A6896}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "user-service.data", "user-service.data\user-service.data.csproj", "{1DC7C72F-CA5B-4FF2-9361-8584C77BEE13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "user-service.data", "user-service.data\user-service.data.csproj", "{1DC7C72F-CA5B-4FF2-9361-8584C77BEE13}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "user-service.domain", "user-service.domain\user-service.domain.csproj", "{4FAC2928-A94D-4FB7-BAD3-92919D948A80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "user-service.domain", "user-service.domain\user-service.domain.csproj", "{4FAC2928-A94D-4FB7-BAD3-92919D948A80}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "user-service.messaging", "user-service.messaging\user-service.messaging.csproj", "{A037258E-27F9-446C-941A-A3C4D2FE4558}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{4FAC2928-A94D-4FB7-BAD3-92919D948A80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FAC2928-A94D-4FB7-BAD3-92919D948A80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FAC2928-A94D-4FB7-BAD3-92919D948A80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A037258E-27F9-446C-941A-A3C4D2FE4558}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A037258E-27F9-446C-941A-A3C4D2FE4558}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A037258E-27F9-446C-941A-A3C4D2FE4558}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A037258E-27F9-446C-941A-A3C4D2FE4558}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

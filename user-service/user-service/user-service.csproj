@@ -9,22 +9,36 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="Protos\auth-service\auth-service.proto" />
+		<None Remove="Protos\booking-service\booking-service.proto" />
+		<None Remove="Protos\rating-service\rating-service.proto" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
 		<PackageReference Include="Grpc.AspNetCore" Version="2.53.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.5">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\user-service.data\user-service.data.csproj" />
+		<ProjectReference Include="..\user-service.data\user-service.data.csproj" />
+		<ProjectReference Include="..\user-service.messaging\user-service.messaging.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Protobuf Include="Protos\user-service\user-service.proto" />
+		<Protobuf Include="Protos\auth-service\auth-service.proto" GrpcServices="Client" />
+		<Protobuf Include="Protos\booking-service\booking-service.proto" GrpcServices="Client" />
+		<Protobuf Include="Protos\rating-service\rating-service.proto" GrpcServices="Client" />
+		<Protobuf Include="Protos\user-service\user-service.proto" GrpcServices="Both" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Fodler Include="Protos\auth-service\" />
 	</ItemGroup>
 
 </Project>

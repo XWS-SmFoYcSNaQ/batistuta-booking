@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+option go_package = "proto/rating";
+
+import "google/api/annotations.proto";
+
+service RatingService {
+  rpc GetAllRatings(Empty) returns (RatingsList) {
+    option (google.api.http) = {
+      get: "/rating"
+    };
+  }
+  rpc Delete(IdMessage) returns (Empty) {
+    option (google.api.http) = {
+      delete: "/rating/{Id}"
+    };
+  }
+  rpc CreateAccommodationRating(CreateAccommodationRatingDTO) returns (Empty) {
+    option (google.api.http) = {
+      post: "/rating/accommodation",
+      body: "*"
+    };
+  }
+  rpc GetHostRatings (Empty) returns (RatingsList) {
+    option (google.api.http) = {
+      get: "/rating/host"
+    };
+  }
+  rpc CreateHostRating (CreateHostRatingDTO) returns (Empty) {
+    option (google.api.http) = {
+      post: "/rating/host",
+      body: "*"
+    };
+  }
+  rpc GetHostAverage (IdMessage) returns (HostAverageDTO) {
+    option (google.api.http) = {
+      get: "/rating/host/average/{Id}"
+    };
+  }
+  rpc GetTargetRatingsById(IdMessage) returns (RatingDetailsList) {
+    option (google.api.http) = {
+      get: "/rating/target/{Id}"
+    };
+  }
+}
+
+message Empty {}
+
+message CreateAccommodationRatingDTO {
+  string AccommodationId = 1;
+  uint32 Value = 2;
+}
+
+message CreateHostRatingDTO {
+  string HostId = 1;
+  uint32 Value = 2;
+}
+
+message RatingsList {
+  repeated RatingDTO Data = 1;
+}
+
+message IdMessage {
+  string Id = 1;
+}
+
+message HostAverageDTO {
+  string HostId = 1;
+  double Average = 2;
+}
+
+message RatingDTO {
+  string Id = 1;
+  string UserId = 2;
+  string TargetId = 3;
+  uint32 TargetType = 4;
+  uint32 Value = 5;
+  string LastModified = 6;
+}
+
+message RatingDetailsList{
+  repeated RatingDetailsDTO Data = 1;
+}
+
+message RatingDetailsDTO {
+  string Id = 1;
+  string TargetId = 2;
+  uint32 TargetType = 3;
+  uint32 Value = 4;
+  string LastModified = 5;
+  string UserId = 6;
+  string UserFirstName = 7;
+  string UserLastName = 8;
+  string UserEmail = 9;
+}

@@ -1,11 +1,13 @@
 package controller
 
 import (
-	"accommodation_service/model"
-	"accommodation_service/proto/accommodation"
-	"accommodation_service/services"
-	"accommodation_service/utility"
 	"context"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/model"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/services"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/utility"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/accommodation"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/auth"
+	commonServices "github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/services"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -13,6 +15,7 @@ import (
 
 type DiscountController struct {
 	DiscountService *services.DiscountService
+	AuthService     *commonServices.AuthService
 }
 
 func (c DiscountController) GetAllByAccommodation(ctx context.Context, request *accommodation.AM_GetAllDiscountsByAccommodation_Request) (*accommodation.AM_GetAllDiscountsByAccommodation_Response, error) {
@@ -63,6 +66,14 @@ func (c DiscountController) GetAllByAccommodationAndInterval(ctx context.Context
 }
 
 func (c DiscountController) Create(ctx context.Context, request *accommodation.AM_CreateDiscount_Request) (*accommodation.AM_CreateDiscount_Response, error) {
+	res, err := c.AuthService.ValidateToken(&ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, err.Error())
+	}
+	if res.UserRole != auth.UserRole_Host {
+		return nil, status.Error(codes.Unauthenticated, "User is not a host")
+	}
+
 	start, err := utility.ParseISOString(request.Start)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())

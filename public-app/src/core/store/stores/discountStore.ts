@@ -36,7 +36,11 @@ export const discountStore = (
   },
   createDiscount: async (data: Discount) => {
     try {
-      await axios.post(`${apiUrl}/accommodation/discount`, data)
+      await axios.post(`${apiUrl}/accommodation/discount`, data, {
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("jwt")}`
+        }
+      })
     } catch (e: any) {
       if(e.response && e.response.data && e.response.data.message){
         throw new Error(e.response.data.message)

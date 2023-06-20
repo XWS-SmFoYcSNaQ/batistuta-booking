@@ -1,9 +1,9 @@
 package services
 
 import (
-	"accommodation_service/model"
 	"database/sql"
 	"errors"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/model"
 	"github.com/google/uuid"
 	"log"
 	"time"
@@ -40,7 +40,7 @@ func (s PeriodService) GetAllByAccommodation(id uuid.UUID) ([]*model.Period, err
 func (s PeriodService) Create(p *model.Period) (uuid.UUID, error) {
 	errorMessage := "error while creating period"
 
-	free, err := s.isAvailableForGivenInterval(p.AccommodationId, p.Start, p.End)
+	free, err := s.IsAvailableForGivenInterval(p.AccommodationId, p.Start, p.End)
 	if err != nil {
 		log.Println(err)
 		return uuid.Nil, errors.New("please choose valid start and end dates")
@@ -77,7 +77,7 @@ func (s PeriodService) Create(p *model.Period) (uuid.UUID, error) {
 	return id, nil
 }
 
-func (s PeriodService) isAvailableForGivenInterval(accommodationId uuid.UUID, start, end time.Time) (bool, error) {
+func (s PeriodService) IsAvailableForGivenInterval(accommodationId uuid.UUID, start, end time.Time) (bool, error) {
 	stmt, err := s.DB.Prepare(`
 		SELECT COUNT(*) AS accommodation_count FROM Period p
 		WHERE p.accommodation_id = $1 AND (p.p_start, p.p_end) OVERLAPS ($2, $3) AND user_id IS NULL

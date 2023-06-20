@@ -19,7 +19,9 @@ func SetupDatabase(db *sql.DB) {
 		benefits TEXT,
 		min_guests integer,
 		max_guests integer NOT NULL,
-		base_price DOUBLE PRECISION NOT NULL)
+		base_price DOUBLE PRECISION NOT NULL,
+		location TEXT NOT NULL,
+		automatic_reservation INT)
     `)
 	if err != nil {
 		log.Fatalln(err)
@@ -45,6 +47,21 @@ func SetupDatabase(db *sql.DB) {
     	accommodation_id uuid NOT NULL,
     	user_id uuid,
     	discount DOUBLE PRECISION NOT NULL,
+    	FOREIGN KEY (accommodation_id) REFERENCES Accommodation (id)
+	)`)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	_, err = db.Exec(`DROP TABLE IF EXISTS Rating;`)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS Rating (
+    	id uuid NOT NULL PRIMARY KEY,
+    	accommodation_id uuid NOT NULL,
+    	user_id uuid NOT NULL,
+    	value_ integer NOT NULL,
     	FOREIGN KEY (accommodation_id) REFERENCES Accommodation (id)
 	)`)
 	if err != nil {
