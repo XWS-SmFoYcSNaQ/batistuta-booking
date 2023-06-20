@@ -2,22 +2,25 @@ package application
 
 import (
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/messaging"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/notification"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/saga/delete_rating"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/rating_service/domain"
 	"log"
 )
 
 type DeleteRatingCommandHandler struct {
-	ratingService     *domain.RatingService
-	replyPublisher    *messaging.Publisher
-	commandSubscriber *messaging.Subscriber
+	ratingService         *domain.RatingService
+	replyPublisher        *messaging.Publisher
+	commandSubscriber     *messaging.Subscriber
+	notificationPublisher *messaging.Publisher
 }
 
-func NewDeleteRatingCommandHandler(ratingService *domain.RatingService, publisher *messaging.Publisher, subscriber *messaging.Subscriber) (*DeleteRatingCommandHandler, error) {
+func NewDeleteRatingCommandHandler(ratingService *domain.RatingService, publisher *messaging.Publisher, subscriber *messaging.Subscriber, notificationPublisher *messaging.Publisher) (*DeleteRatingCommandHandler, error) {
 	o := &DeleteRatingCommandHandler{
-		ratingService:     ratingService,
-		replyPublisher:    publisher,
-		commandSubscriber: subscriber,
+		ratingService:         ratingService,
+		replyPublisher:        publisher,
+		commandSubscriber:     subscriber,
+		notificationPublisher: notificationPublisher,
 	}
 	err := (*o.commandSubscriber).Subscribe(o.handle)
 	if err != nil {
@@ -54,6 +57,12 @@ func (handler *DeleteRatingCommandHandler) handle(command *delete_rating.DeleteR
 		reply.Type = delete_rating.RatingRolledBack
 	case delete_rating.ConcludeRatingDeletion:
 		log.Println("RATING DELETED SUCCESSFULLY")
+		(*handler.notificationPublisher).Publish(&notification.Message{
+			Title:      "Rating Created Successfully",
+			Content:    "Rating Created Successfully",
+			Type:       notification.AccommodationRated,
+			NotifierId: (*(*command).Rating.OldValue).UserID,
+		})
 		reply.Type = delete_rating.RatingDeletionConcluded
 	default:
 		reply.Type = delete_rating.UnknownReply

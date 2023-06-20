@@ -19,6 +19,7 @@ type Config struct {
 	CreateRatingReplySubject   string
 	DeleteRatingCommandSubject string
 	DeleteRatingReplySubject   string
+	NotificationSubject        string
 }
 
 func NewConfig() *Config {
@@ -39,5 +40,6 @@ func NewConfig() *Config {
 		CreateRatingReplySubject:   os.Getenv("CREATE_RATING_REPLY_SUBJECT"),
 		DeleteRatingCommandSubject: os.Getenv("DELETE_RATING_COMMAND_SUBJECT"),
 		DeleteRatingReplySubject:   os.Getenv("DELETE_RATING_REPLY_SUBJECT"),
+		NotificationSubject:        os.Getenv("NOTIFICATION_SUBJECT"),
 	}
 }
