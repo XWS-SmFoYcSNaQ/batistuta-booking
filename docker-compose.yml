@@ -277,7 +277,7 @@ services:
       - notification_database
       - auth_service
     ports:
-      - '12009:12009'
+      - '12010:12010'
   # public_app:
   #   image: public_app
   #   container_name: public_app
