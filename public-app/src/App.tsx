@@ -25,6 +25,7 @@ import "rsuite/dist/rsuite.min.css";
 import { useEffect, useState } from "react";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import RecommendIcon from '@mui/icons-material/Recommend';
 
 const drawerWidth = 300;
 
@@ -71,6 +72,11 @@ const upperNavItems: NavItem[] = [
     route: "reservations-to-confirm",
     text: "Reservations confirmation",
     icon: <CheckIcon />,
+  },
+  {
+    route: "recommended-accommodations",
+    text: "Recommended accommodations",
+    icon: <RecommendIcon />
   },
   {
     route: "/profile",
@@ -138,7 +144,7 @@ export default function App() {
       >
         <Toolbar>
           <Typography variant="h5" noWrap component="div">
-            Welcome {currentUser && currentUser?.FirstName} to Batistuta Booking
+          {currentUser && currentUser?.FirstName}, welcome to Batistuta Booking
           </Typography>
         </Toolbar>
       </AppBar>

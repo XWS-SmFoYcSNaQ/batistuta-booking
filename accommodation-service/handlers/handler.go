@@ -56,3 +56,7 @@ func (h AccommodationHandler) SearchAccommodations(ctx context.Context, request 
 func (h AccommodationHandler) GetAutomaticReservationValue(ctx context.Context, request *accommodation.AM_GetAutomaticReservation_Request) (*accommodation.AM_GetAutomaticReservation_Response, error) {
 	return h.AccommodationController.GetAutomaticReservationValue(ctx, request)
 }
+
+func (h AccommodationHandler) GetHostIdByAccommodationId(ctx context.Context, request *accommodation.AM_GetAllDiscountsByAccommodation_Request) (*accommodation.AM_GetHostIdByAccommodationId_Response, error) {
+	return h.AccommodationController.GetHostIdByAccommodationId(ctx, request)
+}

@@ -48,7 +48,7 @@ export const RoomList = () => {
 										{room.name}
 									</Typography>
 									<Typography variant="body2" color="text.secondary">
-										{room.basePrice}€ per night
+										{room.basePrice}&#8364; per night
 									</Typography>
 								</CardContent>
 								<CardActions>

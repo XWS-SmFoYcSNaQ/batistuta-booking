@@ -91,7 +91,7 @@ func main() {
 
 	accommodationHandler := handlers.AccommodationHandler{
 		AccommodationController: &controller.AccommodationController{
-			AccommodationService: &services.AccommodationService{DB: db},
+			AccommodationService: &services.AccommodationService{DB: db, Cfg: &cfg},
 			PeriodService:        &services.PeriodService{DB: db},
 			DiscountService:      &services.DiscountService{DB: db},
 			AuthService: &commonServices.AuthService{

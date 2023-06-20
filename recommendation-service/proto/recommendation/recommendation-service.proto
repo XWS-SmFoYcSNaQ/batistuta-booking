@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option go_package = "proto/recommendation";
+
+service RecommendationService {
+  rpc GetRecommendedAccommodations(RecommendedAccommodations_Request) returns (RecommendedAccommodations_Response) {}
+}
+
+message RecommendedAccommodations_Request {
+  string id = 1;
+}
+
+message RecommendedAccommodations_Response {
+  repeated RecommendedAccommodationDTO data = 1;
+}
+
+message RecommendedAccommodationDTO {
+  string id = 1;
+  string name = 2;
+  string benefits = 3;
+  int32 minGuests = 4;
+  int32 maxGuests = 5;
+  double basePrice = 6;
+}

@@ -1,23 +1,41 @@
 package services
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/config"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/infrastructure"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/infrastructure/database"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/model"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/accommodation_service/utility"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/accommodation"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/user"
 	"github.com/google/uuid"
 	"log"
 	"strconv"
 )
 
 type AccommodationService struct {
-	DB *sql.DB
+	DB  *sql.DB
+	Cfg *config.Config
 }
 
 func (s AccommodationService) GetAll(filters *utility.Filter) ([]*model.Accommodation, error) {
+	if (*filters).Distinguished {
+		conn := infrastructure.CreateConnection((*s.Cfg).UserServiceAddress)
+		client := user.NewUserServiceClient(conn)
+		hostIds, err := client.GetFeaturedHosts(context.Background(), &user.Empty_Message{})
+		if err != nil {
+			return []*model.Accommodation{}, err
+		}
+		(*filters).DistinguishedHostIds = []string{}
+		for _, host := range hostIds.Hosts {
+			(*filters).DistinguishedHostIds = append((*filters).DistinguishedHostIds, host.Id)
+		}
+	}
+
 	stmt, err := database.GetAllAccommodations(s.DB, filters)
 	if err != nil {
 		log.Println(err)
@@ -207,4 +225,20 @@ func (s AccommodationService) GetAutomaticReservationValue(id string) (int32, er
 	}
 
 	return automaticReservation, nil
+}
+
+func (s AccommodationService) GetHostIdByAccommodationId(id string) (string, error) {
+	var hostId string
+	stmt, err := s.DB.Prepare("SELECT host_id FROM Accommodation WHERE id = $1")
+	if err != nil {
+		return "", err
+	}
+	defer stmt.Close()
+
+	err = stmt.QueryRow(id).Scan(&hostId)
+	if err != nil {
+		return "", err
+	}
+
+	return hostId, nil
 }

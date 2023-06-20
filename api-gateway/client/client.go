@@ -7,10 +7,11 @@ import (
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/auth"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/booking"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/rating"
+	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/recommendation"
 	"github.com/XWS-SmFoYcSNaQ/batistuta-booking/common/proto/user"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"log"
 
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -68,6 +69,18 @@ func RegisterRatingClient(Mux *runtime.ServeMux, Cfg *config.Config) {
 		client,
 	)
 	handleError(err, "Failed to register Rating Microservice")
+}
+
+func RegisterRecommendationClient(Mux *runtime.ServeMux, Cfg *config.Config) {
+	log.Println("ADDRESS OF RECOMMENDATION SERVICE IS " + Cfg.RecommendationServiceAddress)
+	conn := createConnection(Cfg.RecommendationServiceAddress)
+	client := recommendation.NewRecommendationServiceClient(conn)
+	err := recommendation.RegisterRecommendationServiceHandlerClient(
+		context.Background(),
+		Mux,
+		client,
+	)
+	handleError(err, "Failed to register Recommendation Microservice")
 }
 
 // private

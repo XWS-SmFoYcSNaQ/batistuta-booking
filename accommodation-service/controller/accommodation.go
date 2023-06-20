@@ -160,3 +160,11 @@ func (c AccommodationController) GetAutomaticReservationValue(ctx context.Contex
 	}
 	return &accommodation.AM_GetAutomaticReservation_Response{AutomaticReservation: int32(resp)}, nil
 }
+
+func (c AccommodationController) GetHostIdByAccommodationId(ctx context.Context, request *accommodation.AM_GetAllDiscountsByAccommodation_Request) (*accommodation.AM_GetHostIdByAccommodationId_Response, error) {
+	resp, err := c.AccommodationService.GetHostIdByAccommodationId(request.AccommodationId)
+	if err != nil {
+		return nil, err
+	}
+	return &accommodation.AM_GetHostIdByAccommodationId_Response{Id: resp}, nil
+}

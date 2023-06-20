@@ -112,7 +112,7 @@ const handleDateRangeChange = (value: DateRange | null) => {
       {!loading && (
         <>
           <h1> { room?.name } </h1>
-          <p>{ room?.basePrice }€ per night </p>
+          <p>{ room?.basePrice }&#8364; per night </p>
           <p>Total: </p>
           {/* {isAuthenticated() ? <Link to="/books">Books</Link> : null} */}
       {<form onSubmit={handleSubmit}>
